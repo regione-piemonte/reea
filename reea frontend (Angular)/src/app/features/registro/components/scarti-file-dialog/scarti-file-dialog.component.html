@@ -1,0 +1,61 @@
+<div class="dialog-container">
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-info">
+      <i class="fas fa-exclamation-triangle header-icon"></i>
+      <div>
+        <h2 class="dialog-title">Record scartati</h2>
+        <span class="file-name">{{ data.nomeFile }}</span>
+      </div>
+    </div>
+    <button class="close-button" (click)="onChiudi()" aria-label="Chiudi">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenuto -->
+  <div class="dialog-content">
+
+    @if (data.scarti.length === 0) {
+      <div class="no-data">
+        <i class="fas fa-check-circle"></i>
+        <p>Nessuno scarto trovato</p>
+      </div>
+    } @else {
+      <div class="scarti-count">
+        <span class="badge-count">{{ data.scarti.length }}</span> record scartati
+      </div>
+
+      <div class="table-wrapper">
+        <table class="scarti-table">
+          <thead>
+            <tr>
+              <th class="col-riga">N° riga</th>
+              <th class="col-codice">Codice errore</th>
+              <th class="col-desc">Descrizione errore</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (scarto of data.scarti; track $index) {
+              <tr>
+                <td class="col-riga">{{ scarto.numero_riga ?? '—' }}</td>
+                <td class="col-codice">
+                  <span class="errore-badge">{{ scarto.codice_errore || '—' }}</span>
+                </td>
+                <td class="col-desc">{{ scarto.descrizione_errore || '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+  </div>
+
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <button class="btn-chiudi" (click)="onChiudi()">Chiudi</button>
+  </div>
+
+</div>

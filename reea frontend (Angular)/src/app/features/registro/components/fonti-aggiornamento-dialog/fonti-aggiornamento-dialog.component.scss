@@ -1,0 +1,78 @@
+// FONTI AGGIORNAMENTO DIALOG - Styles
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.dialog-container { @include dialog-container(480px); }
+.dialog-header {
+  @include dialog-header;
+  .header-info {
+    @include flex-column;
+    gap: 4px;
+    .dialog-title { @include dialog-title; color: #1c398e; }
+    .assistito-info { font-size: 14px; color: #090909; font-weight: 400; }
+  }
+  .close-button { @include dialog-close-btn; }
+}
+.dialog-content { @include dialog-content; }
+.dialog-footer { @include dialog-footer; .btn-chiudi { @include dialog-btn-chiudi; } }
+
+.dialog-description { font-size: 14px; color: #4b5563; margin: 0 0 16px 0; line-height: 1.5; }
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.fonte-section {
+  margin-bottom: 12px;
+}
+
+.fonte-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 8px;
+
+  &.fonte-attuale {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+  }
+
+  &.fonte-storico {
+    background-color: #f9fafb;
+    opacity: 0.85;
+  }
+}
+
+.fonte-bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+
+  &.attuale { background-color: #005ca9; }
+  &.storico { background-color: #9ca3af; }
+}
+
+.fonte-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fonte-nome { font-size: 15px; font-weight: 700; color: #1f2937; }
+
+.fonte-data { font-size: 13px; color: #6b7280; font-weight: 600; }
+
+.no-fonti { font-size: 14px; color: #6b7280; margin: 0; }
+
+@media (max-width: 480px) {
+  .dialog-container { width: 100%; }
+  .dialog-header, .dialog-content, .dialog-footer { padding-left: 16px; padding-right: 16px; }
+}

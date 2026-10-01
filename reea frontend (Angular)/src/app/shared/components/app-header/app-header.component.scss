@@ -1,0 +1,153 @@
+@use '../../../../styles/variables' as *;
+
+.app-header {
+  position: sticky-fixed;
+  top: 0;
+  z-index: $z-index-sticky;
+  background: $color-primary;
+  box-shadow: $shadow-md;
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 $spacing-lg;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+
+      .logo-brand {
+        font-size: 18px;
+        font-weight: $font-weight-bold;
+        color: $text-white;
+      }
+
+      .logo-subtitle {
+        font-size: 11px;
+        font-weight: $font-weight-medium;
+        color: $text-white;
+        letter-spacing: 1px;
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    .header-icon-btn {
+      color: $text-white;
+
+      mat-icon,
+      i {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+  }
+
+  // REEA-CDU-000-V01
+
+  .page-title-bar {
+    background: #016db3;
+    padding: $spacing-sm $spacing-lg;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .page-title {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-semibold;
+      color: #ffffff;
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .page-title-user {
+      display: flex;
+      align-items: center;
+
+      .user-menu-btn {
+        color: $text-white;
+        padding: 0 $spacing-sm;
+        border-radius: 4px;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+
+        .mdc-button__label {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 0;
+        }
+
+        .user-avatar-icon {
+          font-size: 26px;
+          line-height: 26px;
+          opacity: 0.9;
+          position: relative;
+          top: 1px;
+          margin-right: 8px;
+        }
+
+        .user-menu-name {
+          font-size: $font-size-sm;
+          font-weight: $font-weight-semibold;
+          letter-spacing: 0.3px;
+          line-height: 1;
+          white-space: nowrap;
+          position: relative;
+          top: -1px;
+          margin-right: 16px;
+        }
+
+        .user-menu-sep {
+          opacity: 0.5;
+          font-size: $font-size-sm;
+          line-height: 1;
+          position: relative;
+          top: -1px;
+          margin: 0 10px;
+        }
+
+        .user-menu-asl,
+        .user-menu-profilo {
+          font-size: $font-size-sm;
+          line-height: 1;
+          white-space: nowrap;
+          color: $text-white;
+          opacity: 1;
+          position: relative;
+          top: -1px;
+        }
+
+        .user-menu-arrow {
+          font-size: 11px;
+          line-height: 1;
+          opacity: 0.8;
+          margin-left: 10px;
+          position: relative;
+          top: -1px;
+        }
+      }
+    }
+  }
+}

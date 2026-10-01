@@ -1,0 +1,91 @@
+<!-- ============================================
+     VALUTA / PRENDI IN CARICO DIALOG - Template
+     CDU-023 e CDU-024
+     ============================================ -->
+
+<div class="dialog-container">
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-info">
+      <h2 class="dialog-title">{{ titolo }}</h2>
+      <span class="assistito-info">
+        {{ assistito.cognome }} {{ assistito.nome }} - {{ assistito.codiceFiscale }}
+      </span>
+    </div>
+    <button class="close-button" (click)="onChiudi()" aria-label="Chiudi">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenuto -->
+  <div class="dialog-content">
+
+    <!-- Pulsanti di scelta (solo per 'valuta' e 'prendi-in-carico') -->
+    @if (mostraScelta) {
+      <div class="scelta-container">
+        <button
+          class="scelta-btn"
+          [class.selected]="sceltaSelezionata() === 'a'"
+          [class.dimmed]="sceltaSelezionata() !== null && sceltaSelezionata() !== 'a'"
+          (click)="seleziona('a')">
+          @if (sceltaSelezionata() === 'a') {
+            <i class="fas fa-check scelta-icon"></i>
+          }
+          {{ labelBtnA }}
+        </button>
+
+        <button
+          class="scelta-btn"
+          [class.selected]="sceltaSelezionata() === 'b'"
+          [class.dimmed]="sceltaSelezionata() !== null && sceltaSelezionata() !== 'b'"
+          (click)="seleziona('b')">
+          @if (sceltaSelezionata() === 'b') {
+            <i class="fas fa-check scelta-icon"></i>
+          }
+          {{ labelBtnB }}
+        </button>
+      </div>
+    }
+
+    <!-- Label transizione stato (solo per cambia-valutazione e cambia-presa-in-carico) -->
+    @if (labelTransizione) {
+      <div class="transizione-label">
+        {{ labelTransizione }}
+      </div>
+    }
+
+    <!-- Campo nota (visibile dopo la scelta o subito per le modalità senza scelta) -->
+    @if (mostraNota) {
+      <div class="nota-container">
+        <label class="nota-label">
+          Note
+          @if (isNotaObbligatoria) {
+            <span class="nota-obbligatoria">*obbligatoria</span>
+          } @else {
+            <span class="nota-opzionale">(opzionale)</span>
+          }
+        </label>
+        <textarea
+          class="nota-textarea"
+          [(ngModel)]="nota"
+          placeholder="Inserire una nota sul cambio di stato..."
+          rows="4">
+        </textarea>
+        @if (isNotaObbligatoria && !nota.trim()) {
+          <span class="nota-hint">La nota è obbligatoria per questo stato</span>
+        }
+      </div>
+    }
+
+  </div>
+
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <button class="btn-chiudi" (click)="onChiudi()">Annulla</button>
+    @if (canSave) {
+      <button class="btn-salva" (click)="onSalva()">Salva</button>
+    }
+  </div>
+
+</div>

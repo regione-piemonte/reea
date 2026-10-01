@@ -1,0 +1,256 @@
+@use '../../../../../styles/variables' as *;
+@use '../../../../../styles/mixins' as *;
+
+.sp-page {
+  min-height: calc(100vh - 112px);
+  background: #dce3ea;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 48px 16px;
+}
+
+.sp-container {
+  width: 100%;
+  max-width: 860px;
+  background: $color-white;
+  border-radius: $radius-base;
+  padding: 32px 36px;
+  box-shadow: $shadow-md;
+}
+
+// ── Titoli sezione ────────────────────────────────────────
+.sp-section-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  margin: 0 0 16px 0;
+
+  &--mt {
+    margin-top: 28px;
+  }
+}
+
+// ── Tile profili (centrate, wrap, stile PUA) ─────────────
+.sp-profili-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center; // centra le tile anche quando non riempiono la riga
+}
+
+.sp-profilo-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; // icona sempre ancorata in cima
+  gap: 12px;
+  padding: 24px 16px 20px;
+  border: 2px solid $color-gray-200;
+  border-radius: 8px;
+  cursor: pointer;
+  flex: 0 0 180px;           // larghezza fissa: non cresce, non si restringe
+  background: $color-white;
+  transition: border-color $transition-fast, background $transition-fast, box-shadow $transition-fast;
+  user-select: none;
+
+  @media (max-width: 480px) {
+    flex: 0 0 calc(50% - 8px); // 2 per riga su mobile
+  }
+
+  &:hover {
+    border-color: #1565c0;
+    background: #eaf1fb;
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.12);
+  }
+
+  &--selected {
+    border-color: #1565c0;
+    background: #e8f0fe;
+    box-shadow: 0 2px 8px rgba(21, 101, 192, 0.15);
+  }
+}
+
+.sp-profilo-icon {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;  // impedisce che venga schiacciata
+  min-height: 64px;
+  border-radius: 50%;
+  background: #1565c0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i {
+    font-size: 28px;
+    color: #fff;
+    line-height: 1;
+  }
+}
+
+.sp-profilo-label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.sp-tile-check-inline {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 18px;
+  color: #1565c0;
+}
+
+// ── Lista collocazioni (stile PUA) ────────────────────────
+.sp-collocazioni-list {
+  border: 1px solid $color-gray-200;
+  border-radius: 6px;
+  overflow: hidden;
+  background: $color-white;
+}
+
+.sp-collocazione-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid $color-gray-100;
+  transition: background $transition-fast;
+  user-select: none;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: #eaf1fb;
+  }
+
+  &--selected {
+    background: #e8f0fe;
+  }
+}
+
+// Radio button stile PUA
+.sp-radio {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid $color-gray-300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color $transition-fast;
+
+  .sp-collocazione-row--selected & {
+    border-color: #1565c0;
+  }
+}
+
+.sp-radio-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background $transition-fast;
+
+  &--filled {
+    background: #1565c0;
+  }
+}
+
+.sp-col-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sp-col-codice {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+}
+
+.sp-col-azienda {
+  font-size: $font-size-sm;
+  color: #1565c0;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+}
+
+// ── Errore ────────────────────────────────────────────────
+.sp-errore {
+  color: $color-danger;
+  font-size: $font-size-sm;
+  margin: 16px 0 0;
+
+  i { margin-right: 6px; }
+}
+
+// ── Azioni ───────────────────────────────────────────────
+.sp-azioni {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.sp-btn-indietro {
+  background: transparent;
+  border: 1px solid $color-gray-300;
+  border-radius: $radius-base;
+  color: $text-secondary;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background $transition-fast;
+
+  &:hover { background: $color-gray-100; }
+}
+
+.sp-btn-prosegui {
+  @include button-primary;
+  min-width: 140px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: $font-weight-semibold;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover:not(:disabled) {
+    background-color: #004a8a;
+  }
+
+  &:disabled {
+    background-color: $color-gray-400;
+    cursor: not-allowed;
+  }
+}
+
+// ── Spinner ───────────────────────────────────────────────
+.sp-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: sp-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes sp-spin {
+  to { transform: rotate(360deg); }
+}

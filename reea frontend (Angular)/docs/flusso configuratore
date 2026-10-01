@@ -1,0 +1,51 @@
+Il flusso completo in produzione
+
+1. Operatore apre il browser → va al PUA (Portale Unico di Accesso)
+
+2. PUA è protetto da Shibboleth → l'utente inserisce credenziali RUPAR o SPID
+   → Shibboleth autentica e passa il CF negli header
+
+3. Il PUA legge dal Configuratore le configurazioni dell'utente:
+   - Quali ruoli ha?
+   - In quale collocazione/azienda lavora?
+   - Quali applicazioni può usare?
+
+4. L'utente sul PUA sceglie:
+   - Ruolo (es. Operatore CRPT)
+   - Collocazione (es. ASL TO1)
+   - Applicazione (es. REEA)
+
+5. Il PUA chiama il Configuratore → genera un TOKEN monouso
+
+6. Il PUA fa un redirect HTTP GET verso la tua app:
+   https://tua-app.csi.it/reeafe/auth/callback?token=abc123-uuid
+
+7. Il browser dell'utente arriva su /auth/callback
+   → Il frontend legge il token dall'URL
+   → Chiama il backend: POST /auth/login { token: "abc123-uuid" }
+
+8. Il backend chiama il Configuratore (Server-to-Server con BasicAuth):
+   GET /login/token-information2
+   Headers: Token: abc123-uuid, Shib-Identita-CodiceFiscale: CF_UTENTE, ...
+   → Il Configuratore risponde con nome, cognome, ruolo, collocazione, funzionalità
+
+9. Il backend salva in sessione e risponde al frontend con i dati utente
+
+10. Il frontend mostra l'applicazione con la profilazione corretta
+Cosa manca per farlo funzionare davvero
+Tutto ciò che hai fatto finora (backend + frontend) è il punto 7-10. I punti 1-6 richiedono:
+
+Cosa	Chi lo fa	Come
+Registrare l'app su Shibboleth	CSI Piemonte	Inviare modulo a CSI con URL dell'app
+Registrare l'app sul Configuratore	CSI Piemonte	Compilare Template-Richiesta-Integrazione e inviare a supporto.fse@csi.it
+Configurare i profili/funzionalità su SOLCONFIG	CSI Piemonte	Definire quali funzionalità ha ogni ruolo per l'app REEA
+Deploy su infrastruttura raggiungibile dal PUA	Voi + CSI	Il server deve essere su RUPAR o accessibile da internet
+In breve
+Ora: funziona tutto in mock, il codice è pronto per il flusso reale.
+
+Prossimo passo tecnico: quando CSI vi dà accesso all'ambiente di test configurato con Shibboleth + PUA, basta:
+
+Mettere useMockData: false
+Deployare il backend con le credenziali del Configuratore
+Testare con un utente di prova che CSI vi fornirà
+Il grosso del lavoro non è più di codice — è burocratico/infrastrutturale con CSI.

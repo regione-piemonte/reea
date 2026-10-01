@@ -1,0 +1,190 @@
+// VALUTA ASSISTITO DIALOG - Styles
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.dialog-container { @include dialog-container(560px); }
+
+.dialog-header {
+  @include dialog-header;
+
+  .header-info {
+    @include flex-column;
+    gap: 4px;
+
+    .dialog-title { @include dialog-title; color: #1c398e; }
+    .assistito-info { font-size: 14px; color: #090909; font-weight: 400; }
+  }
+
+  .close-button { @include dialog-close-btn; }
+}
+
+.dialog-content { @include dialog-content; }
+
+.dialog-footer {
+  @include dialog-footer;
+
+  .btn-chiudi {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 28px;
+    background: #E5E7EB;
+    border: none;
+    border-radius: $radius-sm;
+    color: #4B5563;
+    font-size: 14px;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover { background: #D1D5DB; }
+  }
+
+  .btn-salva {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 28px;
+    background: #1c398e;
+    border: none;
+    border-radius: $radius-sm;
+    color: white;
+    font-size: 14px;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+    &:hover { background: #152d72; }
+  }
+}
+
+// === SCELTA VALUTAZIONE ===
+
+.scelta-container {
+  display: flex;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.scelta-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: 28px $spacing-lg;
+  border: 3px solid transparent;
+  border-radius: $radius-md;
+  color: white;
+  font-size: 16px;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+
+  background: #1c398e;
+
+  &:hover:not(.selected):not(.dimmed) {
+    background: #142c6e;
+  }
+
+  &.selected {
+    background: #142c6e;
+    border-color: #7aa3f0;
+    box-shadow: 0 0 0 3px rgba(#7aa3f0, 0.3);
+  }
+
+  &.dimmed {
+    opacity: 0.4;
+    filter: grayscale(30%);
+  }
+
+  .scelta-icon {
+    font-size: 16px;
+  }
+}
+
+// === LABEL TRANSIZIONE STATO ===
+
+.transizione-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: $spacing-xl;
+  padding: 12px 20px;
+  background: #f0f4ff;
+  border: 1px solid #c7d4f5;
+  border-radius: $radius-md;
+  font-size: 15px;
+  font-weight: $font-weight-semibold;
+  color: #1c398e;
+  letter-spacing: 0.2px;
+}
+
+// === CAMPO NOTA ===
+
+.nota-container {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  animation: fadeIn 0.2s ease;
+}
+
+.nota-label {
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+
+  .nota-opzionale {
+    font-size: 12px;
+    color: $text-secondary;
+    font-weight: $font-weight-regular;
+    margin-left: 4px;
+  }
+
+  .nota-obbligatoria {
+    font-size: 12px;
+    color: #c0392b;
+    font-weight: $font-weight-semibold;
+    margin-left: 4px;
+  }
+}
+
+.nota-hint {
+  font-size: 12px;
+  color: #c0392b;
+  margin-top: 2px;
+}
+
+.nota-textarea {
+  width: 100%;
+  padding: $spacing-md;
+  border: 1px solid $border-medium;
+  border-radius: $radius-sm;
+  font-size: 14px;
+  font-family: $font-primary;
+  color: $text-primary;
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  outline: none;
+
+  &:focus {
+    border-color: $color-primary;
+    border-width: 2px;
+  }
+
+  &::placeholder {
+    color: $text-secondary;
+    font-size: 13px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
+  .scelta-container { flex-direction: column; }
+  .scelta-btn { padding: 20px $spacing-lg; }
+}

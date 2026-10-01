@@ -1,0 +1,497 @@
+// ============================================
+// GLOBAL STYLES - REEA Sistema
+// Stili basati su Figma Salute Piemonte
+// ============================================
+
+// ⚠️ ALL @use RULES MUST BE FIRST
+
+// Import Angular Material theming (MUST be first for @use)
+@use '@angular/material' as mat;
+
+// Import Design System
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+@use 'styles/utilities' as *;
+
+// Include Material core
+@include mat.core();
+
+// Define Material theme using design tokens
+$reea-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$blue-palette,
+    tertiary: mat.$yellow-palette,
+  ),
+));
+
+// Apply theme
+html {
+  @include mat.all-component-themes($reea-theme);
+}
+
+// ============================================
+// BASE STYLES
+// ============================================
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: $font-primary;
+  font-size: $font-size-base;
+  line-height: $line-height-normal;
+  color: $text-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: $bg-body;
+}
+
+// ============================================
+// MATERIAL OVERRIDES - Figma Style
+// ============================================
+
+.mat-mdc-form-field {
+  font-size: $font-size-base;
+  font-family: $font-primary;
+
+  .mat-mdc-form-field-focus-overlay {
+    background-color: transparent;
+  }
+
+  // Label più pulita
+  .mdc-floating-label {
+    font-size: $font-size-base;
+    color: $text-secondary;
+  }
+
+  // Input più pulito
+  .mat-mdc-input-element {
+    font-size: $font-size-base;
+    color: $text-primary;
+  }
+}
+
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-stroked-button,
+.mat-mdc-flat-button {
+  text-transform: none;
+  letter-spacing: 0.3px;
+  font-weight: $font-weight-medium;
+  font-family: $font-primary;
+  border-radius: $radius-md !important;
+
+  .mat-icon,
+  i {
+    margin-right: $spacing-sm;
+    margin-left: 0;
+    font-size: 16px;
+  }
+}
+
+// Primary button
+.mat-mdc-raised-button.mat-primary {
+  background-color: $color-primary;
+
+  &:hover:not(:disabled) {
+    background-color: $color-primary-dark;
+  }
+}
+
+// Stroked button
+.mat-mdc-stroked-button.mat-primary {
+  border-color: $color-primary;
+  color: $color-primary;
+
+  &:hover:not(:disabled) {
+    background-color: $color-primary-lighter;
+  }
+}
+
+// Table (Figma Style)
+.mat-mdc-table {
+  background: transparent;
+  font-family: $font-primary;
+
+  .mat-mdc-header-row {
+    background-color: #ffffff;
+    height: 48px;
+  }
+
+  .mat-mdc-header-cell {
+    font-size: 12px;
+    font-weight: $font-weight-bold;
+    color: #000000;
+    text-transform: none;
+    letter-spacing: 0.3px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .mat-mdc-row {
+    height: 60px;
+
+    &:hover {
+      background-color: $table-hover;
+    }
+  }
+
+  .mat-mdc-cell {
+    font-size: $font-size-base;
+    color: $text-primary;
+    border-bottom: 1px solid #F3F4F6;
+  }
+}
+
+.mat-mdc-paginator {
+  background: $bg-card;
+  font-family: $font-primary;
+}
+
+// Select dropdown
+.mat-mdc-select {
+  font-size: 16px;
+}
+
+.mat-mdc-select-panel {
+  background-color: white !important;
+}
+
+.mat-mdc-option {
+  font-size: 16px;
+  font-family: $font-primary;
+  background-color: white !important;
+
+  &:hover:not(.mdc-list-item--disabled) {
+    background-color: #f5f5f5 !important;
+  }
+
+  &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+    background-color: #e3f2fd !important;
+  }
+}
+
+// Datepicker
+.mat-datepicker-content {
+  background-color: white !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 8px !important;
+
+  .mat-calendar {
+    background-color: white !important;
+  }
+}
+
+// Checkbox
+.mat-mdc-checkbox {
+  .mdc-checkbox__background {
+    border-color: $border-dark;
+  }
+
+  &.mat-primary .mdc-checkbox__background {
+    background-color: $color-primary;
+    border-color: $color-primary;
+  }
+}
+
+// Menu
+.mat-mdc-menu-panel {
+  border-radius: $radius-base;
+  box-shadow: $shadow-lg;
+}
+
+.mat-mdc-menu-item {
+  font-size: $font-size-base;
+  font-family: $font-primary;
+
+  .mat-icon,
+  i {
+    margin-right: $spacing-md;
+    color: $text-secondary;
+    font-size: 16px;
+    width: 20px;
+  }
+}
+
+// ============================================
+// SCROLLBAR
+// ============================================
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: $color-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $color-gray-400;
+  border-radius: $radius-sm;
+
+  &:hover {
+    background: $color-gray-500;
+  }
+}
+
+// ============================================
+// LOADING SPINNER
+// ============================================
+
+.loading-spinner {
+  @include flex-center;
+  padding: $spacing-2xl;
+}
+
+// ============================================
+// USER MENU (mat-menu panel rendered outside component)
+// ============================================
+
+.mat-mdc-menu-item.esci-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 160px;
+
+  span { flex: 1; }
+
+  i.fas {
+    font-size: 14px;
+    margin-left: 16px;
+    color: rgba(0, 0, 0, 0.54);
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn $transition-base ease-in;
+}
+
+.slide-up {
+  animation: slideUp $transition-base ease-out;
+}
+
+.slide-down {
+  animation: slideDown $transition-base ease-out;
+}
+
+// ============================================
+// DIALOG OVERRIDES
+// ============================================
+
+.mat-mdc-dialog-container {
+  .mdc-dialog__surface {
+    border-radius: 8px !important;
+  }
+}
+
+// Storia Stati Dialog
+.storia-stati-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+
+    .mdc-dialog__surface {
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+  }
+}
+
+// Archivio File Dialog
+.archivio-file-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+
+    .mdc-dialog__surface {
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+  }
+}
+
+// Importa File Dialog
+.importa-file-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+
+    .mdc-dialog__surface {
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+  }
+}
+
+// Fonti Aggiornamento Dialog
+.fonti-aggiornamento-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+
+    .mdc-dialog__surface {
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+  }
+}
+
+// Note Registro Dialog
+.note-registro-dialog {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+
+    .mdc-dialog__surface {
+      border-radius: 8px !important;
+      overflow: hidden;
+    }
+  }
+}
+
+// ============================================
+// TOOLTIP - Stile personalizzato
+// ============================================
+
+.mat-mdc-tooltip {
+  .mdc-tooltip__surface {
+    font-size: 14px !important;
+    padding: 8px 12px !important;
+    max-width: 300px !important;
+    line-height: 1.4 !important;
+  }
+}
+
+// Snackbar info (export)
+.snack-info .mdc-snackbar__surface {
+  background-color: #1d4ed8 !important;
+  color: white !important;
+  font-size: 14px !important;
+  max-width: 600px !important;
+  white-space: pre-line;
+}
+
+// Snackbar warning
+.snack-warning .mdc-snackbar__surface {
+  background-color: #b45309 !important;
+  color: white !important;
+  font-size: 14px !important;
+}
+
+// Header tabelle dettaglio assistito (storia stati / note)
+.storia-table,
+.note-table {
+  .mdc-data-table__header-cell {
+    background-color: #eff6ff !important;
+    border-bottom: 1px solid #bedbff !important;
+    color: black !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+  }
+}
+
+// Notifica centrata custom (sostituisce MatSnackBar per notifiche batch)
+.center-notif-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .center-notif-box {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+    padding: 28px 36px;
+    max-width: 480px;
+    width: 90vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+
+    .center-notif-icon {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+    }
+
+    .center-notif-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: #1e293b;
+      line-height: 1.5;
+    }
+
+    .center-notif-btn {
+      margin-top: 6px;
+      padding: 6px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    &.notif-success {
+      border-top: 4px solid #16a34a;
+      .center-notif-icon { color: #16a34a; }
+      .center-notif-btn  { background: #16a34a; }
+    }
+    &.notif-error {
+      border-top: 4px solid #dc2626;
+      .center-notif-icon { color: #dc2626; }
+      .center-notif-btn  { background: #dc2626; }
+    }
+    &.notif-info {
+      border-top: 4px solid #1d4ed8;
+      .center-notif-icon { color: #1d4ed8; }
+      .center-notif-btn  { background: #1d4ed8; }
+    }
+  }
+}
+

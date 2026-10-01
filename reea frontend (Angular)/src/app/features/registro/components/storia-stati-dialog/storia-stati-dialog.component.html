@@ -1,0 +1,83 @@
+<!-- ============================================
+     STORIA STATI DIALOG - Template
+     Dialog per visualizzare la storia degli stati
+     ============================================ -->
+
+<div class="dialog-container">
+
+  <!-- Header del Dialog -->
+  <div class="dialog-header">
+    <div class="header-info">
+      <h2 class="dialog-title">Storia Stati Assistito</h2>
+      @if (!isPseudo()) {
+        <span class="assistito-info">
+          {{ assistito().cognome }} {{ assistito().nome }} - {{ assistito().codiceFiscale }}
+        </span>
+      }
+    </div>
+    <button class="close-button" (click)="onChiudi()" aria-label="Chiudi">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenuto del Dialog -->
+  <div class="dialog-content">
+
+    <!-- Tabella Storia Stati -->
+    <div class="table-container">
+      @if (loading()) {
+        <div class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+      <table mat-table [dataSource]="tableData" class="storia-table">
+
+        <!-- Colonna Stato -->
+        <ng-container matColumnDef="stato">
+          <th mat-header-cell *matHeaderCellDef>Stato</th>
+          <td mat-cell *matCellDef="let item">
+            <div class="stato-cell">
+              @if (item.isCurrent) {
+                <span class="dot-attuale" title="Stato attuale"></span>
+              }
+              <app-status-badge [stato]="mapToStatoEnum(item.soggetto_stato_desc)"></app-status-badge>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Colonna Data Modifica -->
+        <ng-container matColumnDef="dataModifica">
+          <th mat-header-cell *matHeaderCellDef>Data Modifica</th>
+          <td mat-cell *matCellDef="let item">{{ item.data_modifica | date:'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <!-- Colonna Operatore Modifica -->
+        <ng-container matColumnDef="operatoreModifica">
+          <th mat-header-cell *matHeaderCellDef>Operatore Modifica</th>
+          <td mat-cell *matCellDef="let item">{{ item.utente_modifica || '--' }}</td>
+        </ng-container>
+
+        <!-- Colonna Nota Passaggio di Stato -->
+        <ng-container matColumnDef="notaPassaggioStato">
+          <th mat-header-cell *matHeaderCellDef>Nota Passaggio di Stato</th>
+          <td mat-cell *matCellDef="let item">{{ item.soggetto_stato_note || '--' }}</td>
+        </ng-container>
+
+        <!-- Header e Righe -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            [class.row-current]="row.isCurrent"></tr>
+
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Footer con Azioni -->
+  <div class="dialog-footer">
+    <button class="btn-chiudi" (click)="onChiudi()">
+      Chiudi
+    </button>
+  </div>
+
+</div>

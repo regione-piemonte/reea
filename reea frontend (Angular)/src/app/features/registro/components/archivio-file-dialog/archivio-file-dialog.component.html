@@ -1,0 +1,203 @@
+<div class="dialog-container">
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-info">
+      <h2 class="dialog-title">Archivio file caricati</h2>
+      <span class="total-files">Totale file: {{ totalFiles() }}</span>
+    </div>
+    <button class="close-button" (click)="onChiudi()" aria-label="Chiudi">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenuto -->
+  <div class="dialog-content">
+
+    <!-- Filtri -->
+    <div class="filter-section">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label class="filter-label">Fonte di provenienza</label>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-select [formControl]="fonteFilter" placeholder="Tutte le fonti">
+              <mat-option value="">Tutte le fonti</mat-option>
+              @for (fonte of fontiOptions; track fonte.value) {
+                <mat-option [value]="fonte.value">{{ fonte.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Data caricamento da</label>
+          <mat-form-field appearance="outline" class="filter-field filter-field-date">
+            <input matInput [matDatepicker]="pickerDa" [formControl]="dataDaFilter" placeholder="gg/mm/aaaa">
+            <mat-datepicker-toggle matIconSuffix [for]="pickerDa"></mat-datepicker-toggle>
+            <mat-datepicker #pickerDa></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Data caricamento a</label>
+          <mat-form-field appearance="outline" class="filter-field filter-field-date">
+            <input matInput [matDatepicker]="pickerA" [formControl]="dataAFilter" placeholder="gg/mm/aaaa">
+            <mat-datepicker-toggle matIconSuffix [for]="pickerA"></mat-datepicker-toggle>
+            <mat-datepicker #pickerA></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <button class="btn-reset-filtri" (click)="onResetFiltri()" matTooltip="Azzera filtri">
+          <i class="fas fa-times-circle"></i> Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    @if (isLoading()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <!-- Tabella -->
+    <div class="table-container">
+      <table mat-table [dataSource]="files()" class="files-table">
+
+        <ng-container matColumnDef="elaborazioneId">
+          <th mat-header-cell *matHeaderCellDef class="col-elab-id" matTooltip="ID Elaborazione">ID Elab.</th>
+          <td mat-cell *matCellDef="let file" class="col-elab-id">{{ file.elaborazione_id ?? '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="nomeFile">
+          <th mat-header-cell *matHeaderCellDef class="col-file" matTooltip="Nome file">File</th>
+          <td mat-cell *matCellDef="let file" class="col-file">
+            <div class="file-name-cell">
+              <i class="fas fa-file-excel excel-icon"></i>
+              @if (file.fileId) {
+                <button class="file-download-link" [title]="file.nome_file"
+                  [disabled]="isDownloading() === file.fileId"
+                  (click)="onDownload(file)">
+                  @if (isDownloading() === file.fileId) {
+                    <i class="fas fa-spinner fa-spin"></i>
+                  }
+                  <span class="file-name-text">{{ file.nome_file || '—' }}</span>
+                </button>
+              } @else {
+                <span class="file-name-text" [title]="file.nome_file">{{ file.nome_file || '—' }}</span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="fonte">
+          <th mat-header-cell *matHeaderCellDef class="col-fonte" matTooltip="Fonte di provenienza">Fonte</th>
+          <td mat-cell *matCellDef="let file" class="col-fonte">
+            <span class="fonte-badge">{{ getFonteLabel(file.fonte_provenienza) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stato">
+          <th mat-header-cell *matHeaderCellDef class="col-stato" matTooltip="Stato elaborazione">Stato</th>
+          <td mat-cell *matCellDef="let file" class="col-stato">
+            <span class="stato-badge" [ngClass]="statoClass(file.stato)">
+              {{ file.stato || '—' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="recordTotali">
+          <th mat-header-cell *matHeaderCellDef class="col-num" matTooltip="Totali record da file Excel">Totali record da file Excel</th>
+          <td mat-cell *matCellDef="let file" class="col-num">{{ file.record_totali ?? '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="recordScartati">
+          <th mat-header-cell *matHeaderCellDef class="col-num" matTooltip="Record scartati da Excel">Scartati da Excel</th>
+          <td mat-cell *matCellDef="let file" class="col-num">{{ file.record_scartati ?? '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="recordElaborati">
+          <th mat-header-cell *matHeaderCellDef class="col-num" matTooltip="Record Elaborati">Record Elaborati</th>
+          <td mat-cell *matCellDef="let file" class="col-num">{{ file.record_elaborati ?? '—' }}</td>
+        </ng-container>
+
+        
+
+        <ng-container matColumnDef="recordErrati">
+          <th mat-header-cell *matHeaderCellDef class="col-num" matTooltip="Record Elaborati in Errore"> Elaborati in Errore</th>
+          <td mat-cell *matCellDef="let file" class="col-num">
+            @if (!file.elaborazione_id) {
+              —
+            } @else if (getErrati(file) > 0) {
+              <span class="scartati-warning">{{ getErrati(file) }}</span>
+            } @else {
+              {{ getErrati(file) }}
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dataUpload">
+          <th mat-header-cell *matHeaderCellDef class="col-data" matTooltip="Data caricamento file">Data caricamento</th>
+          <td mat-cell *matCellDef="let file" class="col-data">
+            {{ (file.data_inizio ?? file.data_caricamento) ? ((file.data_inizio ?? file.data_caricamento) | date:'dd/MM/yyyy HH:mm') : '—' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="operatore">
+          <th mat-header-cell *matHeaderCellDef class="col-operatore" matTooltip="Operatore che ha caricato il file">Operatore</th>
+          <td mat-cell *matCellDef="let file" class="col-operatore">{{ file.operatore || '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="azioni">
+          <th mat-header-cell *matHeaderCellDef class="col-azioni">Azioni</th>
+          <td mat-cell *matCellDef="let file" class="col-azioni">
+            <div style="display: flex; flex-direction: row; gap: 4px; align-items: center;">
+              <button class="action-btn view-btn"
+                [disabled]="!file.fileId"
+                matTooltip="Scarica PDF scarti"
+                (click)="onVisualizzaScartati(file); $event.stopPropagation()">
+                <i class="fas fa-file-pdf" style="color: #1565c0;"></i>
+              </button>
+              <button class="action-btn view-btn"
+                [disabled]="getErrati(file) === 0"
+                [matTooltip]="getErrati(file) === 0 ? 'Nessun record errato' : 'Scarica PDF errori'"
+                (click)="onVisualizzaScarti(file); $event.stopPropagation()">
+                <i class="fas fa-file-pdf" style="color: #b40000;"></i>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+
+      @if (!isLoading() && files().length === 0) {
+        <div class="no-data">
+          <i class="fas fa-folder-open"></i>
+          <p>Nessun file trovato</p>
+        </div>
+      }
+    </div>
+
+
+  </div>
+
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <button class="btn-chiudi" (click)="onChiudi()">Chiudi</button>
+  </div>
+
+</div>
+
+@if (centerNotif(); as notif) {
+  <div class="center-notif-backdrop" tabindex="0" (click)="centerNotif.set(null)" (keydown.enter)="centerNotif.set(null)">
+    <div class="center-notif-box notif-{{ notif.tipo }}" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <i class="center-notif-icon fas"
+         [class.fa-check-circle]="notif.tipo === 'success'"
+         [class.fa-times-circle]="notif.tipo === 'error'"
+         [class.fa-info-circle]="notif.tipo === 'info'"></i>
+      <span class="center-notif-text">{{ notif.text }}</span>
+      <button class="center-notif-btn" (click)="centerNotif.set(null)">OK</button>
+    </div>
+  </div>
+}

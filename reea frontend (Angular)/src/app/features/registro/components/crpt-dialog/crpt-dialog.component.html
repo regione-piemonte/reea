@@ -1,0 +1,322 @@
+<div class="crpt-accordion">
+
+  @if (loadingDizionari()) {
+    <div class="crpt-loading">Caricamento...</div>
+  }
+
+  @if (!editing()) {
+    <!-- VISUALIZZAZIONE -->
+    <div class="crpt-view-grid">
+      <div class="crpt-view-field">
+        <span class="crpt-view-label">Ditta: esposizione</span>
+        <span class="crpt-view-value">
+          {{ anamnesi.occupazioneEsposizioneCrpt == null ? '-' : (anamnesi.occupazioneEsposizioneCrpt ? 'SI' : 'NO') }}
+        </span>
+      </div>
+      <div class="crpt-view-field">
+        <span class="crpt-view-label">Ditta: partita IVA</span>
+        <span class="crpt-view-value">{{ maskedVal('anamnesi_occupazione_piva_ditta_crpt', (anamnesi.occupazionePivaDittaCrpt !== 'Non definito' ? anamnesi.occupazionePivaDittaCrpt : null)) }}</span>
+      </div>
+      <div class="crpt-view-field">
+        <span class="crpt-view-label">Ditta: settore (ISTAT - ATECO 2025)</span>
+        <span class="crpt-view-value">{{ getLabel(settoreList, anamnesi.occupazioneSettoreDittaCrpt) }}</span>
+      </div>
+      <div class="crpt-view-field">
+        <span class="crpt-view-label">Ditta: codice fiscale</span>
+        <span class="crpt-view-value">{{ maskedVal('anamnesi_occupazione_codice_fiscale_ditta_crpt', (anamnesi.occupazioneCodiceFiscaleDittaCrpt !== 'Non definito' ? anamnesi.occupazioneCodiceFiscaleDittaCrpt : null)) }}</span>
+      </div>
+      <div class="crpt-view-field">
+        <span class="crpt-view-label">Mansione (ISTAT - CP2021)</span>
+        <span class="crpt-view-value">{{ getLabel(mansioneList, anamnesi.occupazioneMansioneCrpt) }}</span>
+      </div>
+      <div class="crpt-view-field">
+        <span class="crpt-view-label">Ditta: ragione sociale</span>
+        <span class="crpt-view-value">{{ maskedVal('anamnesi_occupazione_ragione_sociale_ditta_crpt', anamnesi.occupazioneRagioneSocialeDittaCrpt) }}</span>
+      </div>
+    </div>
+    @if (!isPseudo()) {
+      <div class="crpt-accordion-footer">
+        <button class="btn-modifica" (click)="abilitaModifica()">
+          <i class="fa-solid fa-pen"></i> Modifica
+        </button>
+      </div>
+    }
+
+  } @else {
+    <!-- EDITING -->
+
+    @if (erroreEsposizione()) {
+      <div class="crpt-esposizione-error">
+        <i class="fa-solid fa-triangle-exclamation"></i> {{ erroreEsposizione() }}
+      </div>
+    }
+
+    @if (!altriCampiAbilitati()) {
+      <div class="crpt-esposizione-info">
+        <i class="fa-solid fa-circle-info"></i>
+        Impostare <strong>Esposizione = SI</strong> per abilitare l'inserimento degli altri dati CRPT.
+      </div>
+    }
+
+    <div class="crpt-edit-grid" [class.crpt-edit-grid--expanded]="anyDropdownOpen()">
+      <div class="crpt-field">
+        <label class="crpt-label">Ditta: esposizione</label>
+        <select class="crpt-input" [(ngModel)]="form.occupazioneEsposizioneCrpt">
+          <option [ngValue]="null">-</option>
+          <option [ngValue]="true">SI</option>
+          <option [ngValue]="false">NO</option>
+        </select>
+      </div>
+
+      <!-- PIVA — input con autocomplete -->
+      <div class="crpt-field" [class.crpt-field--error]="pivaError()" [class.crpt-field--disabled]="!altriCampiAbilitati()">
+        <label class="crpt-label">
+          Ditta: partita IVA
+          <span class="crpt-label-hint">(min. 3 caratteri per la ricerca)</span>
+        </label>
+        <div class="crpt-autocomplete-wrap">
+          <div class="crpt-autocomplete-input-row">
+            <input class="crpt-input crpt-autocomplete-input"
+                   [class.crpt-input--error]="pivaError()"
+                   type="text"
+                   inputmode="numeric"
+                   maxlength="11"
+                   placeholder="Digita almeno 3 caratteri..."
+                   [ngModel]="pivaDisplayValue()"
+                   (ngModelChange)="onPivaInput($event)"
+                   (keydown)="onPivaKeydown($event)"
+                   (click)="$event.stopPropagation()"
+                   autocomplete="off"
+                   [disabled]="!altriCampiAbilitati()">
+            @if (pivaDisplayValue()) {
+              <button type="button" class="crpt-autocomplete-clear" (click)="clearPiva()">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            }
+          </div>
+          @if (pivaDropdownOpen() && filteredPiva().length > 0) {
+            <ul class="crpt-autocomplete-dropdown" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+              @for (item of filteredPiva(); track item.cod) {
+                <li class="crpt-autocomplete-item" tabindex="0" (click)="selectPiva(item)" (keydown.enter)="selectPiva(item)">
+                  <span class="crpt-autocomplete-item__main">{{ item.cod }}</span>
+                  <span class="crpt-autocomplete-item__sub">{{ item.desc }}{{ item.ditta_codice_fiscale ? ' | CF: ' + item.ditta_codice_fiscale : '' }}</span>
+                </li>
+              }
+            </ul>
+          }
+          @if (pivaDropdownOpen() && filteredPiva().length === 0 && pivaQuery().length >= 3) {
+            <div class="crpt-autocomplete-empty">
+              <i class="fa-solid fa-circle-info"></i>
+              Nessun risultato nel DB — verrà salvato il valore inserito
+            </div>
+          }
+          @if (pivaError()) {
+            <div class="crpt-field-error">
+              <i class="fa-solid fa-triangle-exclamation"></i> {{ pivaError() }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- SETTORE DITTA — popup con ricerca -->
+      <div class="crpt-field" [class.crpt-field--disabled]="!altriCampiAbilitati()">
+        <label class="crpt-label">Ditta: settore (ISTAT - ATECO 2025)</label>
+        <div class="crpt-popup-wrap">
+          <button type="button" class="crpt-popup-trigger" [disabled]="!altriCampiAbilitati()" (click)="toggleSettorePopup($event)">
+            <span class="crpt-popup-trigger__label">
+              {{ getLabel(settoreList, form.occupazioneSettoreDittaCrpt) }}
+            </span>
+            <i class="fa-solid fa-chevron-down crpt-popup-trigger__icon"
+               [class.rotated]="settorePopupOpen()"></i>
+          </button>
+          @if (settorePopupOpen()) {
+            <div class="crpt-popup" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+              <div class="crpt-popup__search-wrap">
+                <i class="fa-solid fa-magnifying-glass crpt-popup__search-icon"></i>
+                <input class="crpt-popup__search"
+                       type="text"
+                       placeholder="Cerca..."
+                       [ngModel]="settoreSearch()"
+                       (ngModelChange)="settoreSearch.set($event)"
+                       autofocus>
+              </div>
+              <ul class="crpt-popup__list">
+                <li class="crpt-popup__item crpt-popup__item--reset"
+                    tabindex="0"
+                    (click)="selectSettore(null)"
+                    (keydown.enter)="selectSettore(null)">
+                  <span>— Nessuna selezione —</span>
+                </li>
+                @for (item of filteredSettore(); track item.cod) {
+                  <li class="crpt-popup__item"
+                      [class.selected]="form.occupazioneSettoreDittaCrpt === item.cod"
+                      tabindex="0"
+                      (click)="selectSettore(item)"
+                      (keydown.enter)="selectSettore(item)">
+                    <span class="crpt-popup__item-cod">{{ item.cod }}</span>
+                    <span class="crpt-popup__item-desc">{{ item.desc }}</span>
+                  </li>
+                }
+                @if (filteredSettore().length === 0) {
+                  <li class="crpt-popup__empty">Nessun risultato</li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- CODICE FISCALE DITTA — input con autocomplete -->
+      <div class="crpt-field" [class.crpt-field--error]="cfError()" [class.crpt-field--disabled]="!altriCampiAbilitati()">
+        <label class="crpt-label">
+          Ditta: codice fiscale
+          <span class="crpt-label-hint">(min. 3 caratteri per la ricerca)</span>
+        </label>
+        <div class="crpt-autocomplete-wrap">
+          <div class="crpt-autocomplete-input-row">
+            <input class="crpt-input crpt-autocomplete-input"
+                   [class.crpt-input--error]="cfError()"
+                   type="text"
+                   maxlength="16"
+                   placeholder="Digita almeno 3 caratteri..."
+                   [ngModel]="cfDisplayValue()"
+                   (ngModelChange)="onCfInput($event)"
+                   (click)="$event.stopPropagation()"
+                   autocomplete="off"
+                   [disabled]="!altriCampiAbilitati()">
+            @if (cfDisplayValue()) {
+              <button type="button" class="crpt-autocomplete-clear" (click)="clearCf()">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            }
+          </div>
+          @if (cfDropdownOpen() && filteredCf().length > 0) {
+            <ul class="crpt-autocomplete-dropdown" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+              @for (item of filteredCf(); track item.cod) {
+                <li class="crpt-autocomplete-item" tabindex="0" (click)="selectCf(item)" (keydown.enter)="selectCf(item)">
+                  <span class="crpt-autocomplete-item__main">{{ item.cod }}</span>
+                  <span class="crpt-autocomplete-item__sub">{{ item.desc }}{{ item.ditta_codice_fiscale ? ' | PIVA: ' + item.ditta_codice_fiscale : '' }}</span>
+                </li>
+              }
+            </ul>
+          }
+          @if (cfDropdownOpen() && filteredCf().length === 0 && cfQuery().length >= 3) {
+            <div class="crpt-autocomplete-empty">
+              <i class="fa-solid fa-circle-info"></i>
+              Nessun risultato nel DB — verrà salvato il valore inserito
+            </div>
+          }
+          @if (cfError()) {
+            <div class="crpt-field-error">
+              <i class="fa-solid fa-triangle-exclamation"></i> {{ cfError() }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- MANSIONE — popup con ricerca -->
+      <div class="crpt-field" [class.crpt-field--disabled]="!altriCampiAbilitati()">
+        <label class="crpt-label">Mansione (ISTAT - CP2021)</label>
+        <div class="crpt-popup-wrap">
+          <button type="button" class="crpt-popup-trigger" [disabled]="!altriCampiAbilitati()" (click)="toggleMansionePopup($event)">
+            <span class="crpt-popup-trigger__label">
+              {{ getLabel(mansioneList, form.occupazioneMansioneCrpt) }}
+            </span>
+            <i class="fa-solid fa-chevron-down crpt-popup-trigger__icon"
+               [class.rotated]="mansionePopupOpen()"></i>
+          </button>
+          @if (mansionePopupOpen()) {
+            <div class="crpt-popup" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+              <div class="crpt-popup__search-wrap">
+                <i class="fa-solid fa-magnifying-glass crpt-popup__search-icon"></i>
+                <input class="crpt-popup__search"
+                       type="text"
+                       placeholder="Cerca..."
+                       [ngModel]="mansioneSearch()"
+                       (ngModelChange)="mansioneSearch.set($event)"
+                       autofocus>
+              </div>
+              <ul class="crpt-popup__list">
+                <li class="crpt-popup__item crpt-popup__item--reset"
+                    tabindex="0"
+                    (click)="selectMansione(null)"
+                    (keydown.enter)="selectMansione(null)">
+                  <span>— Nessuna selezione —</span>
+                </li>
+                @for (item of filteredMansione(); track item.cod) {
+                  <li class="crpt-popup__item"
+                      [class.selected]="form.occupazioneMansioneCrpt === item.cod"
+                      tabindex="0"
+                      (click)="selectMansione(item)"
+                      (keydown.enter)="selectMansione(item)">
+                    <span class="crpt-popup__item-cod">{{ item.cod }}</span>
+                    <span class="crpt-popup__item-desc">{{ item.desc }}</span>
+                  </li>
+                }
+                @if (filteredMansione().length === 0) {
+                  <li class="crpt-popup__empty">Nessun risultato</li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- RAGIONE SOCIALE — input con autocomplete -->
+      <div class="crpt-field" [class.crpt-field--error]="rsError()" [class.crpt-field--disabled]="!altriCampiAbilitati()">
+        <label class="crpt-label">
+          Ditta: ragione sociale
+          <span class="crpt-label-hint">(min. 3 caratteri per la ricerca)</span>
+        </label>
+        <div class="crpt-autocomplete-wrap">
+          <div class="crpt-autocomplete-input-row">
+            <input class="crpt-input crpt-autocomplete-input"
+                   [class.crpt-input--error]="rsError()"
+                   type="text"
+                   placeholder="Digita almeno 3 caratteri..."
+                   [ngModel]="rsDisplayValue()"
+                   (ngModelChange)="onRsInput($event)"
+                   (click)="$event.stopPropagation()"
+                   autocomplete="off"
+                   [disabled]="!altriCampiAbilitati()">
+            @if (rsDisplayValue()) {
+              <button type="button" class="crpt-autocomplete-clear" (click)="clearRS()">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            }
+          </div>
+          @if (rsDropdownOpen() && filteredRS().length > 0) {
+            <ul class="crpt-autocomplete-dropdown" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+              @for (item of filteredRS(); track item.cod) {
+                <li class="crpt-autocomplete-item" tabindex="0" (click)="selectRS(item)" (keydown.enter)="selectRS(item)">
+                  <span class="crpt-autocomplete-item__main">{{ item.cod }}</span>
+                  <span class="crpt-autocomplete-item__sub">PIVA: {{ item.desc || '—' }}{{ item.ditta_codice_fiscale ? ' | CF: ' + item.ditta_codice_fiscale : '' }}</span>
+                </li>
+              }
+            </ul>
+          }
+          @if (rsDropdownOpen() && filteredRS().length === 0 && rsQuery().length >= 3) {
+            <div class="crpt-autocomplete-empty">
+              <i class="fa-solid fa-circle-info"></i>
+              Nessun risultato nel DB — verrà salvato il valore inserito
+            </div>
+          }
+          @if (rsError()) {
+            <div class="crpt-field-error">
+              <i class="fa-solid fa-triangle-exclamation"></i> {{ rsError() }}
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+    <div class="crpt-accordion-footer">
+      <button class="btn-annulla" (click)="annulla()" [disabled]="saving()">Annulla</button>
+      <button class="btn-salva" (click)="salva()" [disabled]="saving()">
+        @if (saving()) { <mat-spinner diameter="16"></mat-spinner> }
+        @else { <i class="fa-solid fa-save"></i> }
+        {{ saving() ? 'Salvataggio...' : 'Salva' }}
+      </button>
+    </div>
+  }
+
+</div>

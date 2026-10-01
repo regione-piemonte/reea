@@ -1,0 +1,63 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div class="header-info">
+      <h2 class="dialog-title">Fonti di Associazione</h2>
+      @if (!isPseudo()) {
+        <span class="assistito-info">{{ assistito.cognome }} {{ assistito.nome }} - {{ assistito.codiceFiscale }}</span>
+      }
+    </div>
+    <button class="close-button" (click)="onChiudi()" aria-label="Chiudi">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+    <p class="dialog-description">
+      L'assistito/a è collegato/a alle seguenti fonti:
+    </p>
+
+    @if (loading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else {
+      <!-- Fonte più recente (rettangolo blu) -->
+      @if (fonteAttuale()) {
+        <div class="fonte-section">
+          <div class="fonte-item fonte-attuale">
+            <span class="fonte-bullet attuale"></span>
+            <div class="fonte-info">
+              <span class="fonte-nome">{{ fonteAttuale()!.descrizione }}</span>
+              <span class="fonte-data">{{ getDateLabel(fonteAttuale()!.descrizione) }}: {{ formatDate(fonteAttuale()!.dataAssociazione) }}</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Storico fonti (rettangoli grigi) -->
+      @if (storicoFonti().length > 0) {
+        <div class="fonte-section">
+          @for (fonte of storicoFonti(); track fonte.descrizione) {
+            <div class="fonte-item fonte-storico">
+              <span class="fonte-bullet storico"></span>
+              <div class="fonte-info">
+                <span class="fonte-nome">{{ fonte.descrizione }}</span>
+                <span class="fonte-data">{{ getDateLabel(fonte.descrizione) }}: {{ formatDate(fonte.dataAssociazione) }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (tutteLeFonti().length === 0) {
+        <p class="no-fonti">Nessuna fonte disponibile</p>
+      }
+    }
+  </div>
+
+  <div class="dialog-footer">
+    <button class="btn-chiudi" (click)="onChiudi()">
+      Chiudi
+    </button>
+  </div>
+</div>

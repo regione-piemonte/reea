@@ -1,0 +1,177 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>it.reea</groupId>
+    <artifactId>reeafe</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <node.version>v20.11.1</node.version>
+        <npm.version>10.2.4</npm.version>
+        <npm.build.command>run build:prod</npm.build.command>
+    </properties>
+
+    <build>
+        <plugins>
+
+            <!-- 1️⃣ Genera environment.ts dal template -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>generate-environment</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+
+                            <!-- Output temporaneo -->
+                            <outputDirectory>
+                                ${project.build.directory}/generated-env
+                            </outputDirectory>
+
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>environment.template.ts</include>
+                                    </includes>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+
+                            <delimiters>
+                                <delimiter>@</delimiter>
+                            </delimiters>
+                            <useDefaultDelimiters>false</useDefaultDelimiters>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 2️⃣ Copia il file filtrato dentro src/environments -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy file="target/generated-env/environment.template.ts"
+                                      tofile="src/environments/environment.ts"
+                                      overwrite="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 3️⃣ Build Angular -->
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.14.1</version>
+
+                <executions>
+
+                    <execution>
+                        <id>install-node</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>${node.version}</nodeVersion>
+                            <npmVersion>${npm.version}</npmVersion>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm-install</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>npm-build</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>${npm.build.command}</arguments>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <!-- PROFILI -->
+
+    <profiles>
+
+        <!-- LOCAL -->
+        <profile>
+            <id>local</id>
+            <properties>
+                <npm.build.command>run build:prod</npm.build.command>
+                <APP_NAME>reeafe</APP_NAME>
+                <PRODUCTION>true</PRODUCTION>
+                <API_BASE_URL>http://localhost:8080/reeabe</API_BASE_URL>
+                <USE_MOCK_DATA>false</USE_MOCK_DATA>
+                <REFRESH_TIME_MS>3600000</REFRESH_TIME_MS>
+                <CUSTOM_VAR>valoreLocal</CUSTOM_VAR>
+            </properties>
+        </profile>
+
+        <!-- TEST -->
+        <profile>
+            <id>test</id>
+            <properties>
+                <npm.build.command>run build:prod</npm.build.command>
+                <APP_NAME>reeafe</APP_NAME>
+                <PRODUCTION>false</PRODUCTION>
+                <API_BASE_URL>/reeabe</API_BASE_URL>
+                <USE_MOCK_DATA>false</USE_MOCK_DATA>
+                <REFRESH_TIME_MS>3600000</REFRESH_TIME_MS>
+                <CUSTOM_VAR>valoreTest</CUSTOM_VAR>
+            </properties>
+        </profile>
+
+        <!-- PRODUCTION -->
+        <profile>
+            <id>production</id>
+            <properties>
+                <npm.build.command>run build:prod</npm.build.command>
+                <APP_NAME>reeafe</APP_NAME>
+                <PRODUCTION>true</PRODUCTION>
+                <API_BASE_URL>/reeabe</API_BASE_URL>
+                <USE_MOCK_DATA>false</USE_MOCK_DATA>
+                <REFRESH_TIME_MS>3600000</REFRESH_TIME_MS>
+                <CUSTOM_VAR>valoreProduction</CUSTOM_VAR>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

@@ -1,0 +1,105 @@
+<div class="login-page">
+
+  <div class="login-card">
+
+    <div class="login-header">
+      <div class="login-logo">
+        <i class="fas fa-shield-halved"></i>
+      </div>
+      <div class="login-titles">
+        <span class="login-region">Regione Piemonte</span>
+        <h1 class="login-app">REEA</h1>
+        <p class="login-subtitle">Registro Esposizione Amianto</p>
+      </div>
+    </div>
+
+    @if (puaObbligatorio()) {
+      <div class="pua-required">
+        <i class="fas fa-lock"></i>
+        <p>Accedere all'applicazione tramite il Portale Unico di Accesso (PUA).</p>
+      </div>
+    } @else {
+
+    <form [formGroup]="form" (ngSubmit)="accedi()" class="login-form" novalidate>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Inserisci username"
+          autocomplete="username"
+          [class.input-error]="form.get('username')?.invalid && form.get('username')?.touched"
+        />
+        @if (form.get('username')?.invalid && form.get('username')?.touched) {
+          <span class="field-error">Campo obbligatorio</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Inserisci password"
+            autocomplete="current-password"
+            [class.input-error]="form.get('password')?.invalid && form.get('password')?.touched"
+          />
+          <button type="button" class="toggle-password" (click)="togglePassword()" tabindex="-1">
+            <i [class]="showPassword() ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+        </div>
+        @if (form.get('password')?.invalid && form.get('password')?.touched) {
+          <span class="field-error">Campo obbligatorio</span>
+        }
+      </div>
+
+      @if (errore()) {
+        <div class="login-error">
+          <i class="fas fa-circle-exclamation"></i>
+          {{ errore() }}
+        </div>
+      }
+
+      <button type="submit" class="btn-accedi" [disabled]="loading()">
+        @if (loading()) {
+          <span class="btn-spinner"></span>
+          Accesso in corso...
+        } @else {
+          <i class="fas fa-right-to-bracket"></i>
+          Accedi
+        }
+      </button>
+
+    </form>
+
+    <div class="login-footer">
+      <p>Accesso riservato al personale autorizzato.</p>
+      <p>Per assistenza contattare il supporto CSI Piemonte.</p>
+    </div>
+
+    @if (isLocale) {
+      <div class="dev-login">
+        <p class="dev-login-label"><i class="fas fa-flask"></i> Login Dev (solo locale)</p>
+        <div class="dev-login-row">
+          <input
+            type="text"
+            [(ngModel)]="cfDev"
+            placeholder="Codice Fiscale"
+            class="dev-cf-input"
+          />
+          <button type="button" class="btn-dev" (click)="loginDev()" [disabled]="loadingDev()">
+            @if (loadingDev()) { <span class="btn-spinner"></span> } @else { Dev }
+          </button>
+        </div>
+      </div>
+    }
+
+    } <!-- @else puaObbligatorio -->
+
+  </div>
+
+</div>

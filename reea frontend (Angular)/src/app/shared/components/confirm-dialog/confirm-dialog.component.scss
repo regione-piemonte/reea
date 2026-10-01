@@ -1,0 +1,63 @@
+@use "../../../../styles/variables" as *;
+
+.confirm-dialog {
+  padding: $spacing-2xl;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-xl;
+  min-width: 340px;
+  max-width: 480px;
+  text-align: center;
+}
+
+.confirm-dialog-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin: 0;
+}
+
+.confirm-dialog-message {
+  font-size: 18px;
+  color: $text-primary;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  gap: $spacing-md;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-confirm-no,
+.btn-confirm-si {
+  min-width: 100px;
+  padding: $spacing-sm $spacing-xl;
+  border-radius: $radius-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.btn-confirm-no {
+  background-color: $color-gray-200;
+  color: $text-primary;
+
+  &:hover {
+    background-color: $color-gray-300;
+  }
+}
+
+.btn-confirm-si {
+  background-color: $color-primary;
+  color: #ffffff;
+
+  &:hover {
+    background-color: $color-primary-dark;
+  }
+}

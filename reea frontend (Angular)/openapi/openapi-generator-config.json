@@ -1,0 +1,22 @@
+{
+  "generatorName": "typescript-angular",
+  "inputSpec": "openapi/swagger.json",
+  "output": "src/app/api/generated",
+
+  "apiPackage": "api",
+  "modelPackage": "model",
+
+  "globalProperty": {
+    "apis": "",
+    "models": ""
+  },
+  "additionalProperties": {
+    "providedInRoot": true,
+    "stringEnums": true,
+    "skipDefaultInterface": true,
+    "useSingleRequestParameter": true,
+    "ngVersion": "19",
+    "npmName": "reeafe-api",
+    "npmVersion": "1.0.0"
+  }
+}

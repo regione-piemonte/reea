@@ -1,0 +1,1198 @@
+// NUOVO ASSISTITO - Wizard Multi-Step Styles
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.page-container { @include page-container; }
+.page-title { @include page-title; }
+
+.back-link {
+  margin-bottom: $spacing-lg;
+  .back-button { @include back-link; font-size: medium; }
+}
+
+// ============================================
+// STEPPER PROGRESS
+// ============================================
+
+// REEA-CDU-000-V01
+.stepper-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+  padding: $spacing-sm 0;
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+    position: relative;
+
+    .step-number {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #e5e7eb;
+      color: $text-secondary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: $font-weight-bold;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .step-label {
+      font-size: 14px;
+      color: $text-secondary;
+      font-weight: $font-weight-medium;
+      white-space: nowrap;
+      transition: color 0.3s ease;
+    }
+
+    &.active {
+      .step-number {
+        background-color: $color-primary;
+        color: white;
+      }
+      .step-label {
+        color: $color-primary;
+      }
+    }
+
+    &.completed {
+      .step-number {
+        background-color: $color-success;
+        color: white;
+      }
+    }
+  }
+
+  .step-connector {
+    width: 80px;
+    height: 3px;
+    background-color: #e5e7eb;
+    margin: 0 $spacing-md;
+    margin-bottom: 28px;
+    transition: background-color 0.3s ease;
+
+    &.active {
+      background-color: $color-success;
+    }
+  }
+}
+
+// ============================================
+// WIZARD CARD
+// ============================================
+
+// REEA-CDU-000-V01
+.wizard-card {
+  @include card($spacing-lg);
+  margin-bottom: $spacing-lg;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  margin: 0 0 $spacing-sm 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  i {
+    font-size: 24px;
+    opacity: 0.8;
+  }
+}
+
+.section-description {
+  font-size: 16px;
+  color: $text-secondary;
+  margin: 0 0 $spacing-md 0;
+  line-height: 1.5;
+}
+
+// ============================================
+// IDENTIFICATIVI FORM (Step 1)
+// ============================================
+
+.search-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+}
+
+.btn-search-mode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  min-height: 90px;
+  padding: $spacing-lg;
+  border-radius: $radius-md;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  background-color: #005ca9;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+
+  i { font-size: 22px; margin-bottom: 2px; }
+
+  .search-mode-label {
+    font-size: 16px;
+    font-weight: $font-weight-bold;
+    line-height: 1.2;
+  }
+
+  .search-mode-desc {
+    font-size: 13px;
+    opacity: 0.85;
+    line-height: 1.3;
+  }
+
+  &:hover {
+    background-color: #004080;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &:active { transform: translateY(0); }
+}
+
+.identificativi-form {
+  margin-bottom: $spacing-lg;
+}
+
+.search-option-section {
+  background-color: #f9fafb;
+  border: 1px solid $border-light;
+  border-radius: $radius-base;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+
+  .option-header {
+    margin-bottom: $spacing-lg;
+
+    .option-label {
+      font-size: 16px;
+      font-weight: $font-weight-semibold;
+      color: $color-primary;
+    }
+  }
+
+  .form-row:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.separator-or {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: $spacing-lg 0;
+
+  span {
+    background-color: white;
+    padding: 0 $spacing-lg;
+    font-size: 14px;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 100px;
+      height: 1px;
+      background-color: $border-medium;
+    }
+
+    &::before {
+      right: 100%;
+      margin-right: $spacing-md;
+    }
+
+    &::after {
+      left: 100%;
+      margin-left: $spacing-md;
+    }
+  }
+}
+
+.validation-note {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background-color: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: $radius-base;
+  margin-top: $spacing-lg;
+
+  i {
+    color: #d97706;
+    font-size: 18px;
+  }
+
+  span {
+    font-size: 14px;
+    color: #92400e;
+  }
+}
+
+// ============================================
+// SEARCH RESULT PANEL
+// ============================================
+
+.search-result-panel {
+  animation: fadeIn 0.3s ease;
+
+  .result-box {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-lg;
+    padding: $spacing-xl;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-lg;
+
+    .result-icon {
+      flex-shrink: 0;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      i {
+        font-size: 28px;
+      }
+    }
+
+    .result-content {
+      flex: 1;
+
+      .result-title {
+        font-size: 20px;
+        font-weight: $font-weight-semibold;
+        margin: 0 0 $spacing-sm 0;
+      }
+
+      .result-description {
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 0;
+      }
+    }
+
+    // Stile per trovato in AURA (verde/successo)
+    &.result-aura {
+      background-color: #ecfdf5;
+      border: 1px solid #a7f3d0;
+
+      .result-icon {
+        background-color: #d1fae5;
+
+        i {
+          color: #059669;
+        }
+      }
+
+      .result-title {
+        color: #065f46;
+      }
+
+      .result-description {
+        color: #047857;
+      }
+    }
+
+    // Stile per avviso AURA decesso/fineAsl (arancione scuro)
+    &.result-aura-warning {
+      background-color: #fff7ed;
+      border: 1px solid #fdba74;
+      margin-top: 12px;
+
+      .result-icon {
+        background-color: #fed7aa;
+
+        i {
+          color: #c2410c;
+        }
+      }
+
+      .result-title {
+        color: #7c2d12;
+      }
+
+      .result-description {
+        color: #9a3412;
+      }
+    }
+
+    // Stile per trovato in REEA (arancione/warning)
+    &.result-reea {
+      background-color: #fffbeb;
+      border: 1px solid #fcd34d;
+
+      .result-icon {
+        background-color: #fef3c7;
+
+        i {
+          color: #d97706;
+        }
+      }
+
+      .result-title {
+        color: #92400e;
+      }
+
+      .result-description {
+        color: #b45309;
+      }
+    }
+
+    // Stile per errore tecnico servizio AURA (rosso)
+    &.result-aura-error {
+      background-color: #fef2f2;
+      border: 1px solid #fecaca;
+
+      .result-icon {
+        background-color: #fee2e2;
+
+        i {
+          color: #dc2626;
+        }
+      }
+
+      .result-title {
+        color: #991b1b;
+      }
+
+      .result-description {
+        color: #b91c1c;
+      }
+    }
+
+    // Stile per non trovato (blu/info)
+    &.result-not-found {
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+
+      .result-icon {
+        background-color: #dbeafe;
+
+        i {
+          color: #2563eb;
+        }
+      }
+
+      .result-title {
+        color: #1e40af;
+      }
+
+      .result-description {
+        color: #1d4ed8;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================
+// FORM STYLES
+// ============================================
+
+.form-row {
+  @include form-row-2col;
+}
+
+.form-field {
+  @include form-field;
+  margin-bottom: 0;
+
+  .field-label {
+    @include field-label(true);
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+
+  &.form-field-row {
+    display: flex;
+    gap: $spacing-md;
+
+    .half-field {
+      flex: 1;
+    }
+  }
+}
+
+// REEA-CDU-000-V01
+.form-section {
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-light;
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+.subsection-title {
+  font-size: 18px;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  margin: 0 0 $spacing-md 0;
+}
+
+.domicilio-checkbox {
+  margin-bottom: $spacing-sm;
+}
+
+// ============================================
+// STEP 2 – ANAGRAFICA: layout a 2 colonne
+// ============================================
+
+// Contenitore che mette 2 blocchi di sezioni affiancati
+.form-sections-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 $spacing-xl;
+  align-items: start;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 1px solid $border-light;
+
+  // Le sezioni interne gestiscono i propri separatori
+  .form-section {
+    border-bottom: none !important;
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-md;
+
+    &:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+}
+
+// ============================================
+// STEP 4 – RIEPILOGO: righe multi-colonna
+// ============================================
+
+.riepilogo-row {
+  display: grid;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  padding-bottom: $spacing-xl;
+  border-bottom: 1px solid $border-light;
+  align-items: start;
+
+  &.riepilogo-row-3 { grid-template-columns: repeat(3, 1fr); }
+  &.riepilogo-row-2 { grid-template-columns: repeat(2, 1fr); }
+
+  // Sezioni dentro la riga: niente bordo/margine individuale
+  .riepilogo-section {
+    border-bottom: none !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+
+    // Con colonne strette uso una sola colonna interna
+    .riepilogo-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .riepilogo-item-full {
+      grid-column: 1 !important;
+    }
+  }
+}
+
+// ============================================
+// LUOGHI ESPOSIZIONE (Step 3)
+// ============================================
+
+.luoghi-esposizione {
+  .luogo-card {
+    background-color: #f9fafb;
+    border: 1px solid $border-light;
+    border-radius: $radius-base;
+    padding: $spacing-lg;
+    margin-bottom: $spacing-lg;
+
+    .luogo-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: $spacing-lg;
+
+      .luogo-number {
+        font-size: 16px;
+        font-weight: $font-weight-semibold;
+        color: $color-primary;
+      }
+
+      .btn-remove {
+        @include flex-center;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        color: $color-danger;
+        cursor: pointer;
+        border-radius: $radius-base;
+        transition: $transition-all;
+
+        &:hover {
+          background-color: rgba($color-danger, 0.1);
+        }
+      }
+    }
+  }
+
+  .luogo-error-msg {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+    margin-top: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: $radius-base;
+    color: $color-danger;
+    font-size: 13px;
+
+    i { flex-shrink: 0; margin-top: 2px; }
+  }
+
+  .btn-add-luogo {
+    @include button-base;
+    width: 100%;
+    justify-content: center;
+    padding: $spacing-lg;
+    background-color: transparent;
+    border: 2px dashed $color-primary;
+    color: $color-primary;
+    font-size: 16px;
+
+    i {
+      margin-right: $spacing-sm;
+    }
+
+    &:hover {
+      background-color: rgba($color-primary, 0.05);
+    }
+  }
+}
+
+// ============================================
+// RIEPILOGO (Step 4)
+// ============================================
+
+.riepilogo-divider {
+  border: none;
+  border-top: 2px solid $border-light;
+  margin: $spacing-xl 0 $spacing-lg;
+}
+
+.riepilogo-warnings {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+}
+
+.riepilogo-warning-box {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  border-radius: 8px;
+  border-left: 4px solid;
+
+  .riepilogo-warning-icon {
+    font-size: 20px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .riepilogo-warning-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+  }
+
+  &--danger {
+    background-color: #fef2f2;
+    border-color: #dc2626;
+    color: #991b1b;
+    .riepilogo-warning-icon { color: #dc2626; }
+  }
+
+  &--warning {
+    background-color: #fffbeb;
+    border-color: #d97706;
+    color: #92400e;
+    .riepilogo-warning-icon { color: #d97706; }
+  }
+}
+
+.riepilogo-content {
+  .riepilogo-section {
+    margin-bottom: $spacing-xl;
+    padding-bottom: $spacing-xl;
+    border-bottom: 1px solid $border-light;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  .contatti-groups {
+    display: flex;
+    gap: 48px;
+  }
+
+  .contatti-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 220px;
+  }
+
+  .contatti-group-label {
+    font-size: 13px;
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    border-bottom: 2px solid $border-light;
+    padding-bottom: 4px;
+  }
+
+  .contatti-group-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .aura-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: $font-weight-bold;
+      color: #1565c0;
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 4px;
+      padding: 1px 5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .value {
+      font-size: 15px;
+      color: $text-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+
+  .riepilogo-section-full {
+    grid-column: 1 / -1;
+    margin-bottom: $spacing-xl;
+    padding-bottom: $spacing-xl;
+    border-bottom: 1px solid $border-light;
+  }
+
+  .riepilogo-title {
+    font-size: 16px;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+    margin: 0 0 $spacing-lg 0;
+
+    .required {
+      color: $color-danger;
+      margin-left: 4px;
+    }
+  }
+
+  .riepilogo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-lg;
+  }
+
+  .riepilogo-item {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+
+    .label {
+      font-size: 13px;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .aura-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: $font-weight-bold;
+      color: #1565c0;
+      background: #e3f2fd;
+      border: 1px solid #90caf9;
+      border-radius: 4px;
+      padding: 1px 5px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+
+    .value {
+      font-size: 16px;
+      color: $text-primary;
+      font-weight: $font-weight-medium;
+    }
+
+    // Stile per "Domicilio uguale alla residenza"
+    .domicilio-coincide {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      color: #059669;
+      font-weight: $font-weight-medium;
+
+      i {
+        font-size: 18px;
+      }
+    }
+
+    // Stile per "Nessun contatto inserito"
+    .no-data {
+      color: $text-secondary;
+      font-style: italic;
+    }
+  }
+
+  // Item che occupa tutta la riga
+  .riepilogo-item-full {
+    grid-column: 1 / -1;
+  }
+
+  .luoghi-riepilogo {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+
+    .luogo-riepilogo-item {
+      display: flex;
+      align-items: flex-start;
+      gap: $spacing-md;
+      padding: $spacing-md;
+      background-color: #f9fafb;
+      border-radius: $radius-base;
+
+      .luogo-badge {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background-color: $color-primary;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: $font-weight-bold;
+        flex-shrink: 0;
+      }
+
+      .luogo-info {
+        font-size: 15px;
+        color: $text-primary;
+        line-height: 1.5;
+
+        .mansione, .periodo {
+          font-size: 14px;
+          color: $text-secondary;
+        }
+      }
+    }
+  }
+
+  .asl-section {
+    .asl-aura-info {
+      font-size: 13px;
+      color: $text-secondary;
+      margin-bottom: $spacing-sm;
+      i { margin-right: 6px; color: $color-primary; }
+    }
+  }
+
+  .trattamento-dati-section {
+    background-color: #f8fafc;
+    border: 1px solid $border-light;
+    border-radius: $radius-md;
+    padding: $spacing-lg;
+
+    .trattamento-dati-checkbox {
+      font-size: 14px;
+      color: $text-primary;
+      line-height: 1.5;
+    }
+  }
+}
+
+// ============================================
+// WIZARD FOOTER
+// ============================================
+
+.wizard-footer {
+  @include flex-between;
+  margin-top: $spacing-md;
+  padding-top: $spacing-md;
+  border-top: 1px solid $border-light;
+}
+
+.btn-primary {
+  @include button-primary;
+
+  i {
+    margin-left: $spacing-sm;
+    margin-right: 0;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  @include button-secondary;
+
+  i {
+    margin-right: $spacing-sm;
+  }
+}
+
+.btn-save {
+  @include button-primary(#10b981, #059669);
+
+  i {
+    margin-right: $spacing-sm;
+  }
+
+  mat-spinner {
+    margin-right: $spacing-sm;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================
+// MATERIAL OVERRIDES
+// ============================================
+
+::ng-deep {
+  .wizard-card .mat-mdc-form-field {
+    @include mat-form-field-form;
+  }
+
+  // Campi disabilitati da AURA: testo grigio (stesso aspetto degli altri disabled)
+  .mat-mdc-form-field.mat-form-field-disabled {
+    .mat-mdc-select-value-text,
+    .mat-mdc-select-placeholder,
+    .mdc-text-field--disabled .mdc-text-field__input,
+    .mat-mdc-input-element:disabled {
+      color: rgba(0, 0, 0, 0.38) !important;
+      -webkit-text-fill-color: rgba(0, 0, 0, 0.38) !important;
+    }
+  }
+
+  .mat-mdc-checkbox {
+    .mdc-checkbox__background {
+      border-color: $border-dark;
+    }
+
+    &.mat-mdc-checkbox-checked {
+      .mdc-checkbox__background {
+        background-color: $color-primary;
+        border-color: $color-primary;
+      }
+    }
+
+    .mdc-label {
+      font-size: 16px;
+      color: $text-primary;
+    }
+  }
+
+  .mat-mdc-progress-spinner circle {
+    stroke: white;
+  }
+
+  // Anno-conflict: bordo rosso sul campo Anno Fine quando annoInizio >= annoFine
+  .mat-mdc-form-field.anno-conflict {
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__trailing {
+      border-color: $color-danger !important;
+    }
+  }
+}
+
+// ============================================
+// REQUIRED INDICATOR
+// ============================================
+
+.required {
+  color: $color-danger;
+  margin-left: 2px;
+}
+
+// ============================================
+// RESPONSIVE
+// ============================================
+
+@include respond-to(lg) {
+  .page-container {
+    padding: $spacing-lg;
+  }
+
+  .stepper-progress {
+    .step-connector {
+      width: 40px;
+    }
+
+    .step .step-label {
+      font-size: 12px;
+    }
+  }
+}
+
+@include respond-to(md) {
+  .page-container {
+    padding: $spacing-base;
+  }
+
+  .stepper-progress {
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+
+    .step-connector {
+      width: 20px;
+      margin: 0 $spacing-xs;
+    }
+
+    .step {
+      .step-number {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+      }
+
+      .step-label {
+        font-size: 11px;
+      }
+    }
+  }
+
+  .wizard-card {
+    padding: $spacing-lg;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
+  }
+
+  .riepilogo-content .riepilogo-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .riepilogo-row {
+    &.riepilogo-row-3, &.riepilogo-row-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-sections-row {
+    grid-template-columns: 1fr;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .wizard-footer {
+    flex-direction: column;
+    gap: $spacing-md;
+
+    button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+@include respond-to(sm) {
+  .stepper-progress {
+    .step-connector {
+      display: none;
+    }
+
+    .step {
+      flex: 1;
+
+      .step-label {
+        text-align: center;
+      }
+    }
+  }
+}
+
+// ============================================
+// AURA MULTIPLE RESULTS TABLE
+// ============================================
+
+.result-aura-multiple {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+
+  .result-icon {
+    background-color: #dbeafe;
+    i { color: #1d4ed8; }
+  }
+
+  .result-title { color: #1e40af; }
+  .result-description { color: #1d4ed8; }
+}
+
+.aura-multi-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: $spacing-lg;
+
+  th {
+    background-color: $color-primary;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    color: $color-gray-800;
+    vertical-align: middle;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover td {
+    background-color: #eff6ff;
+  }
+}
+
+.btn-select-aura {
+  @include button-primary;
+  padding: 6px 14px;
+  font-size: 13px;
+
+  i { margin-right: 6px; }
+}
+
+// ============================================
+// AURA ESENZIONI TABLE
+// ============================================
+
+.aura-esenzioni-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  table-layout: fixed;
+
+  th {
+    background-color: $color-primary;
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #e0e0e0;
+    color: $color-gray-800;
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Codice esenzione
+  th:nth-child(1), td:nth-child(1) { width: 130px; }
+  // Descrizione esenzione — flessibile
+  th:nth-child(2), td:nth-child(2) { width: auto; white-space: normal; }
+  // Codice diagnosi
+  th:nth-child(3), td:nth-child(3) { width: 120px; }
+  // Descrizione diagnosi — flessibile
+  th:nth-child(4), td:nth-child(4) { width: auto; white-space: normal; }
+  // Data emissione
+  th:nth-child(5), td:nth-child(5) { width: 120px; }
+  // Data scadenza
+  th:nth-child(6), td:nth-child(6) { width: 120px; }
+
+  tr:nth-child(even) td {
+    background-color: #f9f9f9;
+  }
+
+  tr:hover td {
+    background-color: #eff6ff;
+  }
+}

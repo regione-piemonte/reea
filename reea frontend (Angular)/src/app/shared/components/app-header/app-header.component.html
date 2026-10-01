@@ -1,0 +1,44 @@
+<header class="app-header">
+  <div class="header-container">
+    <!-- Logo -->
+    <div class="header-logo">
+      <div class="logo-text">
+        <span class="logo-brand"><img src="assets/img/logo-negativo.svg" alt="Salute Piemonte Operatore"></span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="header-actions">
+      <button mat-icon-button class="header-icon-btn">
+        <i class="far fa-question-circle"></i>
+      </button>
+      <button mat-icon-button class="header-icon-btn">
+        <i class="far fa-bell"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Page Title + User -->
+  <div class="page-title-bar">
+    <h1 class="page-title">{{ title }}</h1>
+
+    <div *ngIf="nomeCompleto()" class="page-title-user">
+      <button mat-button class="user-menu-btn" [matMenuTriggerFor]="userMenu">
+        <i class="fas fa-user-circle user-avatar-icon"></i>
+        <span class="user-menu-name">{{ nomeCompleto() | uppercase }}</span>
+        <span class="user-menu-sep" *ngIf="descrizioneAzienda()">-</span>
+        <span class="user-menu-asl" *ngIf="descrizioneAzienda()">{{ descrizioneAzienda() }}</span>
+        <span class="user-menu-sep" *ngIf="descrizioneProfilo()">-</span>
+        <span class="user-menu-profilo" *ngIf="descrizioneProfilo()">{{ descrizioneProfilo() }}</span>
+        <i class="fas fa-chevron-down user-menu-arrow"></i>
+      </button>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <button mat-menu-item class="esci-item" (click)="esci()" [disabled]="logoutInProgress()">
+          <span>Esci</span>
+          <i class="fas fa-external-link-alt"></i>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</header>

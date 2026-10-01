@@ -1,0 +1,53 @@
+# Dipendenze
+node_modules/
+typings/
+
+# Build output
+dist/
+out-tsc/
+wwwroot/*.js
+
+# Angular cache
+.angular/
+
+# OpenAPI Generator
+.openapi-generator/
+.openapi-generator-ignore
+src/app/api/generated/
+openapi/swagger.json
+
+# File generati OpenAPI (root level se presenti)
+api.module.ts
+configuration.ts
+encoder.ts
+param.ts
+variables.ts
+git_push.sh
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test
+coverage/
+
+# Env
+.env
+.env.local
+
+# Temporary
+*.tmp
+*.temp
+
+

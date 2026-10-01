@@ -1,0 +1,315 @@
+// ARCHIVIO FILE DIALOG - Styles (Centralizzato)
+@use "sass:color";
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.dialog-container {
+  @include dialog-container(95vw);
+  width: 95vw;
+  max-width: 95vw;
+  box-sizing: border-box;
+}
+.dialog-content {
+  @include dialog-content;
+  width: 100%;
+  box-sizing: border-box;
+}
+.dialog-footer { @include dialog-footer; .btn-chiudi { @include button-primary; } }
+
+.dialog-header {
+  @include dialog-header;
+  .header-info {
+    @include flex-column;
+    gap: 4px;
+    .dialog-title { @include dialog-title; }
+    .total-files { font-size: 14px; color: $text-secondary; }
+  }
+  .close-button { @include dialog-close-btn; }
+}
+
+.filter-section {
+  margin-bottom: $spacing-lg;
+
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: $spacing-md;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .filter-label { @include filter-label; }
+  .filter-field { width: 220px; }
+  .filter-field-date { width: 180px; }
+}
+
+.btn-reset-filtri {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 $spacing-md;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  background: white;
+  color: $text-secondary;
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 2px;
+  &:hover { background: $bg-hover; color: $color-danger; border-color: $color-danger; }
+}
+
+.table-container {
+  @include table-wrapper;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.files-table {
+  width: 100%;
+  table-layout: fixed;
+
+  th {
+    background-color: #fafafa;
+    font-weight: $font-weight-semibold;
+    font-size: 13px;
+    color: $text-secondary;
+    padding: $spacing-md;
+    border-bottom: 1px solid $border-light;
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    word-break: break-word;
+    cursor: default;
+  }
+  td {
+    padding: $spacing-md;
+    font-size: 13px;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+    vertical-align: middle;
+    word-break: break-word;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background-color: $bg-hover; }
+}
+
+// Larghezze colonne (totale: 100%)
+.col-elab-id   { width: 7%; text-align: center; }
+.col-file      { width: 23%; }
+.col-fonte     { width: 9%; }
+.col-stato     { width: 13%; }
+.col-num       { width: 7%; text-align: center; }
+.col-data      { width: 14%; }
+.col-operatore { width: 11%; }
+.col-azioni    { width: 6%; text-align: center; }
+
+.file-name-text {
+  word-break: break-all;
+  display: block;
+}
+
+.fonte-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  background: #e8f0fe;
+  color: #1a56db;
+  white-space: nowrap;
+}
+
+.file-name-cell {
+  @include flex-start;
+  gap: $spacing-sm;
+  .excel-icon { font-size: 18px; color: #217346; }
+  span { font-weight: $font-weight-medium; }
+}
+
+.file-download-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: $color-primary;
+  text-align: left;
+  font-size: inherit;
+  font-family: inherit;
+  text-decoration: underline;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+
+  &:hover { color: color.adjust(#1a56db, $lightness: -10%); }
+  &:disabled { color: $text-secondary; cursor: not-allowed; text-decoration: none; }
+
+  .file-name-text { font-weight: $font-weight-medium; }
+}
+
+.scartati-warning { color: $color-danger; font-weight: $font-weight-medium; }
+
+// Badge stato elaborazione
+.stato-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: $font-weight-medium;
+  white-space: normal;
+  text-align: center;
+  &.stato-ok       { background: #e6f4ea; color: #1e7e34; }
+  &.stato-warning  { background: #fff3cd; color: #856404; }
+  &.stato-progress { background: #cce5ff; color: #004085; }
+  &.stato-attesa   { background: #f0f0f0; color: #555; }
+  &.stato-errore   { background: #fde8e8; color: #c0392b; }
+}
+
+// Riga espansa
+tr.expanded-row td { border-bottom: none; }
+
+// Pannello dettaglio errori
+.detail-panel {
+  margin: 0 0 $spacing-md 0;
+  border: 1px solid #f0c0c0;
+  border-radius: 6px;
+  overflow: hidden;
+
+  .detail-panel-header {
+    @include flex-start;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-md;
+    background: #fff5f5;
+    color: $color-danger;
+    font-size: 13px;
+    border-bottom: 1px solid #f0c0c0;
+
+    .errori-count {
+      margin-left: auto;
+      background: $color-danger;
+      color: white;
+      border-radius: 10px;
+      padding: 1px 8px;
+      font-size: 11px;
+    }
+  }
+}
+
+.errori-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  th {
+    background: #fafafa;
+    padding: 6px $spacing-md;
+    text-align: left;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
+    border-bottom: 1px solid $border-light;
+  }
+  td {
+    padding: 6px $spacing-md;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+}
+
+.actions-cell { @include flex-start; gap: $spacing-sm; }
+.action-btn {
+  @include action-btn($color-primary);
+  &.view-btn, &.download-btn { color: $color-primary; }
+}
+
+.no-data { @include no-data; }
+
+// === PANNELLO SCARTI ===
+.scarti-panel {
+  margin-top: $spacing-lg;
+  border: 1px solid #f0c0c0;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.scarti-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm $spacing-md;
+  background: #fff5f5;
+  border-bottom: 1px solid #f0c0c0;
+}
+
+.scarti-panel-title {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  color: $color-danger;
+  font-size: 13px;
+  font-weight: $font-weight-semibold;
+}
+
+.scarti-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-secondary;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  &:hover { background: #f0c0c0; color: $color-danger; }
+}
+
+.scarti-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  th {
+    background: #fafafa;
+    padding: 6px $spacing-md;
+    text-align: left;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
+    border-bottom: 1px solid $border-light;
+    white-space: nowrap;
+  }
+  td {
+    padding: 6px $spacing-md;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+    vertical-align: top;
+    word-break: break-word;
+  }
+  tr:last-child td { border-bottom: none; }
+  .raw-cell {
+    font-family: monospace;
+    font-size: 11px;
+    color: $text-secondary;
+    max-width: 300px;
+  }
+}
+
+::ng-deep .mat-mdc-dialog-surface {
+  padding: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
+::ng-deep .dialog-container .mat-mdc-form-field {
+  @include mat-form-field-clean;
+  .mat-mdc-form-field-infix { padding-top: 10px; padding-bottom: 10px; min-height: 40px; }
+}
+
+@include respond-to(md) {
+  .dialog-container { width: 100%; }
+  .filter-section .filter-field { width: 100%; }
+  .files-table { font-size: 12px; th, td { padding: $spacing-sm; } }
+}

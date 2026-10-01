@@ -1,0 +1,179 @@
+// IMPORTA FILE DIALOG - Styles (Centralizzato)
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.dialog-container { @include dialog-container(580px); &.preview-mode { max-width: 960px; width: 100%; } }
+.dialog-header { @include dialog-header; }
+.dialog-title { @include dialog-title; }
+.close-button { @include dialog-close-btn; }
+.dialog-content { @include dialog-content; }
+.dialog-footer { @include dialog-footer; }
+
+.form-field { @include form-field; }
+.field-label { @include field-label(true); display: block; font-size: 16px; }
+.full-width { width: 100%; max-width: 280px; }
+
+.dropzone { @include dropzone; }
+.dropzone-content {
+  .upload-icon { font-size: 48px; color: $text-muted; margin-bottom: $spacing-md; }
+  .dropzone-text { font-size: 16px; color: $text-primary; margin: 0 0 $spacing-xs 0; }
+  .dropzone-hint { font-size: 14px; color: $text-secondary; margin: 0; }
+}
+
+.file-selected {
+  @include flex-between;
+  .file-info {
+    @include flex-start;
+    gap: $spacing-md;
+    .file-icon { font-size: 32px; color: #217346; }
+    .file-details { @include flex-column; align-items: flex-start; }
+    .file-name { font-size: 15px; font-weight: $font-weight-medium; color: $text-primary; }
+    .file-size { font-size: 13px; color: $text-secondary; }
+  }
+  .remove-file-btn { @include action-btn($color-danger); border-radius: 50%; }
+}
+
+.info-box {
+  @include info-box;
+  .info-box-header { @include flex-start; gap: $spacing-sm; margin-bottom: $spacing-sm; .info-icon { color: #0066cc; font-size: 18px; } span { font-size: 15px; color: $text-primary; font-weight: $font-weight-medium; } }
+  .columns-list { margin: 0; padding-left: $spacing-2xl + $spacing-sm; list-style: none; li { font-size: 14px; color: $text-primary; padding: 2px 0; } }
+}
+
+.upload-error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background-color: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #856404;
+  i { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+}
+
+.upload-progress { margin-top: $spacing-lg; text-align: center; .upload-text { font-size: 14px; color: $text-secondary; margin-top: $spacing-sm; } }
+
+.warning-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background-color: #fff8e1;
+  border: 1px solid #f59e0b;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #92400e;
+  i { font-size: 16px; margin-top: 2px; flex-shrink: 0; color: #f59e0b; }
+  strong { display: block; margin-bottom: 6px; }
+  .warning-cf-list {
+    margin: 4px 0 0 0;
+    padding: 0;
+    list-style: none;
+    li {
+      display: inline-block;
+      margin: 3px 4px;
+      padding: 2px 8px;
+      font-family: monospace;
+      font-size: 13px;
+      background-color: #fecaca;
+      color: #991b1b;
+      border: 1px solid #f87171;
+      border-radius: 4px;
+    }
+  }
+}
+
+.btn-annulla { @include button-base; padding: 0 $spacing-xl; height: 44px; background-color: white; color: $text-primary; border: 1px solid $border-medium; &:hover:not(:disabled) { background-color: $bg-hover; } }
+.btn-importa { @include button-primary; &:disabled { opacity: 0.5; background-color: #a0c4e8; } }
+
+// Header info preview (fonte + file sotto il titolo)
+.header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 2px;
+}
+
+.preview-header-fonte {
+  font-size: 17px;
+  font-weight: $font-weight-semibold;
+  color: #1c398e;
+}
+
+.preview-header-file {
+  font-size: 13px;
+  color: $text-secondary;
+}
+
+// Preview step
+.preview-count {
+  font-size: 14px;
+  color: $text-secondary;
+  margin: 0 0 $spacing-md 0;
+  i { margin-right: $spacing-xs; color: $text-muted; }
+  strong { color: $text-primary; }
+}
+
+.preview-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  thead tr {
+    background-color: $table-header-bg;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  th {
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: $font-weight-medium;
+    color: $text-secondary;
+    white-space: nowrap;
+    border-bottom: 2px solid $border-medium;
+  }
+
+  td {
+    padding: 8px 12px;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background-color: $bg-hover; }
+
+  .empty-row {
+    text-align: center;
+    color: $text-muted;
+    padding: $spacing-2xl;
+    font-style: italic;
+  }
+}
+
+::ng-deep .dialog-container .mat-mdc-form-field { @include mat-form-field-clean; }
+
+@include respond-to(sm) {
+  .dialog-container { width: 100%; }
+  .dropzone { padding: $spacing-xl $spacing-md; }
+  .dropzone-content .upload-icon { font-size: 36px; }
+}

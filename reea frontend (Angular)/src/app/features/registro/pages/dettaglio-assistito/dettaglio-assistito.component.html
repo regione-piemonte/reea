@@ -1,0 +1,1375 @@
+
+<app-header title="Registro Ex Esposti Amianto"></app-header>
+
+<div class="page-container">
+
+  <!-- Link Torna all'elenco -->
+  <div class="back-link">
+    <button class="back-button" (click)="tornaAllElenco()">
+      <i class="fas fa-arrow-left"></i>
+      Torna all'elenco assistiti
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else if (assistito()) {
+
+    <!-- Titolo -->
+    <div class="page-header">
+      <h1 class="page-title">Dettaglio Assistito</h1>
+    </div>
+
+    <!-- Due card affiancate -->
+    <div class="cards-row">
+
+      <!-- Card Dati Anagrafici -->
+      <div class="detail-card card-half">
+        <h2 class="section-title">Dati anagrafici</h2>
+
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">Codice fiscale</span>
+            <span class="info-value">{{ v('a.codiceFiscale', assistito()!.codiceFiscale) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Nome</span>
+            <span class="info-value">{{ v('a.nome', assistito()!.nome) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Cognome</span>
+            <span class="info-value">{{ v('a.cognome', assistito()!.cognome) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">ASL di Assistenza</span>
+            <span class="info-value">{{ assistito()!.aslCompetenza || '-' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Telefono</span>
+            <div class="info-value info-value--editable">
+              @if (isEditingContatti()) {
+                <mat-form-field appearance="outline" class="edit-field">
+                  <input matInput [formControl]="telefonoControl" placeholder="Inserisci telefono">
+                </mat-form-field>
+              } @else {
+                <div class="contatti-list">
+                  @if (assistito()!.telefonoAura) {
+                    @for (tel of assistito()!.telefonoAura!.split(';'); track tel) {
+                      <div class="contatti-item"><span class="aura-badge">AURA</span><span>{{ tel }}</span></div>
+                    }
+                  }
+                  <div class="contatti-item contatti-item--user">
+                    <span>{{ v('a.telefono', assistito()!.telefono) }}</span>
+                    @if (!isPseudo()) {
+                      <button class="btn-icon-edit" (click)="abilitaModificaContatti()">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+          <div class="info-row">
+            <span class="info-label">E-mail</span>
+            <div class="info-value info-value--editable">
+              @if (isEditingContatti()) {
+                <mat-form-field appearance="outline" class="edit-field">
+                  <input matInput [formControl]="emailControl" placeholder="Inserisci email" type="email">
+                  @if (emailControl.hasError('email')) {
+                    <mat-error>Email non valida</mat-error>
+                  }
+                </mat-form-field>
+              } @else {
+                <div class="contatti-list">
+                  @if (assistito()!.emailAura) {
+                    @for (em of assistito()!.emailAura!.split(';'); track em) {
+                      <div class="contatti-item"><span class="aura-badge">AURA</span><span>{{ em }}</span></div>
+                    }
+                  }
+                  <div class="contatti-item contatti-item--user">
+                    <span>{{ v('a.email', assistito()!.email) }}</span>
+                    @if (!isPseudo()) {
+                      <button class="btn-icon-edit" (click)="abilitaModificaContatti()">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        @if (isEditingContatti()) {
+          <div class="edit-actions">
+            <button class="btn-secondary" (click)="annullaModificaContatti()" [disabled]="isSaving()">Annulla</button>
+            <button class="btn-primary" (click)="salvaContatti()" [disabled]="isSaving()">
+              @if (isSaving()) { <mat-spinner diameter="20"></mat-spinner> } @else {
+                <i class="fa-regular fa-floppy-disk"></i> Salva modifiche
+              }
+            </button>
+          </div>
+        }
+
+        <div class="card-footer-action">
+          <button class="btn-visualizza-anagrafica" (click)="vaiAdAnagraficaCompleta()">Visualizza anagrafica completa</button>
+        </div>
+      </div>
+
+      <!-- Card Dati del Registro -->
+      <div class="detail-card card-half">
+        <div class="registro-header">
+          <h2 class="section-title">Dati di registro</h2>
+          <app-status-badge [stato]="assistito()!.stato"></app-status-badge>
+        </div>
+        <div class="info-list info-list--compact">
+          <div class="info-row">
+            <span class="info-label">Attestazione sanitaria</span>
+            <span class="info-value">{{ assistito()!.attestazioneSanitaria || '-' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Provenienza attestazione</span>
+            <span class="info-value">{{ assistito()!.provenienzaAttestazione || '-' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Sezione</span>
+            <span class="info-value">{{ getSezioneLabel(assistito()!.sezione) }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Avviato a sorveglianza</span>
+            <span class="info-value">{{ assistito()!.insertoInSorveglianza == null ? '-' : (assistito()!.insertoInSorveglianza ? 'SI' : 'NO') }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Elenco INAIL</span>
+            <span class="info-value">{{ assistito()!.tipoElencoInail || '-' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Fonti associate</span>
+            <span class="info-value">{{ getFontiAssociate() }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Accordion Storia Stati + Note -->
+    <mat-accordion class="accordion-section" multi>
+
+      <!-- Accordion Storia Stati -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <i class="fas fa-history accordion-icon"></i>
+            Visualizza storia stati
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        @if (storiaStatiLoading()) {
+          <div class="accordion-loading">
+            <mat-spinner diameter="30"></mat-spinner>
+          </div>
+        } @else if (storiaStatiTableData.length === 0) {
+          <div class="no-data"><p>Nessuna storia stati disponibile</p></div>
+        } @else {
+          <div class="accordion-table-container">
+            <table mat-table [dataSource]="storiaStatiTableData" class="storia-table">
+              <ng-container matColumnDef="stato">
+                <th mat-header-cell *matHeaderCellDef>Stato</th>
+                <td mat-cell *matCellDef="let item">
+                  <div class="stato-cell">
+                    @if (item.isCurrent) {
+                      <span class="dot-attuale" title="Stato attuale"></span>
+                    }
+                    <app-status-badge [stato]="mapToStatoEnum(item.soggetto_stato_desc)"></app-status-badge>
+                  </div>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="dataModifica">
+                <th mat-header-cell *matHeaderCellDef>Data Modifica</th>
+                <td mat-cell *matCellDef="let item">{{ item.data_modifica | date:'dd/MM/yyyy HH:mm' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="operatoreModifica">
+                <th mat-header-cell *matHeaderCellDef>Operatore Modifica</th>
+                <td mat-cell *matCellDef="let item">{{ item.utente_modifica || '--' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="notaPassaggioStato">
+                <th mat-header-cell *matHeaderCellDef>Nota Passaggio di Stato</th>
+                <td mat-cell *matCellDef="let item">{{ item.soggetto_stato_note || '--' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="storiaStatiColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: storiaStatiColumns;"
+                  [class.row-current]="row.isCurrent"></tr>
+            </table>
+          </div>
+        }
+      </mat-expansion-panel>
+
+      <!-- Accordion Note -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <i class="fas fa-sticky-note accordion-icon"></i>
+            Note
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <!-- Tabella note -->
+        @if (note().length > 0) {
+          <div class="accordion-table-container">
+            <table mat-table [dataSource]="note()" class="note-table">
+              <ng-container matColumnDef="descrizione">
+                <th mat-header-cell *matHeaderCellDef>Nota</th>
+                <td mat-cell *matCellDef="let item">
+                  @if (notaInModifica()?.nota_id === item.nota_id) {
+                    <mat-form-field appearance="outline" class="nota-edit-field">
+                      <textarea matInput [formControl]="editNotaControl" rows="2"></textarea>
+                    </mat-form-field>
+                  } @else {
+                    {{ item.descrizione }}
+                  }
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="dataCreazione">
+                <th mat-header-cell *matHeaderCellDef>Data</th>
+                <td mat-cell *matCellDef="let item">{{ item.data_modifica }}</td>
+              </ng-container>
+              <ng-container matColumnDef="utente">
+                <th mat-header-cell *matHeaderCellDef>Operatore</th>
+                <td mat-cell *matCellDef="let item">{{ item.utente_modifica }}</td>
+              </ng-container>
+              <ng-container matColumnDef="azioni">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let item">
+                  @if (!isPseudo()) {
+                    @if (notaInModifica()?.nota_id === item.nota_id) {
+                      <button class="btn-icon-edit" (click)="salvaModificaNota()" title="Salva">
+                        <i class="fa-regular fa-floppy-disk"></i>
+                      </button>
+                      <button class="btn-icon-edit" (click)="annullaModificaNota()" title="Annulla">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    } @else {
+                      <button class="btn-icon-edit" (click)="abilitaModificaNota(item)" title="Modifica">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button class="btn-icon-edit" (click)="eliminaNota(item)" title="Elimina">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    }
+                  }
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="noteColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: noteColumns;"></tr>
+            </table>
+          </div>
+        } @else {
+          <div class="no-data"><p>Nessuna nota disponibile</p></div>
+        }
+
+        @if (!isPseudo()) {
+          <!-- Form nuova nota -->
+          <div class="nota-form">
+            <mat-form-field appearance="outline" class="nota-textarea">
+              <mat-label>Inserisci nota</mat-label>
+              <textarea matInput [formControl]="nuovaNotaControl" rows="3" placeholder="Scrivi una nota..."></textarea>
+            </mat-form-field>
+            <button class="btn-salva-nota" (click)="salvaNota()" [disabled]="!nuovaNotaControl.value?.trim()">
+              <i class="fas fa-save"></i> Salva nota
+            </button>
+          </div>
+        }
+      </mat-expansion-panel>
+
+    </mat-accordion>
+
+    <!-- Tabs Sezioni -->
+    <div class="detail-card tabs-card">
+      <mat-tab-group (selectedIndexChange)="onTabChange($event)" [selectedIndex]="activeTab()">
+
+        <mat-tab label="PREADESIONE">
+          <div class="tab-content">
+            @if (hasPreadesione()) {
+
+              <!-- DATI ANAGRAFICI PREADESIONE -->
+              <h3 class="esito-section-title">Dati Anagrafici</h3>
+              <div class="preadesione-anagrafica-grid">
+
+                <!-- Colonna sinistra: 10 campi -->
+                <div class="anamnesi-fumo-col">
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Codice Adesione</span>
+                    <span class="anamnesi-value">{{ v('p.codiceAdesione', preAdesioneData().codiceAdesione) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Data Adesione</span>
+                    <span class="anamnesi-value">{{ preAdesioneData().dataPreAdesione ? (preAdesioneData().dataPreAdesione | date:'dd/MM/yyyy') : '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Codice Fiscale</span>
+                    <span class="anamnesi-value">{{ v('p.codiceFiscale', preAdesioneData().codiceFiscale) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Cognome</span>
+                    <span class="anamnesi-value">{{ v('p.cognome', preAdesioneData().cognome) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Nome</span>
+                    <span class="anamnesi-value">{{ v('p.nome', preAdesioneData().nome) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Data di nascita</span>
+                    <span class="anamnesi-value">{{ isMasked('p.dataNascita') ? '*****' : (preAdesioneData().dataNascita ? (preAdesioneData().dataNascita | date:'dd/MM/yyyy') : '-') }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Provincia di nascita</span>
+                    <span class="anamnesi-value">{{ preAdesioneData().provinciaNascita || '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Comune di nascita</span>
+                    <span class="anamnesi-value">{{ v('p.comuneNascita', preAdesioneData().comuneNascita) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Tessera Team</span>
+                    <span class="anamnesi-value">{{ v('p.tesseraTeam', preAdesioneData().tesseraTeam) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Id Aura</span>
+                    <span class="anamnesi-value">{{ v('p.idAura', preAdesioneData().idAura) }}</span>
+                  </div>
+                </div>
+
+                <!-- Colonna destra: 10 campi -->
+                <div class="anamnesi-fumo-col">
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Provincia di domicilio</span>
+                    <span class="anamnesi-value">{{ preAdesioneData().provinciaDomicilio || '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Comune di domicilio</span>
+                    <span class="anamnesi-value">{{ v('p.comuneDomicilio', preAdesioneData().comuneDomicilio) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Cod. comune ISTAT domicilio</span>
+                    <span class="anamnesi-value">{{ v('p.codiceComuneIstatDomicilio', preAdesioneData().codiceComuneIstatDomicilio) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">CAP di domicilio</span>
+                    <span class="anamnesi-value">{{ v('p.capDomicilio', preAdesioneData().capDomicilio) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">E-mail</span>
+                    <span class="anamnesi-value">{{ v('p.email', preAdesioneData().email) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Telefono</span>
+                    <span class="anamnesi-value">{{ v('p.telefono', preAdesioneData().telefono) }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Cod. ASL di domicilio</span>
+                    <span class="anamnesi-value">{{ preAdesioneData().codiceAslDomicilio || '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">ASL di domicilio</span>
+                    <span class="anamnesi-value">{{ preAdesioneData().aslDomicilio || '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Cod. ASL di residenza</span>
+                    <span class="anamnesi-value">{{ preAdesioneData().codiceAslResidenza || '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">ASL di residenza</span>
+                    <span class="anamnesi-value">{{ preAdesioneData().aslResidenza || '-' }}</span>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- DATI LAVORATIVI / ESPOSIZIONI -->
+              <h3 class="esito-section-title">Dati Lavorativi</h3>
+              @if (esposizioni().length > 0) {
+                <div class="table-container">
+                  <table mat-table [dataSource]="esposizioni()" class="esposizioni-table">
+                    <ng-container matColumnDef="azienda">
+                      <th mat-header-cell *matHeaderCellDef>Azienda</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.azienda') ? '*****' : (element.azienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="codiceComuneIstatAzienda">
+                      <th mat-header-cell *matHeaderCellDef>ISTAT Comune</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.codiceComuneIstatAzienda') ? '*****' : (element.codiceComuneIstatAzienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="comuneAzienda">
+                      <th mat-header-cell *matHeaderCellDef>Comune</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.comuneAzienda') ? '*****' : (element.comuneAzienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="capAzienda">
+                      <th mat-header-cell *matHeaderCellDef>CAP</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.capAzienda') ? '*****' : (element.capAzienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="provinciaAzienda">
+                      <th mat-header-cell *matHeaderCellDef>Provincia</th>
+                      <td mat-cell *matCellDef="let element">{{ element.provinciaAzienda || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="mansione">
+                      <th mat-header-cell *matHeaderCellDef>Mansione</th>
+                      <td mat-cell *matCellDef="let element">{{ element.mansione || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="dataInizio">
+                      <th mat-header-cell *matHeaderCellDef>Dal</th>
+                      <td mat-cell *matCellDef="let element">{{ element.dataInizioEsposizione | date:'yyyy' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="dataFine">
+                      <th mat-header-cell *matHeaderCellDef>Al</th>
+                      <td mat-cell *matCellDef="let element">{{ element.dataFineEsposizione | date:'yyyy' }}</td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="esposizioniColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: esposizioniColumns;"></tr>
+                  </table>
+                </div>
+              } @else {
+                <div class="no-data"><p>Nessuna esposizione lavorativa registrata</p></div>
+              }
+
+              @if (!isPseudo() && canMostraValutaButton() && !showStatoPanel() && assistito()?.stato !== 'Avviato alla sorveglianza') {
+                <div class="tab-valuta-action">
+                  <button class="btn-valuta-tab" (click)="apriValutaDialog()">
+                    <i class="fa-solid fa-circle-check"></i> {{ getValutaButtonLabel() }}
+                  </button>
+                </div>
+              }
+              @if (!isPseudo() && canConcludiSorveglianza() && !showStatoPanel()) {
+                <div class="tab-valuta-action">
+                  <button class="btn-valuta-tab" (click)="apriConcludiSorveglianza()">
+                    <i class="fa-solid fa-circle-check"></i> Concludi sorveglianza
+                  </button>
+                </div>
+              }
+            } @else {
+              <div class="no-data"><p>Nessun dato disponibile</p></div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab label="SEGNALAZIONE MMG">
+          <div class="tab-content">
+            @if (isSegnalazioneMMG()) {
+              <div class="data-grid preadesione-info-grid">
+                <div class="data-field">
+                  <label class="field-label">Data di Presentazione Istanza</label>
+                  <span class="field-value">{{ assistito()!.dataPresentazioneIstanza ? (assistito()!.dataPresentazioneIstanza | date:'dd/MM/yyyy') : '-' }}</span>
+                </div>
+              </div>
+
+              @if (esposizioni().length > 0) {
+                <div class="table-container">
+                  <table mat-table [dataSource]="esposizioni()" class="esposizioni-table">
+                    <ng-container matColumnDef="azienda">
+                      <th mat-header-cell *matHeaderCellDef>Azienda</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.azienda') ? '*****' : (element.azienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="codiceComuneIstatAzienda">
+                      <th mat-header-cell *matHeaderCellDef>ISTAT Comune</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.codiceComuneIstatAzienda') ? '*****' : (element.codiceComuneIstatAzienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="comuneAzienda">
+                      <th mat-header-cell *matHeaderCellDef>Comune</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.comuneAzienda') ? '*****' : (element.comuneAzienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="capAzienda">
+                      <th mat-header-cell *matHeaderCellDef>CAP</th>
+                      <td mat-cell *matCellDef="let element">{{ isMasked('e.capAzienda') ? '*****' : (element.capAzienda || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="provinciaAzienda">
+                      <th mat-header-cell *matHeaderCellDef>Provincia</th>
+                      <td mat-cell *matCellDef="let element">{{ element.provinciaAzienda || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="mansione">
+                      <th mat-header-cell *matHeaderCellDef>Mansione</th>
+                      <td mat-cell *matCellDef="let element">{{ element.mansione || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="dataInizio">
+                      <th mat-header-cell *matHeaderCellDef>Dal</th>
+                      <td mat-cell *matCellDef="let element">{{ element.dataInizioEsposizione | date:'yyyy' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="dataFine">
+                      <th mat-header-cell *matHeaderCellDef>Al</th>
+                      <td mat-cell *matCellDef="let element">{{ element.dataFineEsposizione | date:'yyyy' }}</td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="esposizioniColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: esposizioniColumns;"></tr>
+                  </table>
+                </div>
+              } @else {
+                <div class="no-data"><p>Nessuna esposizione lavorativa registrata</p></div>
+              }
+
+              @if (!isPseudo() && canMostraValutaButton() && !showStatoPanel() && assistito()?.stato !== 'Avviato alla sorveglianza') {
+                <div class="tab-valuta-action">
+                  <button class="btn-valuta-tab" (click)="apriValutaDialog()">
+                    <i class="fa-solid fa-circle-check"></i> {{ getValutaButtonLabel() }}
+                  </button>
+                </div>
+              }
+              @if (!isPseudo() && canConcludiSorveglianza() && !showStatoPanel()) {
+                <div class="tab-valuta-action">
+                  <button class="btn-valuta-tab" (click)="apriConcludiSorveglianza()">
+                    <i class="fa-solid fa-circle-check"></i> Concludi sorveglianza
+                  </button>
+                </div>
+              }
+            } @else {
+              <div class="no-data"><p>Nessun dato disponibile</p></div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab label="INAIL">
+          <div class="tab-content">
+            @if (inailRecords().length > 0) {
+              @for (r of inailRecords(); track $index) {
+                <div class="sub-section-card">
+                  <div class="detail-grid">
+                    <div class="info-row"><span class="info-label">Elenco INAIL</span><span class="info-value">{{ r.tipologiaInail ?? '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Domanda</span><span class="info-value">{{ v('in.domanda', r.domanda) }}</span></div>
+                    <div class="info-row"><span class="info-label">Cognome</span><span class="info-value">{{ v('in.cognome', r.cognome) }}</span></div>
+                    <div class="info-row"><span class="info-label">Nome</span><span class="info-value">{{ v('in.nome', r.nome) }}</span></div>
+                    <div class="info-row"><span class="info-label">Codice Fiscale</span><span class="info-value">{{ v('in.codiceFiscale', r.codiceFiscale) }}</span></div>
+                    <div class="info-row"><span class="info-label">Sesso</span><span class="info-value">{{ r.sesso ?? '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Data Nascita</span><span class="info-value">{{ isMasked('in.dataNascita') ? '*****' : (r.dataNascita ? (r.dataNascita | date:'dd/MM/yyyy') : '-') }}</span></div>
+                    <div class="info-row"><span class="info-label">Indirizzo</span><span class="info-value">{{ v('in.indirizzo', r.indirizzoResidenza) }}</span></div>
+                    <div class="info-row"><span class="info-label">Istat</span><span class="info-value">{{ v('in.istat', r.istatResidenza) }}</span></div>
+                    <div class="info-row"><span class="info-label">Cap</span><span class="info-value">{{ v('in.cap', r.capResidenza) }}</span></div>
+                    <div class="info-row"><span class="info-label">Regione</span><span class="info-value">{{ r.regioneResidenza ?? '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Provincia residenza</span><span class="info-value">{{ r.provinciaResidenza ?? '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Comune residenza</span><span class="info-value">{{ v('in.comune', r.comuneResidenza) }}</span></div>
+                  </div>
+                </div>
+              }
+            } @else {
+              <div class="no-data"><p>Nessun dato INAIL disponibile</p></div>
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab label="SPRESAL - Anamnesi">
+          <div class="tab-content">  
+            @if (anamnesiSpresal().length === 0) {
+              <div class="no-data"><p>Nessun dato Anamnesi disponibile</p></div>
+            } @else {
+              <div class="esito-card">
+
+                <!-- DATI INTERVISTA — mostrato una sola volta dal primo record -->
+                <h3 class="esito-section-title">Dati Intervista</h3>
+                <div class="anamnesi-row-grid">
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Data intervista</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].dataIntervista ? (anamnesiSpresal()[0].dataIntervista | date:'dd/MM/yyyy') : '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Intervistatore</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].nominativoIntervistatore || '-' }}</span>
+                  </div>
+                </div>
+
+                <!-- ABITUDINI AL FUMO: 4 colonne — mostrato una sola volta -->
+                <h3 class="esito-section-title">Abitudini al Fumo</h3>
+                <div class="anamnesi-fumo-grid">
+
+                  <!-- Fumatore generale -->
+                  <div class="anamnesi-fumo-col">
+                    <div class="anamnesi-fumo-header">Generale</div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Fumatore</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].fumatore == null ? '-' : (anamnesiSpresal()[0].fumatore ? 'SI' : 'NO') }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Sigarette -->
+                  <div class="anamnesi-fumo-col">
+                    <div class="anamnesi-fumo-header">Sigarette</div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Sigarette</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigarette == null ? '-' : (anamnesiSpresal()[0].sigarette ? 'SI' : 'NO') }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Anni</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigaretteAnni ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Età inizio</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigaretteEtaInizio ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Fuma attualmente</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigaretteFumaAttualmente == null ? '-' : (anamnesiSpresal()[0].sigaretteFumaAttualmente ? 'SI' : 'NO') }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Età fine</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigaretteEtaFine ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Die</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigaretteDie ?? '-' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Sigari -->
+                  <div class="anamnesi-fumo-col">
+                    <div class="anamnesi-fumo-header">Sigari</div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Sigari</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigari == null ? '-' : (anamnesiSpresal()[0].sigari ? 'SI' : 'NO') }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Anni</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigariAnni ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Età inizio</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigariEtaInizio ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Fuma attualmente</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigariFumaAttualmente == null ? '-' : (anamnesiSpresal()[0].sigariFumaAttualmente ? 'SI' : 'NO') }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Età fine</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigariEtaFine ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Die</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].sigariDie ?? '-' }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Pipa -->
+                  <div class="anamnesi-fumo-col">
+                    <div class="anamnesi-fumo-header">Pipa</div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Pipa</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].pipa == null ? '-' : (anamnesiSpresal()[0].pipa ? 'SI' : 'NO') }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Anni</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].pipaAnni ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Età inizio</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].pipaEtaInizio ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Fuma attualmente</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].pipaFumaAttualmente == null ? '-' : (anamnesiSpresal()[0].pipaFumaAttualmente ? 'SI' : 'NO') }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Età fine</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].pipaEtaFine ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Die</span>
+                      <span class="anamnesi-value">{{ anamnesiSpresal()[0].pipaDie ?? '-' }}</span>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- OCCUPAZIONE — unica tabella con tutti i record -->
+                <h3 class="esito-section-title">Occupazione</h3>
+                <div class="table-container">
+                  <table mat-table [dataSource]="anamnesiSpresal()" class="occupazione-table" multiTemplateDataRows>
+                    <ng-container matColumnDef="occupazioneNum">
+                      <th mat-header-cell *matHeaderCellDef>n.</th>
+                      <td mat-cell *matCellDef="let r">{{ r.occupazioneNum || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="occupazioneAnnoInizio">
+                      <th mat-header-cell *matHeaderCellDef>Anno inizio</th>
+                      <td mat-cell *matCellDef="let r">{{ r.occupazioneAnnoInizio ?? '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="occupazioneAnnoFine">
+                      <th mat-header-cell *matHeaderCellDef>Anno fine</th>
+                      <td mat-cell *matCellDef="let r">{{ r.occupazioneAnnoFine ?? '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="occupazioneTipo">
+                      <th mat-header-cell *matHeaderCellDef>Occupazione</th>
+                      <td mat-cell *matCellDef="let r">{{ r.occupazioneTipo || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="occupazioneDescrizioneLavoro">
+                      <th mat-header-cell *matHeaderCellDef>Lavoro</th>
+                      <td mat-cell *matCellDef="let r">{{ r.occupazioneDescrizioneLavoro || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="occupazioneNomeIndirizzoDitta">
+                      <th mat-header-cell *matHeaderCellDef>Ditta: nome e indirizzo</th>
+                      <td mat-cell *matCellDef="let r">{{ isMasked('an.nomeIndirizzoDitta') ? '*****' : (r.occupazioneNomeIndirizzoDitta || '-') }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="occupazioneAttivitaDitta">
+                      <th mat-header-cell *matHeaderCellDef>Ditta: attività</th>
+                      <td mat-cell *matCellDef="let r">{{ r.occupazioneAttivitaDitta || '-' }}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="occupazioneEsposizione">
+                      <th mat-header-cell *matHeaderCellDef>Esposizione</th>
+                      <td mat-cell *matCellDef="let r">
+                        @if (r.occupazioneEsposizioneCrpt === true) {
+                          <span class="esposizione-badge esposizione-si">SI</span>
+                        } @else if (r.occupazioneEsposizioneCrpt === false) {
+                          <span class="esposizione-badge esposizione-no">NO</span>
+                        } @else {
+                          <span>-</span>
+                        }
+                      </td>
+                    </ng-container>
+                    <ng-container matColumnDef="azioni">
+                      <th mat-header-cell *matHeaderCellDef>Dati CRPT</th>
+                      <td mat-cell *matCellDef="let r">
+                        <button class="btn-crpt-azioni" (click)="apriEditCrpt(r)">
+                          <i class="fa-solid fa-eye"></i> Visualizza
+                          <i class="fas" [class.fa-chevron-down]="expandedCrptId() !== r.regSpresalAnamnesiId" [class.fa-chevron-up]="expandedCrptId() === r.regSpresalAnamnesiId"></i>
+                        </button>
+                      </td>
+                    </ng-container>
+
+                    <!-- RIGA DI DETTAGLIO CRPT — appare sotto la riga cliccata -->
+                    <ng-container matColumnDef="expandedDetail">
+                      <td mat-cell *matCellDef="let r" [attr.colspan]="occupazioneColumns.length" class="crpt-detail-cell">
+                        @if (expandedCrptId() === r.regSpresalAnamnesiId) {
+                          <div class="crpt-panel-expanded">
+                            <app-crpt-dialog
+                              [anamnesi]="r"
+                              [campiAnon]="campiAnon()"
+                              (saved)="onCrptSaved($event)">
+                            </app-crpt-dialog>
+                          </div>
+                        }
+                      </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="occupazioneColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: occupazioneColumns;"
+                        [class.row-expanded]="expandedCrptId() === row.regSpresalAnamnesiId"></tr>
+                    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']; when: isDetailRow" class="crpt-detail-row"></tr>
+                  </table>
+                </div>
+
+                <!-- NOTA ATTIVITA CON AMIANTO — mostrata sopra Esposizione Amianto -->
+                @if (expandedCrptId() !== null) {
+                  @for (r of anamnesiSpresal(); track r.regSpresalAnamnesiId) {
+                    @if (r.regSpresalAnamnesiId === expandedCrptId() && r.notaAttivitaConAmianto) {
+                      <div class="anamnesi-nota-amianto">
+                        <span class="anamnesi-label">Nota attività con amianto</span>
+                        <span class="anamnesi-value">{{ r.notaAttivitaConAmianto }}</span>
+                      </div>
+                    }
+                  }
+                } @else if (anamnesiSpresal()[0]?.notaAttivitaConAmianto) {
+                  <div class="anamnesi-nota-amianto">
+                    <span class="anamnesi-label">Nota attività con amianto</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].notaAttivitaConAmianto }}</span>
+                  </div>
+                }
+
+                <!-- ESPOSIZIONE AMIANTO — mostrato una sola volta dal primo record -->
+                <h3 class="esito-section-title">Esposizione Amianto</h3>
+                <div class="anamnesi-row-grid cols-5">
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Anamnesi esposizione amianto</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].anamnesiEsposizioneAmianto == null ? '-' : (anamnesiSpresal()[0].anamnesiEsposizioneAmianto ? 'SI' : 'NO') }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Esposizione professionale</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].esposizioneProfessionale || '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Anno fine esposizione</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].annoFineEsposizione ?? '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Livello esposizione</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].livelloEsposizione || '-' }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Inserimento in sorveglianza</span>
+                    <span class="anamnesi-value">{{ anamnesiSpresal()[0].inserimentoInSorveglianza == null ? '-' : (anamnesiSpresal()[0].inserimentoInSorveglianza ? 'SI' : 'NO') }}</span>
+                  </div>
+                  <div class="anamnesi-field">
+                    <span class="anamnesi-label">Counseling antifumo effettuato</span>
+                    @if (isEditingCounseling()) {
+                      <div class="acquisita-edit-row">
+                        <select class="acquisita-select"
+                                [value]="counselingEditValue()"
+                                (change)="counselingEditValue.set($any($event.target).value)">
+                          <option value="null">Non specificato</option>
+                          <option value="SI">SI</option>
+                          <option value="NO">NO</option>
+                        </select>
+                        <button class="btn-icon-edit" (click)="saveCounseling()" [disabled]="isSavingCounseling()" title="Salva">
+                          @if (isSavingCounseling()) { <mat-spinner diameter="14"></mat-spinner> }
+                          @else { <i class="fa-regular fa-floppy-disk"></i> }
+                        </button>
+                        <button class="btn-icon-edit" (click)="cancelEditCounseling()" [disabled]="isSavingCounseling()" title="Annulla">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    } @else {
+                      <div class="acquisita-display-row">
+                        <span class="anamnesi-value">{{ anamnesiSpresal()[0].counseling == null ? '-' : anamnesiSpresal()[0].counseling }}</span>
+                        @if (canEditCounseling()) {
+                          <button class="btn-icon-edit btn-icon-edit--sm" (click)="startEditCounseling()" title="Modifica">
+                            <i class="fa-solid fa-pen"></i>
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+
+              <!-- STORIA PROFESSIONALE -->
+              @if (!isPseudo()) {
+              <div class="storia-prof-section">
+                <h3 class="storia-prof-title">STORIA PROFESSIONALE</h3>
+
+                @if (storiaProfLoading()) {
+                  <div class="accordion-loading"><mat-spinner diameter="32"></mat-spinner></div>
+                } @else if (storiaProfFiles().length === 0) {
+                  <p class="no-data-inline">Nessun file presente</p>
+                } @else {
+                  <ul class="storia-prof-list">
+                    @for (f of storiaProfFiles(); track f.percorsoAssoluto) {
+                      <li class="storia-prof-item storia-prof-item--clickable"
+                          tabindex="0"
+                          (click)="downloadStoriaProfessionale(f.nomeFile)"
+                          (keydown.enter)="downloadStoriaProfessionale(f.nomeFile)"
+                          [title]="'Clicca per scaricare: ' + f.nomeFile">
+                        <i class="fas fa-file-pdf storia-prof-icon"></i>
+                        <span class="storia-prof-name">{{ f.nomeFile }}</span>
+                        <i class="fas fa-download storia-prof-download-icon"></i>
+                      </li>
+                    }
+                  </ul>
+                }
+              </div>
+              } <!-- @if (!isPseudo()) -->
+
+              </div>
+            }
+
+          </div>
+        </mat-tab>
+
+        <mat-tab label="SPRESAL - Esiti di sorveglianza">
+          <div class="tab-content">
+
+            @if (spresalEsitiLoading()) {
+              <div class="accordion-loading"><mat-spinner diameter="36"></mat-spinner></div>
+            } @else if (spresalEsiti().length === 0) {
+              <div class="no-data"><p>Nessun esito di sorveglianza disponibile</p></div>
+            } @else {
+
+              <mat-accordion class="esiti-accordion" multi>
+              @for (esito of spresalEsiti(); track esito.reg_spresal_esiti_id) {
+                <mat-expansion-panel class="esito-panel">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      <span class="esito-header-title">Visita del {{ esito.data_visita ? (esito.data_visita | date:'dd/MM/yyyy') : '-' }}</span>
+                      @if (esito.livello_visita) {
+                        <span class="esito-livello-badge">{{ esito.livello_visita }}</span>
+                      }
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <!-- ===== DATI VISITA ===== -->
+                  <h3 class="esito-section-title">Dati Visita</h3>
+                  <div class="esito-info-grid">
+                    <div class="info-row"><span class="info-label">Data visita</span><span class="info-value">{{ esito.data_visita ? (esito.data_visita | date:'dd/MM/yyyy') : '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Visita</span><span class="info-value">{{ esito.visita || '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Livello visita</span><span class="info-value">{{ esito.livello_visita || '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Riceve indennizzo</span><span class="info-value" [class.text-si]="esito.riceve_indennizzo === true" [class.text-no]="esito.riceve_indennizzo === false">{{ esito.riceve_indennizzo == null ? '-' : (esito.riceve_indennizzo ? 'SI' : 'NO') }}</span></div>
+                    @if (esito.malattia_indennizzo) {
+                      <div class="info-row"><span class="info-label">Malattia indennizzo</span><span class="info-value">{{ esito.malattia_indennizzo }}</span></div>
+                    }
+                  </div>
+
+                  <!-- ===== ACCERTAMENTI DIAGNOSTICI ===== -->
+                  <h3 class="esito-section-title">Accertamenti Diagnostici</h3>
+
+                  <!-- Accertamenti strumentali: due tabelle affiancate -->
+                  <div class="accertamenti-strumentali-row">
+
+                    <!-- Tabella sinistra: RX, TAC, Spirometrie -->
+                    <div class="accertamenti-strumentali-block">
+                      <table class="accertamenti-table">
+                        <thead>
+                          <tr>
+                            <th>Accertamento strumentale</th>
+                            <th>Effettuato</th>
+                            <th>Data</th>
+                            <th>Referto normale?</th>
+                            <th>Prestazione acquisita</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>RX Torace</td>
+                            <td [class.text-si]="esito.accertamenti_rx === true" [class.text-no]="esito.accertamenti_rx === false">{{ esito.accertamenti_rx == null ? '-' : (esito.accertamenti_rx ? 'SI' : 'NO') }}</td>
+                            <td>{{ esito.accertamenti_rx_data ? (esito.accertamenti_rx_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.accertamenti_rx_referto_normale || '-' }}</td>
+                            <td class="acquisita-cell">
+                              <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_rx_acquisita', value: esito.accertamenti_rx_acquisita, effettuato: esito.accertamenti_rx }"></ng-container>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>TAC Torace</td>
+                            <td [class.text-si]="esito.accertamenti_tc === true" [class.text-no]="esito.accertamenti_tc === false">{{ esito.accertamenti_tc == null ? '-' : (esito.accertamenti_tc ? 'SI' : 'NO') }}</td>
+                            <td>{{ esito.accertamenti_tc_data ? (esito.accertamenti_tc_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.accertamenti_tc_referto_normale || '-' }}</td>
+                            <td class="acquisita-cell">
+                              <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_tc_acquisita', value: esito.accertamenti_tc_acquisita, effettuato: esito.accertamenti_tc }"></ng-container>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Spirometria semplice</td>
+                            <td [class.text-si]="esito.accertamenti_spirometria_semplice === true" [class.text-no]="esito.accertamenti_spirometria_semplice === false">{{ esito.accertamenti_spirometria_semplice == null ? '-' : (esito.accertamenti_spirometria_semplice ? 'SI' : 'NO') }}</td>
+                            <td>{{ esito.accertamenti_spirometria_semplice_data ? (esito.accertamenti_spirometria_semplice_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.accertamenti_spirometria_semplice_referto_norm || '-' }}</td>
+                            <td class="acquisita-cell">
+                              <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_spirometria_semplice_acquisita', value: esito.accertamenti_spirometria_semplice_acquisita, effettuato: esito.accertamenti_spirometria_semplice }"></ng-container>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Spirometria globale</td>
+                            <td [class.text-si]="esito.accertamenti_spirometria_globale === true" [class.text-no]="esito.accertamenti_spirometria_globale === false">{{ esito.accertamenti_spirometria_globale == null ? '-' : (esito.accertamenti_spirometria_globale ? 'SI' : 'NO') }}</td>
+                            <td>{{ esito.accertamenti_spirometria_globale_data ? (esito.accertamenti_spirometria_globale_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.accertamenti_spirometria_globale_referto_norm || '-' }}</td>
+                            <td class="acquisita-cell">
+                              <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_spirometria_globale_acquisita', value: esito.accertamenti_spirometria_globale_acquisita, effettuato: esito.accertamenti_spirometria_globale }"></ng-container>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Tabella destra: DLCO, PET, Altro -->
+                    <div class="accertamenti-strumentali-block">
+                      <table class="accertamenti-table">
+                        <thead>
+                          <tr>
+                            <th>Accertamento strumentale</th>
+                            <th>Effettuato</th>
+                            <th>Data</th>
+                            <th>Referto normale?</th>
+                            <th>Prestazione acquisita</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Diffusione Alveolo-Capillare (DLCO)</td>
+                            <td [class.text-si]="esito.accertamenti_dlco === true" [class.text-no]="esito.accertamenti_dlco === false">{{ esito.accertamenti_dlco == null ? '-' : (esito.accertamenti_dlco ? 'SI' : 'NO') }}</td>
+                            <td>{{ esito.accertamenti_dlco_data ? (esito.accertamenti_dlco_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.accertamenti_dlco_referto_normale || '-' }}</td>
+                            <td class="acquisita-cell">
+                              <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_dlco_acquisita', value: esito.accertamenti_dlco_acquisita, effettuato: esito.accertamenti_dlco }"></ng-container>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>PET</td>
+                            <td [class.text-si]="esito.accertamenti_pet === true" [class.text-no]="esito.accertamenti_pet === false">{{ esito.accertamenti_pet == null ? '-' : (esito.accertamenti_pet ? 'SI' : 'NO') }}</td>
+                            <td>{{ esito.accertamenti_pet_data ? (esito.accertamenti_pet_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                            <td class="acquisita-cell">
+                              <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_pet_acquisita', value: esito.accertamenti_pet_acquisita, effettuato: esito.accertamenti_pet }"></ng-container>
+                            </td>
+                          </tr>
+                          @if (esito.accertamenti_altro) {
+                            <tr>
+                              <td>{{ esito.accertamenti_altro_descrizione || 'Altro accertamento' }}</td>
+                              <td class="text-si">SI</td>
+                              <td>{{ esito.accertamenti_altro_data ? (esito.accertamenti_altro_data | date:'dd/MM/yyyy') : '-' }}</td>
+                              <td>{{ esito.accertamenti_altro_referto_normale || '-' }}</td>
+                              <td class="acquisita-cell">
+                                <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_altro_referto_acquisita', value: esito.accertamenti_altro_referto_acquisita, effettuato: esito.accertamenti_altro }"></ng-container>
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div>
+
+                  <!-- Visite specialistiche: tabella separata -->
+                  <div class="table-container accertamenti-container accertamenti-visite-container">
+                    <table class="accertamenti-table">
+                      <thead>
+                        <tr>
+                          <th>Visita specialistica</th>
+                          <th>Effettuata</th>
+                          <th>Data</th>
+                          <th>Esito visita</th>
+                          <th>Prestazione acquisita</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Visita pneumologica</td>
+                          <td [class.text-si]="esito.accertamenti_visita_pneumologica === true" [class.text-no]="esito.accertamenti_visita_pneumologica === false">{{ esito.accertamenti_visita_pneumologica == null ? '-' : (esito.accertamenti_visita_pneumologica ? 'SI' : 'NO') }}</td>
+                          <td>{{ esito.accertamenti_visita_pneumologica_data ? (esito.accertamenti_visita_pneumologica_data | date:'dd/MM/yyyy') : '-' }}</td>
+                          <td class="esito-visita-cell">
+                            @if (esito.accertamenti_visita_pneumologica_referto) {
+                              <span class="esito-preview">{{ esito.accertamenti_visita_pneumologica_referto | slice:0:50 }}{{ esito.accertamenti_visita_pneumologica_referto!.length > 50 ? '…' : '' }}</span>
+                              <button class="btn-esito-visita" (click)="apriEsitoVisita('Visita pneumologica', esito.accertamenti_visita_pneumologica_referto!, esito.accertamenti_visita_pneumologica_data)">
+                                <i class="fas fa-eye"></i> Esito visita
+                              </button>
+                            } @else { - }
+                          </td>
+                          <td class="acquisita-cell">
+                            <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_visita_pneumologica_acquisita', value: esito.accertamenti_visita_pneumologica_acquisita, effettuato: esito.accertamenti_visita_pneumologica }"></ng-container>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Visita radiologica</td>
+                          <td [class.text-si]="esito.accertamenti_visita_radiologica === true" [class.text-no]="esito.accertamenti_visita_radiologica === false">{{ esito.accertamenti_visita_radiologica == null ? '-' : (esito.accertamenti_visita_radiologica ? 'SI' : 'NO') }}</td>
+                          <td>{{ esito.accertamenti_visita_radiologica_data ? (esito.accertamenti_visita_radiologica_data | date:'dd/MM/yyyy') : '-' }}</td>
+                          <td class="esito-visita-cell">
+                            @if (esito.accertamenti_visita_radiologica_referto) {
+                              <span class="esito-preview">{{ esito.accertamenti_visita_radiologica_referto | slice:0:50 }}{{ esito.accertamenti_visita_radiologica_referto!.length > 50 ? '…' : '' }}</span>
+                              <button class="btn-esito-visita" (click)="apriEsitoVisita('Visita radiologica', esito.accertamenti_visita_radiologica_referto!, esito.accertamenti_visita_radiologica_data)">
+                                <i class="fas fa-eye"></i> Esito visita
+                              </button>
+                            } @else { - }
+                          </td>
+                          <td class="acquisita-cell">
+                            <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_visita_radiologica_acquisita', value: esito.accertamenti_visita_radiologica_acquisita, effettuato: esito.accertamenti_visita_radiologica }"></ng-container>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Visita oncologica</td>
+                          <td [class.text-si]="esito.accertamenti_visita_oncologica === true" [class.text-no]="esito.accertamenti_visita_oncologica === false">{{ esito.accertamenti_visita_oncologica == null ? '-' : (esito.accertamenti_visita_oncologica ? 'SI' : 'NO') }}</td>
+                          <td>{{ esito.accertamenti_visita_oncologica_data ? (esito.accertamenti_visita_oncologica_data | date:'dd/MM/yyyy') : '-' }}</td>
+                          <td class="esito-visita-cell">
+                            @if (esito.accertamenti_visita_oncologica_referto) {
+                              <span class="esito-preview">{{ esito.accertamenti_visita_oncologica_referto | slice:0:50 }}{{ esito.accertamenti_visita_oncologica_referto!.length > 50 ? '…' : '' }}</span>
+                              <button class="btn-esito-visita" (click)="apriEsitoVisita('Visita oncologica', esito.accertamenti_visita_oncologica_referto!, esito.accertamenti_visita_oncologica_data)">
+                                <i class="fas fa-eye"></i> Esito visita
+                              </button>
+                            } @else { - }
+                          </td>
+                          <td class="acquisita-cell">
+                            <ng-container *ngTemplateOutlet="acquisitaCell; context: { esito: esito, field: 'accertamenti_visita_oncologica_acquisita', value: esito.accertamenti_visita_oncologica_acquisita, effettuato: esito.accertamenti_visita_oncologica }"></ng-container>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- ===== DIAGNOSI ===== -->
+                  <h3 class="esito-section-title">Diagnosi</h3>
+                  <div class="diagnosi-adempimenti-container">
+                    <table class="diagnosi-adempimenti-table">
+                      <thead>
+                        <tr>
+                          <th colspan="1" class="dg-header-result" scope="col">Diagnosi rilevate in sorveglianza</th>
+                          <th colspan="5" class="dg-header-adempimenti" scope="colgroup">ADEMPIMENTI LEGALI</th>
+                        </tr>
+                        <tr class="dg-subheader">
+                          <th class="dg-th-name" scope="col"></th>
+                          <th scope="col">Primo certificato e Denuncia (data)</th>
+                          <th scope="col">Aggr. malattia e denuncia (data)</th>
+                          <th scope="col">% di riconoscimento</th>
+                          <th scope="col">Referto (data)</th>
+                          <th scope="col">Comunicazione al COR (data)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @if (esito.risultato_negativo === true) {
+                          <tr>
+                            <td class="dg-name"><strong>Negativo</strong></td>
+                            <td>-</td><td>-</td><td>-</td><td>-</td><td>-</td>
+                          </tr>
+                        }
+                        @if (esito.ppm_placche_pleuriche_monolaterali === true) {
+                          <tr>
+                            <td class="dg-name">Placche pleuriche monolaterali</td>
+                            <td>{{ esito.ppm_primo_certificato_e_denuncia_data ? (esito.ppm_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.ppm_aggravamento_e_denuncia_data ? (esito.ppm_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.ppm_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.ppm_referto_data ? (esito.ppm_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                        @if (esito.ppb_placche_pleuriche_bilaterali === true) {
+                          <tr>
+                            <td class="dg-name">Placche pleuriche bilaterali</td>
+                            <td>{{ esito.ppb_primo_certificato_e_denuncia_data ? (esito.ppb_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.ppb_aggravamento_e_denuncia_data ? (esito.ppb_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.ppb_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.ppb_referto_data ? (esito.ppb_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                        @if (esito.ap_asbestosi_polmonare === true) {
+                          <tr>
+                            <td class="dg-name">Asbestosi polmonare</td>
+                            <td>{{ esito.ap_primo_certificato_e_denuncia_data ? (esito.ap_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.ap_aggravamento_e_denuncia_data ? (esito.ap_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.ap_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.ap_referto_data ? (esito.ap_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                        @if (esito.fpd_fibrosi_pleurica_diffusa === true) {
+                          <tr>
+                            <td class="dg-name">Fibrosi pleurica diffusa</td>
+                            <td>{{ esito.fpd_primo_certificato_e_denuncia_data ? (esito.fpd_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.fpd_aggravamento_e_denuncia_data ? (esito.fpd_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.fpd_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.fpd_referto_data ? (esito.fpd_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                        @if (esito.mp_mesotelioma_pleurico === true) {
+                          <tr class="dg-row-oncologica">
+                            <td class="dg-name dg-name--oncologica">Mesotelioma pleurico</td>
+                            <td>{{ esito.mp_primo_certificato_e_denuncia_data ? (esito.mp_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.mp_aggravamento_e_denuncia_data ? (esito.mp_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.mp_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.mp_referto_data ? (esito.mp_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.mp_comunicazione_al_cor_data ? (esito.mp_comunicazione_al_cor_data | date:'dd/MM/yyyy') : '-' }}</td>
+                          </tr>
+                        }
+                        @if (esito.am_altro_mesotelioma === true) {
+                          <tr class="dg-row-oncologica">
+                            <td class="dg-name dg-name--oncologica">Altro mesotelioma</td>
+                            <td>{{ esito.am_primo_certificato_e_denuncia_data ? (esito.am_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.am_aggravamento_e_denuncia_data ? (esito.am_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.am_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.am_referto_data ? (esito.am_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.am_comunicazione_al_cor_data ? (esito.am_comunicazione_al_cor_data | date:'dd/MM/yyyy') : '-' }}</td>
+                          </tr>
+                        }
+                        @if (esito.nl_neoplasia_laringe === true) {
+                          <tr>
+                            <td class="dg-name">Neoplasia laringe</td>
+                            <td>{{ esito.nl_primo_certificato_e_denuncia_data ? (esito.nl_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.nl_aggravamento_e_denuncia_data ? (esito.nl_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.nl_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.nl_referto_data ? (esito.nl_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                        @if (esito.no_neoplasia_ovarica === true) {
+                          <tr>
+                            <td class="dg-name">Neoplasia ovarica</td>
+                            <td>{{ esito.no_primo_certificato_e_denuncia_data ? (esito.no_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.no_aggravamento_e_denuncia_data ? (esito.no_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.no_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.no_referto_data ? (esito.no_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                        @if (esito.tp_tumore_del_polmone === true) {
+                          <tr class="dg-row-oncologica">
+                            <td class="dg-name dg-name--oncologica">Tumore al polmone</td>
+                            <td>{{ esito.tp_primo_certificato_e_denuncia_data ? (esito.tp_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.tp_aggravamento_e_denuncia_data ? (esito.tp_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.tp_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.tp_referto_data ? (esito.tp_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.tp_comunicazione_al_cor_data ? (esito.tp_comunicazione_al_cor_data | date:'dd/MM/yyyy') : '-' }}</td>
+                          </tr>
+                        }
+                        @if (esito.bpco_enfisema_polmonare === true) {
+                          <tr>
+                            <td class="dg-name">Broncopneumopatia cronica ostruttiva (BPCO) / enfisema polmonare</td>
+                            <td>{{ esito.bpco_primo_certificato_e_denuncia_data ? (esito.bpco_primo_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.bpco_aggravamento_e_denuncia_data ? (esito.bpco_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.bpco_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.bpco_referto_data ? (esito.bpco_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                        @if (esito.altra_diagnosi) {
+                          <tr>
+                            <td class="dg-name dg-name--altro">{{ esito.altra_diagnosi_descrizione || 'Altra diagnosi' }}</td>
+                            <td>{{ esito.altra_prima_certificato_e_denuncia_data ? (esito.altra_prima_certificato_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.altra_aggravamento_e_denuncia_data ? (esito.altra_aggravamento_e_denuncia_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>{{ esito.altra_percentuale_di_riconoscimento ?? '-' }}</td>
+                            <td>{{ esito.altra_referto_data ? (esito.altra_referto_data | date:'dd/MM/yyyy') : '-' }}</td>
+                            <td>-</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- ===== FOLLOW-UP ===== -->
+                  <h3 class="esito-section-title">Follow-up</h3>
+                  <div class="esito-info-grid">
+                    <div class="info-row"><span class="info-label">Follow-up previsto</span><span class="info-value" [class.text-si]="esito.follow_up_previsto === true" [class.text-no]="esito.follow_up_previsto === false">{{ esito.follow_up_previsto == null ? '-' : (esito.follow_up_previsto ? 'SI' : 'NO') }}</span></div>
+                    <div class="info-row"><span class="info-label">Anno ultima visita</span><span class="info-value">{{ esito.anno_ultima_visita ?? '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Anno presunto prossima visita</span><span class="info-value">{{ esito.anno_presunto_prossima_visita ?? '-' }}</span></div>
+                    <div class="info-row"><span class="info-label">Invio sintesi a MMG</span><span class="info-value" [class.text-si]="esito.invio_sintesi_a_mmg === true" [class.text-no]="esito.invio_sintesi_a_mmg === false">{{ esito.invio_sintesi_a_mmg == null ? '-' : (esito.invio_sintesi_a_mmg ? 'SI' : 'NO') }}</span></div>
+                  </div>
+
+                </mat-expansion-panel>
+              }
+              </mat-accordion>
+
+            }
+          </div>
+        </mat-tab>
+
+        <mat-tab label="NPLA - Piani di lavoro amianto">
+          <div class="tab-content">
+            @if (nplaRecords().length > 0) {
+              @for (npla of nplaRecords(); track $index) {
+                <h3 class="esito-section-title">
+                  Cantiere {{ $index + 1 }}
+                  @if (npla.aziendaNome) { — {{ npla.aziendaNome }} }
+                </h3>
+                <div class="preadesione-anagrafica-grid" style="margin-bottom: 16px;">
+                  <!-- Colonna sinistra -->
+                  <div class="anamnesi-fumo-col">
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Codice Fiscale</span>
+                      <span class="anamnesi-value">{{ v('np.codiceFiscale', npla.codiceFiscale) }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Periodo</span>
+                      <span class="anamnesi-value">{{ npla.periodo || '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Id cantiere</span>
+                      <span class="anamnesi-value">{{ npla.idCantiere || '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Azienda PIVA</span>
+                      <span class="anamnesi-value">{{ v('np.aziendaPiva', npla.aziendaPiva) }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Azienda nome</span>
+                      <span class="anamnesi-value">{{ v('np.aziendaNome', npla.aziendaNome) }}</span>
+                    </div>
+                  </div>
+                  <!-- Colonna destra -->
+                  <div class="anamnesi-fumo-col">
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">ASL cantiere</span>
+                      <span class="anamnesi-value">{{ npla.aslCantiere || '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Comune cantiere</span>
+                      <span class="anamnesi-value">{{ v('np.comuneCantiere', npla.comuneCantiere) }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Anno</span>
+                      <span class="anamnesi-value">{{ npla.anno || '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Tipologia piano</span>
+                      <span class="anamnesi-value">{{ npla.tipologiaPiano || '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Q.tà da rimuovere (kg)</span>
+                      <span class="anamnesi-value">{{ npla.quantitaDaRimuovere ?? '-' }}</span>
+                    </div>
+                    <div class="anamnesi-field">
+                      <span class="anamnesi-label">Q.tà rimossa (kg)</span>
+                      <span class="anamnesi-value">{{ npla.quantitaRimossa ?? '-' }}</span>
+                    </div>
+                  </div>
+                </div>
+              }
+            } @else {
+              <div class="no-data"><p>Nessun piano di lavoro amianto disponibile</p></div>
+            }
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+    </div>
+
+    <!-- Panel cambio stato -->
+    @if (!isPseudo() && showStatoPanel()) {
+      <div class="detail-card stato-change-panel">
+        <h3 class="section-title">Cambio stato</h3>
+        <div class="stato-form">
+          <mat-form-field appearance="outline" class="stato-select">
+            <mat-label>Nuovo stato</mat-label>
+            <mat-select [formControl]="statoScelto">
+              @for (s of statiDisponibili; track s.id) {
+                <mat-option [value]="s.id">{{ s.label }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="nota-textarea">
+            <mat-label>Nota {{ isNotaObbligatoria ? '(obbligatoria)' : '(opzionale)' }}</mat-label>
+            <textarea matInput [formControl]="notaCambioStato" rows="3"
+              placeholder="Inserisci una nota sul cambio di stato..."></textarea>
+            @if (isNotaObbligatoria) {
+              <mat-hint>La nota è obbligatoria per questo stato</mat-hint>
+            }
+          </mat-form-field>
+        </div>
+        <div class="edit-actions">
+          <button class="btn-secondary" (click)="chiudiCambioStato()" [disabled]="isSaving()">Annulla</button>
+          <button class="btn-primary" (click)="eseguiCambioStato()" [disabled]="isSaving()">
+            @if (isSaving()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <i class="fa-regular fa-floppy-disk"></i> Conferma cambio stato
+            }
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- Footer -->
+    <!-- <div class="page-footer">
+      <div class="pagination-controls">
+        <button class="btn-pagination" disabled><i class="fas fa-chevron-left"></i></button>
+        <button class="btn-pagination" disabled><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div> -->
+
+  } @else {
+    <div class="error-container">
+      <i class="fas fa-exclamation-triangle"></i>
+      <p>Assistito non trovato</p>
+      <button class="btn-primary" (click)="tornaAllElenco()">Torna all'elenco</button>
+    </div>
+  }
+
+</div>
+
+<!-- Template riutilizzabile per la cella "Prestazione acquisita" con edit inline -->
+<ng-template #acquisitaCell let-esito="esito" let-field="field" let-value="value" let-effettuato="effettuato">
+  @if (!isPseudo() && !isSpresalNonPseudo() && editingAcquisita()?.esitoId === esito.reg_spresal_esiti_id && editingAcquisita()?.field === field) {
+    <div class="acquisita-edit-row">
+      <select class="acquisita-select"
+              [value]="editAcquistaValue()"
+              (change)="editAcquistaValue.set($any($event.target).value)"
+              [disabled]="isSavingAcquisita()">
+        <option value="null">-</option>
+        <option value="true">SI</option>
+        <option value="false">NO</option>
+      </select>
+      <button class="btn-icon-edit" (click)="salvaAcquisita()" [disabled]="isSavingAcquisita()" title="Salva">
+        @if (isSavingAcquisita()) { <mat-spinner diameter="14"></mat-spinner> }
+        @else { <i class="fa-regular fa-floppy-disk"></i> }
+      </button>
+      <button class="btn-icon-edit" (click)="annullaEditAcquisita()" [disabled]="isSavingAcquisita()" title="Annulla">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  } @else {
+    <div class="acquisita-display-row">
+      <span>{{ value == null ? '-' : (value ? 'SI' : 'NO') }}</span>
+      @if (!isPseudo() && !isSpresalNonPseudo() && effettuato === true) {
+        <button class="btn-icon-edit btn-icon-edit--sm" title="Modifica"
+                (click)="apriEditAcquisita(esito.reg_spresal_esiti_id, field, value)">
+          <i class="fa-solid fa-pen"></i>
+        </button>
+      }
+    </div>
+  }
+</ng-template>

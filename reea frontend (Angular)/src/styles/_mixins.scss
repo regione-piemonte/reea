@@ -1,0 +1,854 @@
+// ============================================
+// MIXINS - Funzioni riutilizzabili SCSS
+// ============================================
+
+@use 'variables' as *;
+
+// === FLEX MIXINS ===
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-start {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@mixin flex-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// === CARD MIXIN ===
+
+@mixin card($padding: $spacing-lg) {
+  background: $bg-card;
+  border-radius: $radius-base;
+  padding: $padding;
+  box-shadow: $shadow-base;
+}
+
+// === TABLE STYLES ===
+
+@mixin table-cell {
+  padding: $spacing-md;
+  font-size: $font-size-base;
+  color: $text-primary;
+  border-bottom: 1px solid $table-border;
+}
+
+@mixin table-header {
+  @include table-cell;
+  background-color: $table-header-bg;
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// === OVERLAY ===
+
+@mixin overlay($bg: rgba(0, 0, 0, 0.5)) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: $bg;
+  z-index: $z-index-modal-backdrop;
+}
+
+// === ANIMATIONS ===
+
+@mixin slide-up($duration: $transition-base) {
+  animation: slideUp $duration ease-out;
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+// === BUTTON MIXINS ===
+
+@mixin button-base {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  border: none;
+  border-radius: $radius-base;
+  font-family: $font-primary;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-all;
+  white-space: nowrap;
+
+  i {
+    font-size: 18px;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+@mixin button-primary($bg: #005ca9, $hover-bg: #004a8a) {
+  @include button-base;
+  background-color: $bg;
+  color: white;
+  padding: 0 $spacing-xl;
+  height: 44px;
+  font-size: 16px;
+
+  i {
+    color: white;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: $hover-bg;
+  }
+}
+
+@mixin button-outline($color: #005ca9, $hover-bg: rgba(0, 92, 169, 0.04)) {
+  @include button-base;
+  border: 1.5px solid $color;
+  background-color: white;
+  color: $color;
+  padding: 0 $spacing-lg;
+  height: 44px;
+  font-size: 16px;
+
+  i {
+    color: $color;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: $hover-bg;
+  }
+}
+
+@mixin button-secondary($bg: #e5e7eb, $hover-bg: #d1d5db) {
+  @include button-base;
+  background-color: $bg;
+  color: black;
+  padding: 0 $spacing-base;
+  height: 40px;
+  font-size: 16px;
+
+  i {
+    color: black;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: $hover-bg;
+  }
+}
+
+// === RESPONSIVE MIXINS ===
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $breakpoint-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: $breakpoint-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $breakpoint-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $breakpoint-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $breakpoint-xl) { @content; }
+  }
+}
+
+// === DIALOG MIXINS ===
+
+@mixin dialog-container($width: 580px) {
+  width: $width;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin dialog-header {
+  @include flex-between;
+  padding: $spacing-lg $spacing-xl;
+  border-bottom: 1px solid $border-light;
+}
+
+@mixin dialog-title {
+  font-size: 22px;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  margin: 0;
+}
+
+@mixin dialog-close-btn {
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: $text-secondary;
+  cursor: pointer;
+  border-radius: $radius-base;
+  transition: $transition-all;
+
+  i { font-size: 18px; }
+
+  &:hover {
+    background-color: $bg-hover;
+    color: $text-primary;
+  }
+}
+
+@mixin dialog-content {
+  padding: $spacing-xl;
+  overflow-y: auto;
+  flex: 1;
+}
+
+@mixin dialog-footer {
+  @include flex-end;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-xl;
+  border-top: 1px solid $border-light;
+  background-color: $bg-body;
+}
+
+// === FORM MIXINS ===
+
+@mixin form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: $spacing-lg;
+}
+
+// REEA-CDU-000-V01
+@mixin field-label($required: false) {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+
+  @if $required {
+    .required { color: $color-danger; margin-left: 2px; }
+  }
+}
+
+@mixin form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-md;
+}
+
+// === PAGE MIXINS ===
+
+@mixin page-container {
+  padding: $spacing-xl $spacing-2xl;
+  background-color: $bg-body;
+  min-height: calc(100vh - 120px);
+}
+
+@mixin page-title {
+  font-size: 24px;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin: 0 0 $spacing-xl 0;
+}
+
+@mixin section-title($color: #005ca9) {
+  font-size: 20px;
+  font-weight: $font-weight-medium;
+  color: $color;
+  margin: 0 0 $spacing-xl 0;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px solid $border-light;
+}
+
+@mixin back-link {
+  @include button-base;
+  padding: 0;
+  background: transparent;
+  color: #005ca9;
+  height: auto;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+// === INFO BOX MIXIN ===
+
+@mixin info-box {
+  background-color: #e8f4fc;
+  border: 1px solid #b8daf3;
+  border-radius: $radius-base;
+  padding: $spacing-lg;
+}
+
+// === DROPZONE MIXIN ===
+
+@mixin dropzone {
+  border: 2px dashed $border-medium;
+  border-radius: $radius-md;
+  padding: $spacing-2xl $spacing-xl;
+  text-align: center;
+  cursor: pointer;
+  transition: $transition-all;
+  background-color: $bg-body;
+
+  &:hover {
+    border-color: $color-primary;
+    background-color: rgba($color-primary, 0.02);
+  }
+
+  &.dragover {
+    border-color: $color-primary;
+    background-color: rgba($color-primary, 0.05);
+    border-style: solid;
+  }
+
+  &.has-file {
+    border-style: solid;
+    border-color: $color-success;
+    background-color: rgba($color-success, 0.02);
+    padding: $spacing-lg;
+  }
+}
+
+// === ACTION BUTTON MIXIN ===
+
+@mixin action-btn($color: $color-primary) {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: $color;
+  cursor: pointer;
+  border-radius: $radius-base;
+  transition: $transition-all;
+
+  i { font-size: 16px; }
+
+  &:hover {
+    background-color: rgba($color, 0.1);
+  }
+}
+
+// === MATERIAL FORM FIELD RESET ===
+
+@mixin mat-form-field-clean {
+  .mat-mdc-form-field-subscript-wrapper { display: none; }
+
+  // REEA-CDU-000-V01
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: $border-dark !important;  border-width: 3px !important;
+  }
+
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $color-primary !important;border-width: 3px !important;
+    }
+  }
+}
+
+// === NO DATA PLACEHOLDER ===
+
+@mixin no-data($icon-size: 48px) {
+  @include flex-column;
+  @include flex-center;
+  padding: $spacing-3xl;
+  color: $text-muted;
+
+  i {
+    font-size: $icon-size;
+    margin-bottom: $spacing-md;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+// === TABLE CONTAINER ===
+
+@mixin table-wrapper {
+  border: 1px solid $border-light;
+  border-radius: $radius-base;
+  overflow: hidden;
+}
+
+// === FILTER LABEL ===
+
+// REEA-CDU-000-V01
+@mixin filter-label {
+  display: block;
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+// === DIALOG MATERIAL TABLE ===
+
+@mixin dialog-mat-table($header-bg: #f9fafb, $header-border: #e5e7eb) {
+  width: 100%;
+  border-collapse: collapse;
+
+  .mat-mdc-header-row {
+    background-color: $header-bg !important;
+    height: 48px;
+  }
+
+  .mat-mdc-header-cell {
+    background-color: $header-bg !important;
+    border-bottom: 1px solid $header-border !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    color: #374151 !important;
+    padding: 14px 16px !important;
+    text-align: left;
+  }
+
+  .mat-mdc-row {
+    height: auto;
+
+    &:hover {
+      background-color: #f9fafb !important;
+    }
+  }
+
+  .mat-mdc-cell {
+    padding: 14px 16px !important;
+    font-size: 14px !important;
+    color: #1f2937 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    vertical-align: middle;
+  }
+
+  .mat-mdc-row:last-child .mat-mdc-cell {
+    border-bottom: none !important;
+  }
+}
+
+// === DIALOG MATERIAL TABLE BLUE (Storia Stati) ===
+
+@mixin dialog-mat-table-blue {
+  @include dialog-mat-table(#eff6ff, #bedbff);
+
+  .mat-mdc-header-cell {
+    color: #000000 !important;
+  }
+}
+
+// === DIALOG NO DATA ===
+
+@mixin dialog-no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  color: #9ca3af;
+
+  i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
+// === DIALOG BTN CHIUDI ===
+
+@mixin dialog-btn-chiudi {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  background-color: #005ca9;
+  color: white;
+  padding: 0 24px;
+  height: 44px;
+  font-size: 16px;
+
+  &:hover {
+    background-color: #004a8a;
+  }
+}
+
+// === DETAIL PAGE MIXINS ===
+
+@mixin detail-card {
+  background: white;
+  border-radius: $radius-md;
+  padding: $spacing-xl;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border-light;
+}
+
+@mixin detail-section-title {
+  font-size: 18px;
+  font-weight: $font-weight-semibold;
+  color: $color-primary;
+  margin: 0 0 $spacing-xl 0;
+}
+
+@mixin data-field {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+// REEA-CDU-000-V01
+@mixin data-field-label {
+  font-size: 14px;
+  font-weight: $font-weight-bold;
+  color: $text-primary;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+@mixin data-field-value {
+  font-size: 16px;
+  font-weight: $font-weight-medium;
+  color: $text-primary;
+}
+
+@mixin data-grid($columns: 2) {
+  display: grid;
+  gap: $spacing-xl $spacing-2xl;
+  grid-template-columns: repeat($columns, 1fr);
+}
+
+// === PAGE LAYOUT MIXINS ===
+
+@mixin page-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-xl;
+}
+
+@mixin page-footer-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: $spacing-lg;
+}
+
+// === BUTTON VARIANTS ===
+
+@mixin btn-icon-edit {
+  background: none;
+  border: none;
+  padding: $spacing-xs;
+  cursor: pointer;
+  color: $color-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i { font-size: 14px; }
+
+  &:hover { color: $color-primary-dark; }
+}
+
+@mixin btn-outline-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-base;
+  background: white;
+  border: 1px solid $color-primary;
+  border-radius: $radius-sm;
+  color: $color-primary;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-all;
+
+  i { font-size: 14px; }
+
+  &:hover {
+    background: $color-primary;
+    color: white;
+  }
+}
+
+@mixin btn-success {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: #10b981;
+  border: none;
+  border-radius: $radius-sm;
+  color: white;
+  font-size: 14px;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: $transition-all;
+
+  i { font-size: 14px; }
+
+  &:hover:not(:disabled) { background: #059669; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+@mixin btn-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: white;
+  border: 1px solid $border-medium;
+  border-radius: $radius-sm;
+  color: $text-primary;
+  cursor: pointer;
+  transition: $transition-all;
+
+  i { font-size: 12px; }
+
+  &:hover:not(:disabled) {
+    background: $bg-hover;
+    border-color: $border-dark;
+  }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+// === STATE CONTAINERS ===
+
+@mixin loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+@mixin error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: $spacing-lg;
+  min-height: 300px;
+  text-align: center;
+
+  i { font-size: 64px; color: $color-warning; }
+  p { font-size: 18px; color: $text-secondary; margin: 0; }
+}
+
+// === TABS STYLING ===
+
+@mixin tabs-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+@mixin tab-content {
+  padding: $spacing-xl;
+}
+
+@mixin tab-section-title {
+  font-size: 16px;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  margin: 0 0 $spacing-lg 0;
+}
+
+// === EDIT SECTION ===
+
+@mixin modifica-section {
+  margin-top: $spacing-xl;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $border-light;
+}
+
+@mixin edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  margin-top: $spacing-xl;
+  padding-top: $spacing-lg;
+  border-top: 1px solid $border-light;
+}
+
+// === SIMPLE TABLE ===
+
+@mixin simple-table {
+  width: 100%;
+
+  th {
+    padding: $spacing-md $spacing-base;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid $border-light;
+    color: $text-secondary;
+    font-weight: $font-weight-medium;
+    font-size: 13px;
+    text-align: left;
+  }
+
+  td {
+    padding: $spacing-md $spacing-base;
+    font-size: 14px;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background-color: $bg-hover; }
+}
+
+// === MATERIAL FORM FIELD OVERRIDES ===
+
+@mixin mat-form-field-detail {
+  .mat-mdc-text-field-wrapper { padding-bottom: 0; }
+  .mat-mdc-form-field-infix { padding-top: 10px; padding-bottom: 10px; min-height: 40px; }
+  .mat-mdc-form-field-subscript-wrapper { height: 18px; }
+  .mat-mdc-input-element { font-size: 16px; color: $text-primary; }
+
+  // REEA-CDU-000-V01
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing { border-color: $border-dark !important;   border-width: 3px !important;}
+
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing { border-color: $color-primary !important; border-width: 3px !important; }
+  }
+}
+
+@mixin mat-form-field-filters {
+  .mat-mdc-text-field-wrapper { padding-bottom: 0; min-height: 52px !important; }
+  .mat-mdc-form-field-infix { padding-top: 14px; padding-bottom: 14px; min-height: 44px; }
+  .mat-mdc-form-field-subscript-wrapper { display: none; }
+  .mat-mdc-input-element, .mat-mdc-select { font-size: 16px; color: $text-primary; }
+  .mat-mdc-input-element { height: 24px !important; }
+  .mat-mdc-input-element::placeholder { font-size: 16px; color: $text-secondary; }
+
+  // REEA-CDU-000-V01
+  .mdc-notched-outline__leading {
+    border-width: 3px !important;
+    border-color: $border-dark !important;
+    border-radius: $radius-base 0 0 $radius-base !important;
+    width: 16px !important;
+  }
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing { border-width: 3px !important; border-color: $border-dark !important; }
+  .mdc-notched-outline__trailing { border-width: 3px !important;border-radius: 0 $radius-base $radius-base 0 !important; }
+
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing { border-color: $color-primary !important; border-width: 3px !important; }
+  }
+}
+
+@mixin mat-form-field-form {
+  .mat-mdc-text-field-wrapper { padding-bottom: 0; }
+  .mat-mdc-form-field-infix { padding-top: 12px; padding-bottom: 12px; min-height: 44px; }
+  .mat-mdc-form-field-subscript-wrapper { height: 18px; }
+  .mat-mdc-input-element, .mat-mdc-select { font-size: 16px; color: $text-primary; }
+  .mat-mdc-input-element::placeholder { font-size: 14px; color: $text-muted; }
+
+  // REEA-CDU-000-V01
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border-color: $border-dark !important;
+  border-width: 3px !important;
+}
+
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing { border-color: $color-primary !important; border-width: 3px !important; }
+  }
+
+  &.mat-form-field-invalid {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing { border-color: $color-danger !important; border-width: 3px !important;}
+  }
+
+  .mat-datepicker-toggle { color: $text-secondary; }
+}
+
+// === TABS MATERIAL OVERRIDES ===
+
+@mixin mat-tabs-detail {
+  .mat-mdc-tab-header {
+    background-color: white;
+    border-bottom: 1px solid $border-light;
+  }
+
+  .mat-mdc-tab {
+    min-width: auto;
+    padding: 0 $spacing-lg;
+    height: 48px;
+
+    .mdc-tab__text-label {
+      font-size: 13px;
+      font-weight: $font-weight-medium;
+      color: $text-secondary;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    &.mdc-tab--active .mdc-tab__text-label {
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  .mat-mdc-tab-body-wrapper { background-color: white; }
+  .mdc-tab-indicator__content--underline { border-color: $color-primary; border-width: 2px; }
+}

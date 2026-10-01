@@ -1,0 +1,340 @@
+<app-header title="Registro Ex Esposti Amianto"></app-header>
+
+<div class="page-container">
+
+  <!-- Breadcrumb -->
+  <div class="back-link">
+    <button class="back-button" (click)="tornaAlDettaglio()">
+      <i class="fas fa-arrow-left"></i>
+      Torna al dettaglio assistito
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else if (dati()) {
+
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Anagrafica Completa</h1>
+        <span class="page-subtitle">{{ v('cognome', dati()!.cognome) }} {{ v('nome', dati()!.nome) }} — {{ v('codice_fiscale', dati()!.codice_fiscale) }}</span>
+      </div>
+      <div class="header-actions">
+        @if (dati()!.descrizione_stato) {
+          <app-status-badge [stato]="statoAssistito(dati()!.descrizione_stato)"></app-status-badge>
+        }
+        @if (!editMode() && !isPseudo()) {
+          <button class="btn-modifica" (click)="attivaModifica()">
+            <i class="fas fa-edit"></i> Modifica
+          </button>
+        } @else if (editMode()) {
+          <button class="btn-annulla" (click)="annullaModifica()" [disabled]="saving()">
+            Annulla
+          </button>
+          <button class="btn-salva" (click)="salva()" [disabled]="saving()">
+            @if (saving()) { <i class="fas fa-spinner fa-spin"></i> Salvataggio... }
+            @else { <i class="fas fa-save"></i> Salva }
+          </button>
+        }
+      </div>
+    </div>
+
+    <form [formGroup]="editForm">
+
+    <!-- ===== DATI IDENTIFICATIVI ===== -->
+    <div class="section-card">
+      <h2 class="section-title">Dati Identificativi</h2>
+      <div class="field-list">
+        <div class="field-row"><span class="field-label">Codice Fiscale</span><span class="field-value">{{ v('codice_fiscale', dati()!.codice_fiscale) }}</span></div>
+        <div class="field-row"><span class="field-label">Id Aura</span><span class="field-value">{{ v('id_aura', dati()!.id_aura) }}</span></div>
+        <div class="field-row"><span class="field-label">Cognome</span><span class="field-value">{{ v('cognome', dati()!.cognome) }}</span></div>
+        <div class="field-row"><span class="field-label">Nome</span><span class="field-value">{{ v('nome', dati()!.nome) }}</span></div>
+        <div class="field-row"><span class="field-label">Sesso</span><span class="field-value">{{ v('sesso', dati()!.sesso) }}</span></div>
+        <div class="field-row"><span class="field-label">Data di nascita</span><span class="field-value">{{ isMasked('nascita_data') ? '*****' : (dati()!.nascita_data ? (dati()!.nascita_data | date:'dd/MM/yyyy') : '-') }}</span></div>
+        <div class="field-row"><span class="field-label">Comune di nascita</span><span class="field-value">{{ v('nascita_comune_desc', dati()!.nascita_comune_desc) }}</span></div>
+        <div class="field-row"><span class="field-label">Provincia di nascita</span><span class="field-value">{{ v('nascita_provincia_desc', dati()!.nascita_provincia_desc) }}</span></div>
+        <div class="field-row"><span class="field-label">Stato di nascita</span><span class="field-value">{{ v('nascita_stato_desc', dati()!.nascita_stato_desc) }}</span></div>
+        <div class="field-row"><span class="field-label">Tessera Team</span><span class="field-value">{{ v('tessera_team', dati()!.tessera_team) }}</span></div>
+        <div class="field-row">
+          <span class="field-label">ASL di Assistenza</span>
+          @if (editMode() && !isFromAura()) {
+            <mat-form-field appearance="outline" class="edit-select">
+              <mat-select [formControl]="ctrl('assistenza_asl_id')" placeholder="Seleziona ASL">
+                <mat-option [value]="null">-- Nessuna --</mat-option>
+                @for (asl of aslOptions(); track asl.asl_id) {
+                  <mat-option [value]="asl.asl_id">{{ asl.asl_azienda_desc }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          } @else {
+            <span class="field-value">{{ v('descrizione_asl_competenza', dati()!.descrizione_asl_competenza) }}</span>
+          }
+        </div>
+        @if (dati()!.data_decesso) {
+          <div class="field-row">
+            <span class="field-label field-label--danger">Data fine ASL</span>
+            <span class="field-value field-value--danger">{{ isMasked('assistenza_asl_fine') ? '*****' : (dati()!.assistenza_asl_fine ? (dati()!.assistenza_asl_fine | date:'dd/MM/yyyy') : '-') }}</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label field-label--danger">Data decesso</span>
+            <span class="field-value field-value--danger">{{ isMasked('data_decesso') ? '*****' : (dati()!.data_decesso | date:'dd/MM/yyyy') }}</span>
+          </div>
+        }
+        @if (!dati()!.data_decesso && dati()!.descrizione_stato?.toLowerCase().includes('emigrazione')) {
+          <div class="field-row">
+            <span class="field-label field-label--warning">Data fine ASL</span>
+            <span class="field-value field-value--warning">{{ isMasked('assistenza_asl_fine') ? '*****' : (dati()!.assistenza_asl_fine ? (dati()!.assistenza_asl_fine | date:'dd/MM/yyyy') : '-') }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- ===== RESIDENZA ===== -->
+    <div class="section-card">
+      <h2 class="section-title">Residenza</h2>
+      <div class="field-list">
+        <div class="field-row">
+          <span class="field-label">Stato</span>
+          @if (editMode() && !isFromAura()) {
+            <mat-form-field appearance="outline" class="edit-select">
+              <mat-select [formControl]="ctrl('residenza_nazione_cod')" placeholder="Seleziona"
+                          (selectionChange)="onResidenzaStatoChange($event.value)">
+                <mat-option value="">-- Nessuno --</mat-option>
+                @for (n of nazioniOptions(); track n.nazione_istat_cod) {
+                  <mat-option [value]="n.nazione_istat_cod">{{ n.nazione_desc_it }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          } @else {
+            <span class="field-value">{{ v('residenza_stato_desc', dati()!.residenza_stato_desc) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">Provincia</span>
+          @if (editMode() && !isFromAura()) {
+            @if (residenzaEstera()) {
+              <span class="field-value">-</span>
+            } @else {
+              <mat-form-field appearance="outline" class="edit-select">
+                <mat-select [formControl]="ctrl('residenza_provincia_id')" placeholder="Seleziona"
+                            (selectionChange)="onResidenzaProvinciaChange($event.value)">
+                  <mat-option [value]="null">-- Nessuna --</mat-option>
+                  @for (p of provinceOptions(); track p.provincia_id) {
+                    <mat-option [value]="p.provincia_id">{{ p.provincia_desc }} ({{ p.provincia_sigla }})</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            }
+          } @else {
+            <span class="field-value">{{ v('residenza_provincia_desc', dati()!.residenza_provincia_desc) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">Comune</span>
+          @if (editMode() && !isFromAura()) {
+            @if (residenzaEstera()) {
+              <span class="field-value">-</span>
+            } @else {
+              <mat-form-field appearance="outline" class="edit-select">
+                <mat-select [formControl]="ctrl('residenza_comune_cod_sel')" placeholder="Seleziona comune">
+                  @if (!ctrl('residenza_provincia_id').value) {
+                    <mat-option disabled value="">Seleziona prima una provincia</mat-option>
+                  }
+                  @for (c of comuniResidenzaOptions(); track c.comune_cod) {
+                    <mat-option [value]="c.comune_cod">{{ c.comune_desc }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            }
+          } @else {
+            <span class="field-value">{{ v('residenza_comune_desc', dati()!.residenza_comune_desc) }}</span>
+          }
+        </div>
+        <div class="field-row"><span class="field-label">Cod. comune ISTAT</span><span class="field-value">{{ v('residenza_comune_cod', dati()!.residenza_comune_cod) }}</span></div>
+        <div class="field-row">
+          <span class="field-label">Indirizzo</span>
+          @if (editMode() && !isFromAura()) {
+            <input class="edit-input" [formControl]="ctrl('residenza_indirizzo')" />
+          } @else {
+            <span class="field-value">{{ v('residenza_indirizzo', dati()!.residenza_indirizzo) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">Numero civico</span>
+          @if (editMode() && !isFromAura()) {
+            <input class="edit-input" [formControl]="ctrl('residenza_numero_civico')" />
+          } @else {
+            <span class="field-value">{{ v('residenza_numero_civico', dati()!.residenza_numero_civico) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">CAP</span>
+          @if (editMode() && !isFromAura()) {
+            <input class="edit-input" maxlength="5" [formControl]="ctrl('residenza_cap')" />
+          } @else {
+            <span class="field-value">{{ v('residenza_cap', dati()!.residenza_cap) }}</span>
+          }
+        </div>
+        <div class="field-row"><span class="field-label">ASL di residenza</span><span class="field-value">{{ v('residenza_asl_desc', dati()!.residenza_asl_desc) }}</span></div>
+      </div>
+    </div>
+
+    <!-- ===== DOMICILIO ===== -->
+    <div class="section-card">
+      <h2 class="section-title">Domicilio</h2>
+      <div class="field-list">
+        <div class="field-row">
+          <span class="field-label">Stato</span>
+          @if (editMode() && !isFromAura()) {
+            <mat-form-field appearance="outline" class="edit-select">
+              <mat-select [formControl]="ctrl('domicilio_nazione_cod')" placeholder="Seleziona"
+                          (selectionChange)="onDomicilioStatoChange($event.value)">
+                <mat-option value="">-- Nessuno --</mat-option>
+                @for (n of nazioniOptions(); track n.nazione_istat_cod) {
+                  <mat-option [value]="n.nazione_istat_cod">{{ n.nazione_desc_it }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          } @else {
+            <span class="field-value">{{ v('domicilio_stato_desc', dati()!.domicilio_stato_desc) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">Provincia</span>
+          @if (editMode() && !isFromAura()) {
+            @if (domicilioEstero()) {
+              <span class="field-value">-</span>
+            } @else {
+              <mat-form-field appearance="outline" class="edit-select">
+                <mat-select [formControl]="ctrl('domicilio_provincia_id')" placeholder="Seleziona"
+                            (selectionChange)="onDomicilioProvinciaChange($event.value)">
+                  <mat-option [value]="null">-- Nessuna --</mat-option>
+                  @for (p of provinceOptions(); track p.provincia_id) {
+                    <mat-option [value]="p.provincia_id">{{ p.provincia_desc }} ({{ p.provincia_sigla }})</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            }
+          } @else {
+            <span class="field-value">{{ v('domicilio_provincia_desc', dati()!.domicilio_provincia_desc) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">Comune</span>
+          @if (editMode() && !isFromAura()) {
+            @if (domicilioEstero()) {
+              <span class="field-value">-</span>
+            } @else {
+              <mat-form-field appearance="outline" class="edit-select">
+                <mat-select [formControl]="ctrl('domicilio_comune_cod_sel')" placeholder="Seleziona comune">
+                  @if (!ctrl('domicilio_provincia_id').value) {
+                    <mat-option disabled value="">Seleziona prima una provincia</mat-option>
+                  }
+                  @for (c of comuniDomicilioOptions(); track c.comune_cod) {
+                    <mat-option [value]="c.comune_cod">{{ c.comune_desc }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            }
+          } @else {
+            <span class="field-value">{{ v('domicilio_comune_desc', dati()!.domicilio_comune_desc) }}</span>
+          }
+        </div>
+        <div class="field-row"><span class="field-label">Cod. comune ISTAT</span><span class="field-value">{{ v('domicilio_comune_cod', dati()!.domicilio_comune_cod) }}</span></div>
+        <div class="field-row">
+          <span class="field-label">Indirizzo</span>
+          @if (editMode() && !isFromAura()) {
+            <input class="edit-input" [formControl]="ctrl('domicilio_indirizzo')" />
+          } @else {
+            <span class="field-value">{{ v('domicilio_indirizzo', dati()!.domicilio_indirizzo) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">Numero civico</span>
+          @if (editMode() && !isFromAura()) {
+            <input class="edit-input" [formControl]="ctrl('domicilio_numero_civico')" />
+          } @else {
+            <span class="field-value">{{ v('domicilio_numero_civico', dati()!.domicilio_numero_civico) }}</span>
+          }
+        </div>
+        <div class="field-row">
+          <span class="field-label">CAP</span>
+          @if (editMode() && !isFromAura()) {
+            <input class="edit-input" maxlength="5" [formControl]="ctrl('domicilio_cap')" />
+          } @else {
+            <span class="field-value">{{ v('domicilio_cap', dati()!.domicilio_cap) }}</span>
+          }
+        </div>
+        <div class="field-row"><span class="field-label">ASL di domicilio</span><span class="field-value">{{ v('domicilio_asl_desc', dati()!.domicilio_asl_desc) }}</span></div>
+      </div>
+    </div>
+
+    <!-- ===== CONTATTI ===== -->
+    <div class="section-card">
+      <h2 class="section-title">Contatti</h2>
+      <div class="field-list">
+        <div class="field-row">
+          <span class="field-label">Telefono</span>
+          @if (editMode()) {
+            <input class="edit-input" [formControl]="ctrl('telefono')" />
+          } @else {
+            <span class="field-value">{{ v('telefono', dati()!.telefono) }}</span>
+          }
+        </div>
+        <div class="field-row"><span class="field-label">Telefono (AURA)</span><span class="field-value">{{ v('telefono_aura', dati()!.telefono_aura) }}</span></div>
+        <div class="field-row">
+          <span class="field-label">E-mail</span>
+          @if (editMode()) {
+            <input class="edit-input" type="email" [formControl]="ctrl('email')" />
+          } @else {
+            <span class="field-value">{{ v('email', dati()!.email) }}</span>
+          }
+        </div>
+        <div class="field-row"><span class="field-label">E-mail (AURA)</span><span class="field-value">{{ v('email_aura', dati()!.email_aura) }}</span></div>
+      </div>
+    </div>
+
+    </form>
+
+    <!-- ===== ESENZIONI ===== -->
+    <div class="section-card">
+      <h2 class="section-title">Esenzioni</h2>
+      @if (esenzioni().length > 0) {
+        <table class="esenzioni-table">
+          <thead>
+            <tr>
+              <th>Codice esenzione</th>
+              <th>Esenzione</th>
+              <th>Codice diagnosi</th>
+              <th>Diagnosi</th>
+              <th>Data emissione</th>
+              <th>Data scadenza</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of esenzioni(); track e.esenzione_cod + (e.diagnosi_cod ?? '')) {
+              <tr>
+                <td>{{ e.esenzione_cod }}</td>
+                <td>{{ e.esenzione_desc || '—' }}</td>
+                <td>{{ e.diagnosi_cod || '—' }}</td>
+                <td>{{ e.diagnosi_desc || '—' }}</td>
+                <td>{{ e.esenzione_data_emissione ? (e.esenzione_data_emissione | date:'dd/MM/yyyy') : '—' }}</td>
+                <td>{{ e.esenzione_data_scadenza ? (e.esenzione_data_scadenza | date:'dd/MM/yyyy') : '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="no-data-text">Nessuna esenzione registrata</p>
+      }
+    </div>
+
+  } @else {
+    <div class="error-container">
+      <p>Dati non disponibili</p>
+    </div>
+  }
+
+</div>

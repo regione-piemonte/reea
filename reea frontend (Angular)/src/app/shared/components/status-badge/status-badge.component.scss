@@ -1,0 +1,55 @@
+@use '../../../../styles/variables' as *;
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+  line-height: 1.3;
+
+  // Da validare - Giallo/Arancione (Figma)
+  &.badge-warning {
+    background-color: #FFF4E5;
+    color: #D97706;
+    border: 1px solid #FCD34D;
+  }
+
+  // Validato - Verde
+  &.badge-success {
+    background-color: #D1FAE5;
+    color: #059669;
+    border: 1px solid #6EE7B7;
+  }
+
+  // Inviato al monitoraggio - Azzurro
+  &.badge-info {
+    background-color: #E0F2FE;
+    color: #0284C7;
+    border: 1px solid #7DD3FC;
+  }
+
+  // Non validato - Rosso (Figma)
+  &.badge-danger {
+    background-color: #FEE2E2;
+    color: #DC2626;
+    border: 1px solid #FCA5A5;
+  }
+
+  // Escluso / Altro - Grigio
+  &.badge-secondary {
+    background-color: #F3F4F6;
+    color: #6B7280;
+    border: 1px solid #D1D5DB;
+  }
+
+  // Monitoraggio concluso - Blu
+  &.badge-primary {
+    background-color: #DBEAFE;
+    color: #1D4ED8;
+    border: 1px solid #93C5FD;
+  }
+}

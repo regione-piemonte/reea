@@ -1,0 +1,1066 @@
+// DETTAGLIO ASSISTITO - Styles
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.page-container { @include page-container; max-width: 1400px; margin: 0 auto; }
+
+// Prestazione acquisita: cella con valore + matitina
+.acquisita-cell {
+  white-space: nowrap;
+}
+.acquisita-display-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.acquisita-edit-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.acquisita-select {
+  font-size: 13px;
+  padding: 2px 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 26px;
+}
+
+.btn-icon-edit--sm {
+  padding: 2px 4px;
+  font-size: 11px;
+}
+
+.back-link {
+  margin-bottom: $spacing-lg;
+  .back-button { @include back-link; font-size: 14px; font-weight: $font-weight-medium; }
+}
+
+// === HEADER ===
+.page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-base;
+
+  .page-title {
+    @include page-title;
+    margin: 0;
+  }
+}
+
+// Header "Dati di registro" con badge allineato alla colonna valori
+.registro-header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-base;
+
+  .section-title {
+    width: 200px;
+    flex-shrink: 0;
+    margin-bottom: 0 !important;
+  }
+}
+
+// === CARD ===
+.detail-card {
+  @include detail-card;
+  padding: $spacing-lg !important;
+}
+.section-title {
+  @include detail-section-title;
+  margin-bottom: $spacing-base !important;
+}
+
+// Bottone in fondo alla card anagrafica
+.card-footer-action {
+  margin-top: $spacing-base;
+}
+
+.btn-visualizza-anagrafica {
+  @include button-primary;
+  font-size: 13px;
+  padding: 8px 16px;
+  width: 100%;
+  justify-content: center;
+}
+
+// Layout label-valore in riga
+.info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &.info-list--compact {
+    gap: 4px;
+  }
+}
+
+.info-row {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+  gap: $spacing-xl;
+  padding: 3px 0;
+}
+
+.info-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: $text-primary;
+  white-space: nowrap;
+}
+
+.info-value {
+  font-size: 13px;
+  color: $text-primary;
+
+  &.info-value--editable {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-sm;
+  }
+}
+
+.contatti-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.contatti-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aura-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #1565c0;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  border-radius: 3px;
+  padding: 1px 5px;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+// Due card affiancate
+.cards-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-lg;
+
+  .card-half {
+    margin-bottom: 0;
+  }
+}
+
+// === DATA GRID ===
+.data-grid {
+  @include data-grid(2);
+  &.anagrafica-grid { grid-template-columns: repeat(2, 1fr); margin-bottom: $spacing-lg; }
+  &.registro-grid   { grid-template-columns: repeat(2, 1fr); }
+  &.preadesione-info-grid { grid-template-columns: repeat(3, 1fr); margin-bottom: $spacing-xl; }
+}
+
+.data-field {
+  @include data-field;
+  .field-label { @include data-field-label; }
+  .field-value { @include data-field-value; }
+  .field-value-with-icon { @include flex-start; gap: $spacing-md; .field-value { flex: 1; } }
+}
+
+.btn-icon-edit { @include btn-icon-edit; }
+.edit-actions {
+  @include edit-actions;
+  .btn-secondary { @include button-secondary; font-size: 13px; padding: 8px 16px; }
+  .btn-primary { @include button-primary; font-size: 13px; padding: 8px 16px; i { margin-right: $spacing-sm; } }
+}
+.edit-field {
+  width: 260px;
+
+  ::ng-deep {
+    .mat-mdc-text-field-wrapper { padding: 0 8px; }
+    .mat-mdc-form-field-infix {
+      padding-top: 4px !important;
+      padding-bottom: 4px !important;
+      min-height: unset;
+    }
+    input.mat-mdc-input-element {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+  }
+}
+
+// === ACCORDION ===
+.accordion-section {
+  margin-bottom: $spacing-lg;
+
+  .accordion-icon {
+    margin-right: $spacing-sm;
+    color: $color-primary;
+  }
+}
+
+.accordion-loading {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.accordion-table-container {
+  overflow-x: auto;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  margin-top: $spacing-base;
+}
+
+.storia-table,
+.note-table {
+  @include simple-table;
+  width: 100%;
+}
+
+// === STORIA STATI ===
+.stato-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot-attuale {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #1c398e;
+  flex-shrink: 0;
+}
+
+::ng-deep .row-current td {
+  background-color: #f0f7ff !important;
+  font-weight: 500;
+}
+
+::ng-deep .storia-table .mat-column-notaPassaggioStato {
+  white-space: normal;
+  word-break: break-word;
+  min-width: 160px;
+}
+
+// === NOTE FORM ===
+.nota-form {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-lg;
+
+  .nota-textarea {
+    flex: 1;
+  }
+
+  .btn-salva-nota {
+    @include button-primary;
+    margin-top: 4px;
+    white-space: nowrap;
+
+    i { margin-right: $spacing-sm; }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.nota-edit-field {
+  width: 100%;
+}
+
+// === TABS ===
+.tabs-card { @include tabs-card; }
+.tab-content { @include tab-content; }
+.tab-section-title { @include tab-section-title; }
+
+.table-container {
+  overflow-x: auto;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  .esposizioni-table { @include simple-table; }
+}
+
+.no-data { padding: $spacing-xl; text-align: center; p { font-size: 14px; color: $text-secondary; margin: 0; } }
+
+.sub-section-card {
+  background: #f8fafc;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  padding: $spacing-base;
+  margin-bottom: $spacing-base;
+
+  .info-label { color: $color-primary; }
+}
+
+.sub-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: $color-primary;
+  margin-bottom: $spacing-sm;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: $spacing-xl;
+}
+
+// === VALUTA TAB ACTION ===
+.tab-valuta-action {
+  display: flex;
+  justify-content: center;
+  margin-top: $spacing-lg;
+  padding-top: $spacing-base;
+  border-top: 1px solid $border-light;
+}
+
+.btn-valuta-tab {
+  @include button-primary;
+  font-size: 13px;
+  padding: 8px 16px;
+  i { margin-right: $spacing-sm; }
+}
+
+// === CRPT FORM ===
+.crpt-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: $spacing-base;
+  margin-top: $spacing-base;
+}
+
+.crpt-form-field {
+  display: flex;
+  flex-direction: column;
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-secondary;
+    margin-bottom: 4px;
+  }
+  .full-width { width: 100%; }
+}
+
+.crpt-actions {
+  display: flex;
+  gap: $spacing-base;
+  justify-content: flex-end;
+  margin-top: $spacing-base;
+  padding-top: $spacing-base;
+  border-top: 1px solid $border-light;
+}
+
+.esposizione-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+.btn-crpt-azioni {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1565c0;
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  &:hover { background: #bbdefb; }
+}
+
+.occupazione-table {
+  th, td {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}
+
+.crpt-detail-row {
+  height: 0;
+
+  td.crpt-detail-cell {
+    padding: 0;
+    border-bottom: none;
+    overflow: hidden;
+  }
+}
+
+.crpt-detail-row:has(.crpt-panel-expanded) td.crpt-detail-cell {
+  padding: 0 0 12px;
+  border-bottom: 2px solid #90caf9;
+}
+
+// Riga selezionata — sfondo più scuro
+::ng-deep .occupazione-table tr.mat-mdc-row.row-expanded td {
+  background-color: #dbeafe !important;
+  font-weight: 600;
+}
+
+// Pannello CRPT aperto — sfondo più scuro
+.crpt-panel-expanded {
+  background: #eff6ff;
+  border: 1.5px solid #90caf9;
+  border-radius: 6px;
+  margin: 8px 0 4px;
+  padding: 4px;
+}
+
+.btn-annulla-tab {
+  @include button-secondary;
+  font-size: 13px;
+  padding: 8px 16px;
+  i { margin-right: $spacing-sm; }
+}
+
+// === FOOTER ===
+.page-footer { @include page-footer-flex; }
+.btn-valida { @include btn-success; }
+.pagination-controls { display: flex; gap: $spacing-xs; }
+.btn-pagination { @include btn-pagination; }
+.loading-container { @include loading-container; }
+.error-container { @include error-container; .btn-primary { @include button-primary; } }
+
+// === MATERIAL OVERRIDES ===
+::ng-deep {
+  .detail-card .mat-mdc-form-field { @include mat-form-field-detail; }
+  .tabs-card .mat-mdc-tab-group { @include mat-tabs-detail; }
+  // Tab attiva: blu primario, testo bianco, si "fonde" con il contenuto sottostante
+  .tabs-card .mat-mdc-tab.mdc-tab--active {
+    background-color: #0073E6;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    margin-bottom: -1px;
+    padding-bottom: 1px;
+    z-index: 1;
+  }
+  .tabs-card .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+    color: white !important;
+  }
+  // Nasconde la lineetta indicatore MDC (sostituita dal bordo)
+  .tabs-card .mdc-tab-indicator__content {
+    display: none !important;
+  }
+  // Contenuto: bordo su tutti i lati, la tab attiva si sovrappone al bordo superiore
+  .tabs-card .mat-mdc-tab-body-wrapper {
+    border: 1px solid #0073E6;
+    border-radius: 0 0 6px 6px;
+  }
+  .tabs-card .mat-mdc-tab-header-pagination {
+    display: none !important;
+  }
+
+  .esposizioni-table,
+  .storia-table,
+  .note-table {
+    th.mat-mdc-header-cell,
+    .mat-mdc-header-row .mat-mdc-header-cell,
+    .mdc-data-table__header-cell {
+      background-color: #eff6ff !important;
+      border-bottom: 1px solid #bedbff !important;
+      color: black !important;
+      font-weight: 700 !important;
+      font-size: 14px !important;
+    }
+    td.mat-mdc-cell { font-size: 14px; color: $text-primary; }
+  }
+
+  .note-table .mat-column-descrizione {
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .accordion-section {
+    .mat-expansion-panel {
+      border: 1.5px solid #b3d4f5;
+      border-radius: 12px !important;
+      margin-bottom: $spacing-lg;
+      box-shadow: none !important;
+    }
+    .mat-expansion-panel-header {
+      font-weight: $font-weight-semibold;
+      font-size: 18px;
+      color: $color-primary;
+
+      .mat-expansion-panel-header-title,
+      .mat-panel-title {
+        color: $color-primary !important;
+        font-weight: $font-weight-semibold;
+        font-size: 18px;
+      }
+
+      &:hover {
+        background-color: #f0f7ff !important;
+      }
+    }
+    .mat-expansion-panel-body {
+      padding: $spacing-lg;
+    }
+  }
+}
+
+// === PANNELLO CAMBIO STATO ===
+.stato-change-panel {
+  margin-top: $spacing-base;
+
+  .stato-form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-base;
+    max-width: 600px;
+
+    .stato-select { width: 100%; }
+    .nota-textarea { width: 100%; }
+  }
+}
+
+// === SPRESAL ESITI ===
+.esiti-accordion {
+  display: block;
+  margin-top: $spacing-base;
+}
+
+.esito-panel {
+  margin-bottom: $spacing-base;
+  border-radius: $radius-md !important;
+  box-shadow: $shadow-base !important;
+
+  &:last-child { margin-bottom: 0; }
+
+  ::ng-deep .mat-expansion-panel-header {
+    background: #f0f6ff;
+    border-radius: $radius-md !important;
+    min-height: 52px;
+
+    &.mat-expanded {
+      border-radius: $radius-md $radius-md 0 0 !important;
+    }
+  }
+
+  ::ng-deep .mat-expansion-panel-body {
+    padding: $spacing-lg;
+  }
+}
+
+.esito-header-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: $color-primary;
+  margin-right: $spacing-base;
+}
+
+.esito-livello-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e3efff;
+  color: $color-primary;
+  border: 1px solid #b3d4f5;
+}
+
+.esito-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $text-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: $spacing-lg 0 $spacing-sm;
+  padding-bottom: 4px;
+  border-bottom: 1px solid $border-light;
+}
+
+.esito-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.esito-note-row {
+  grid-column: 1 / -1;
+}
+
+// === SPRESAL ANAMNESI LAYOUT ===
+
+.anamnesi-row-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px 16px;
+  margin-bottom: 8px;
+
+  &.cols-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.anamnesi-fumo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.anamnesi-fumo-col {
+  padding: 10px 12px;
+  border-right: 1px solid $border-light;
+
+  &:last-child {
+    border-right: none;
+  }
+}
+
+.anamnesi-fumo-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: $color-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #b3d4f5;
+}
+
+.anamnesi-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 6px;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.anamnesi-fumo-col .anamnesi-field {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 4px;
+
+  .anamnesi-label {
+    flex: 0 0 48%;
+    max-width: 48%;
+  }
+
+  .anamnesi-value {
+    flex: 1;
+    text-align: right;
+    word-break: break-word;
+  }
+}
+
+.anamnesi-nota-amianto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0 12px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-left: 3px solid $color-primary;
+  border-radius: 4px;
+
+  .anamnesi-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $color-primary;
+  }
+
+  .anamnesi-value {
+    font-size: 13px;
+    color: $text-primary;
+  }
+}
+
+.anamnesi-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: $color-primary;
+  line-height: 1.2;
+}
+
+.anamnesi-value {
+  font-size: 13px;
+  color: $text-primary;
+  line-height: 1.4;
+}
+
+// === PREADESIONE ANAGRAFICA GRID (2 colonne) ===
+.preadesione-anagrafica-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+// Diagnosi adempimenti table
+.diagnosi-adempimenti-container {
+  border: 2px solid $color-primary;
+  border-radius: $radius-sm;
+  overflow-x: auto;
+  margin-top: 8px;
+}
+
+.diagnosi-adempimenti-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 820px;
+
+  // Riga header principale 
+  thead tr:first-child {
+    .dg-header-result {
+      background: #2d3748;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 14px;
+      text-align: left;
+      border-right: 2px solid rgba(255,255,255,0.3);
+    }
+    .dg-header-adempimenti {
+      background: $color-primary;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      padding: 10px 14px;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // Riga sub-header
+  .dg-subheader th {
+    background: #f1f5f9;
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-secondary;
+    padding: 7px 12px;
+    text-align: left;
+    border-bottom: 2px solid #c8d8e8;
+    border-right: 1px solid #c8d8e8;
+    white-space: normal;
+
+    &:last-child  { border-right: none; }
+    &.dg-th-name { min-width: 180px; }
+    &.dg-th-flag { min-width: 60px; }
+  }
+
+  tbody tr {
+    &:nth-child(even) { background: #f8faff; }
+    &:hover { background: #eff6ff; }
+    &.dg-row-oncologica {
+      &:nth-child(even) { background: #fff5f5; }
+      &:hover { background: #ffe4e4; }
+    }
+  }
+
+  td {
+    font-size: 13px;
+    color: $text-primary;
+    padding: 8px 12px;
+    border-bottom: 1px solid #c8d8e8;
+    border-right: 1px solid #c8d8e8;
+    vertical-align: middle;
+
+    &:last-child { border-right: none; }
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .dg-name {
+    font-weight: 500;
+    min-width: 180px;
+
+    &--oncologica { color: #c0392b; font-weight: 600; }
+    &--altro      { color: $text-secondary; font-style: italic; }
+  }
+
+  .dg-flag {
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+  }
+}
+
+// Accertamenti table
+.accertamenti-container {
+  border: 2px solid $color-primary;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.accertamenti-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: $color-primary;
+  }
+
+  th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+    padding: 8px 10px;
+    text-align: left;
+    white-space: normal;
+    word-break: break-word;
+    vertical-align: top;
+    border-right: 1px solid rgba(255,255,255,0.25);
+
+    &:last-child { border-right: none; }
+  }
+
+  tbody tr {
+    &:nth-child(even) { background: #f8faff; }
+    &:hover { background: #eff6ff; }
+  }
+
+  td {
+    font-size: 12px;
+    color: $text-primary;
+    padding: 7px 10px;
+    border-bottom: 1px solid #c8d8e8;
+    border-right: 1px solid #c8d8e8;
+    vertical-align: middle;
+
+    &:last-child { border-right: none; }
+
+    &:first-child { font-weight: 500; }
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+.text-si { color: $color-success; font-weight: 600; }
+.text-no { color: $color-danger;  font-weight: 600; }
+
+.accertamenti-strumentali-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  align-items: flex-start;
+
+  @media (max-width: 1100px) {
+    flex-direction: column;
+  }
+}
+
+.accertamenti-strumentali-block {
+  flex: 4;
+  border: 2px solid $color-primary;
+  border-radius: $radius-sm;
+  overflow: hidden;
+  min-width: 0;
+
+  &:first-child { flex: 5; }
+
+  @media (max-width: 1100px) {
+    width: 100%;
+    flex: unset;
+  }
+}
+
+.accertamenti-visite-container {
+  margin-top: 12px;
+}
+
+// === STORIA PROFESSIONALE ===
+.storia-prof-section {
+  margin-top: $spacing-lg;
+}
+
+.storia-prof-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $text-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 $spacing-sm;
+}
+
+.esito-card {
+  background: #fff;
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+}
+
+.esito-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-base;
+}
+
+.esito-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: $color-primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.btn-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-primary;
+  background: #e3efff;
+  border: 1px solid #b3d4f5;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: #bbdefb; }
+
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.no-data-inline {
+  font-size: 13px;
+  color: $text-secondary;
+  margin: 0;
+  padding: $spacing-base 0;
+}
+
+.storia-prof-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.storia-prof-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border: 1px solid $border-light;
+  border-radius: $radius-sm;
+
+  &:hover { background: #eff6ff; }
+
+  &--clickable {
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+}
+
+.storia-prof-icon {
+  color: #e53935;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.storia-prof-name {
+  flex: 1;
+  font-size: 13px;
+  color: $text-primary;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.esito-visita-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.esito-preview {
+  font-size: 12px;
+  color: $text-secondary;
+  font-style: italic;
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-esito-visita {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: $color-primary;
+  color: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &:hover { background: #005BB5; }
+}
+
+.esito-meta {
+  margin-top: $spacing-base;
+  font-size: 11px;
+  color: $text-secondary;
+  text-align: right;
+}
+
+// === RESPONSIVE ===
+@include respond-to(lg) {
+  .page-container { padding: $spacing-lg; }
+  .data-grid {
+    &.registro-grid, &.preadesione-info-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+}
+
+@include respond-to(md) {
+  .page-container { padding: $spacing-base; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: $spacing-base; }
+  .cards-row { grid-template-columns: 1fr; }
+  .data-grid {
+    &.anagrafica-grid, &.registro-grid, &.preadesione-info-grid { grid-template-columns: 1fr; }
+  }
+  .nota-form { flex-direction: column; .btn-salva-nota { width: 100%; } }
+
+  .edit-actions { flex-direction: column; .btn-secondary, .btn-primary { width: 100%; justify-content: center; } }
+  .page-footer { flex-direction: column; gap: $spacing-lg; .btn-valida { width: 100%; justify-content: center; } .pagination-controls { justify-content: center; } }
+  ::ng-deep .tabs-card .mat-mdc-tab-group .mat-mdc-tab { padding: 0 $spacing-sm; .mdc-tab__text-label { font-size: 11px; } }
+}

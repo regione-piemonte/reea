@@ -1,0 +1,1278 @@
+<!-- ============================================
+     NUOVO ASSISTITO - Wizard Multi-Step
+     Pagina per l'inserimento di un nuovo assistito
+     ============================================ -->
+
+<!-- Header Component -->
+<app-header title="Registro Ex Esposti Amianto"></app-header>
+
+<div class="page-container">
+
+  <!-- Link Torna all'elenco -->
+  <div class="back-link">
+    <button class="back-button" (click)="tornaAllElenco()">
+      <i class="fas fa-arrow-left"></i>
+      Torna all'elenco assistiti
+    </button>
+  </div>
+
+  <!-- Titolo Pagina -->
+  <h1 class="page-title">Nuovo Assistito</h1>
+
+  <!-- Stepper Progress -->
+  <div class="stepper-progress">
+    <div class="step" [class.active]="currentStep() >= 0" [class.completed]="currentStep() > 0">
+      <div class="step-number">1</div>
+      <div class="step-label">Dati Identificativi</div>
+    </div>
+    <div class="step-connector" [class.active]="currentStep() > 0"></div>
+    <div class="step" [class.active]="currentStep() >= 1" [class.completed]="currentStep() > 1">
+      <div class="step-number">2</div>
+      <div class="step-label">Anagrafica</div>
+    </div>
+    <div class="step-connector" [class.active]="currentStep() > 1"></div>
+    <div class="step" [class.active]="currentStep() >= 2" [class.completed]="currentStep() > 2">
+      <div class="step-number">3</div>
+      <div class="step-label">Luoghi Esposizione</div>
+    </div>
+    <div class="step-connector" [class.active]="currentStep() > 2"></div>
+    <div class="step" [class.active]="currentStep() >= 3" [class.completed]="currentStep() > 3">
+      <div class="step-number">4</div>
+      <div class="step-label">Riepilogo</div>
+    </div>
+  </div>
+
+  <!-- Step 1: Dati Identificativi -->
+  @if (currentStep() === 0) {
+    <div class="wizard-card">
+      <h2 class="section-title">
+        <i class="fas fa-id-card"></i>
+        Dati Identificativi
+      </h2>
+      <!-- Form di ricerca (nascosto se mostra risultato) -->
+      @if (!showSearchResult()) {
+
+        <!-- Selezione modalità (nessuna modalità selezionata) -->
+        @if (searchMode() === null) {
+          <p class="section-description">
+            Seleziona come vuoi cercare il soggetto.
+          </p>
+          <div class="search-mode-selector">
+            <button class="btn-search-mode" (click)="selectSearchMode('cf')">
+              <i class="fas fa-id-card"></i>
+              <span class="search-mode-label">Codice Fiscale</span>
+              <span class="search-mode-desc">Cerca tramite codice fiscale</span>
+            </button>
+            <button class="btn-search-mode" (click)="selectSearchMode('anagrafica')">
+              <i class="fas fa-user"></i>
+              <span class="search-mode-label">Dati Anagrafici</span>
+              <span class="search-mode-desc">Cerca tramite cognome, nome e data di nascita</span>
+            </button>
+          </div>
+        }
+
+        <!-- Modalità selezionata: form -->
+        @if (searchMode() !== null) {
+          <form [formGroup]="searchForm" class="identificativi-form">
+
+            <!-- Sezione Codice Fiscale -->
+            @if (searchMode() === 'cf') {
+              <div class="search-option-section">
+                <div class="option-header">
+                  <span class="option-label">Ricerca per Codice Fiscale</span>
+                </div>
+                <div class="form-row">
+                  <div class="form-field" style="grid-column: 1 / -1;">
+                    <label class="field-label">Codice Fiscale</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                      <input
+                        matInput
+                        formControlName="codiceFiscale"
+                        placeholder="ES. RSSMRA70A01L219K"
+                        maxlength="16"
+                        style="text-transform: uppercase;"
+                      />
+                      @if (hasError(searchForm, 'codiceFiscale')) {
+                        <mat-error>Formato Codice Fiscale non valido</mat-error>
+                      }
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Sezione Dati Anagrafici -->
+            @if (searchMode() === 'anagrafica') {
+              <div class="search-option-section">
+                <div class="option-header">
+                  <span class="option-label">Ricerca per Dati Anagrafici</span>
+                </div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label class="field-label">Cognome</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                      <input matInput formControlName="cognome" />
+                    </mat-form-field>
+                  </div>
+                  <div class="form-field">
+                    <label class="field-label">Nome</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                      <input matInput formControlName="nome" />
+                    </mat-form-field>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-field">
+                    <label class="field-label">Data di Nascita</label>
+                    <mat-form-field appearance="outline" class="full-width">
+                      <input
+                        matInput
+                        [matDatepicker]="dataNascitaPicker"
+                        formControlName="dataNascita"
+                        placeholder="gg/mm/aaaa"
+                      />
+                      <mat-datepicker-toggle matSuffix [for]="dataNascitaPicker"></mat-datepicker-toggle>
+                      <mat-datepicker #dataNascitaPicker></mat-datepicker>
+                    </mat-form-field>
+                  </div>
+                  <div class="form-field"></div>
+                </div>
+              </div>
+            }
+
+          </form>
+
+          <!-- Footer Step 1 - Ricerca -->
+          <div class="wizard-footer">
+            <button class="btn-secondary" (click)="selectSearchMode(null)">
+              <i class="fas fa-arrow-left"></i>
+              Cambia modalità
+            </button>
+            <button class="btn-primary" (click)="goToStep2()" [disabled]="isSearching()">
+              @if (isSearching()) {
+                <mat-spinner diameter="20"></mat-spinner>
+                Ricerca in corso...
+              } @else {
+                Avanti
+                <i class="fas fa-arrow-right"></i>
+              }
+            </button>
+          </div>
+        }
+      }
+
+      <!-- Pannello Risultato Ricerca -->
+      @if (showSearchResult()) {
+        <div class="search-result-panel">
+          <!-- Risultato: Trovato in AURA -->
+          @if (searchResultType() === 'aura') {
+            <div class="result-box result-aura">
+              <div class="result-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="result-content">
+                <h3 class="result-title">Assistito in Archivio AURA</h3>
+                <p class="result-description">
+                  I dati anagrafici sono stati trovati nel sistema AURA e saranno pre-compilati automaticamente.
+                </p>
+              </div>
+            </div>
+
+            @if (auraHasDecesso()) {
+              <div class="result-box result-aura-warning">
+                <div class="result-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="result-content">
+                  <h3 class="result-title">Attenzione: soggetto deceduto</h3>
+                  <p class="result-description">
+                    Data di decesso: <strong>{{ auraData()!.data_decesso | date: 'dd/MM/yyyy' }}</strong>
+                  </p>
+                  <p class="result-description">
+                    L'assistito sarà registrato con stato <strong>Escluso per decesso</strong>.
+                  </p>
+                </div>
+              </div>
+            }
+            @if (auraHasFineAsl() && !auraHasDecesso()) {
+              <div class="result-box result-aura-warning">
+                <div class="result-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="result-content">
+                  <h3 class="result-title">Attenzione: soggetto emigrato</h3>
+                  <p class="result-description">
+                    Data fine ASL: <strong>{{ auraData()!.data_fine_asl | date: 'dd/MM/yyyy' }}</strong>
+                  </p>
+                  <p class="result-description">
+                    L'assistito sarà registrato con stato <strong>Escluso per emigrazione</strong>.
+                  </p>
+                </div>
+              </div>
+            }
+
+            <div class="wizard-footer">
+              <button class="btn-secondary" (click)="backToSearch()">
+                <i class="fas fa-arrow-left"></i>
+                Torna alla ricerca
+              </button>
+              <button class="btn-primary" (click)="proceedToAnagrafica()">
+                Continua
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          }
+
+          <!-- Risultato: Multipli soggetti in AURA (solo ricerca per anagrafica) -->
+          @if (searchResultType() === 'aura_multiple') {
+            <div class="result-box result-aura-multiple">
+              <div class="result-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="result-content">
+                <h3 class="result-title">Più soggetti trovati in AURA</h3>
+                <p class="result-description">
+                  Sono stati trovati <strong>{{ auraMultiResults().length }}</strong> soggetti con questi dati anagrafici.
+                  Seleziona il soggetto corretto dalla lista.
+                </p>
+              </div>
+            </div>
+
+            <table class="aura-multi-table">
+              <thead>
+                <tr>
+                  <th>Cognome</th>
+                  <th>Nome</th>
+                  <th>Data di Nascita</th>
+                  <th>Codice Fiscale</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of auraMultiResults(); track r.id_aura) {
+                  <tr>
+                    <td>{{ r.cognome }}</td>
+                    <td>{{ r.nome }}</td>
+                    <td>{{ r.data_nascita | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ r.codice_fiscale }}</td>
+                    <td>
+                      <button class="btn-select-aura" (click)="selectAuraResult(r)">
+                        <i class="fas fa-check"></i>
+                        Seleziona
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+
+            <div class="wizard-footer">
+              <button class="btn-secondary" (click)="backToSearch()">
+                <i class="fas fa-arrow-left"></i>
+                Torna alla ricerca
+              </button>
+            </div>
+          }
+
+          <!-- Risultato: Trovato in REEA -->
+          @if (searchResultType() === 'reea') {
+            <div class="result-box result-reea">
+              <div class="result-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="result-content">
+                <h3 class="result-title">Assistito già in Archivio REEA</h3>
+                <p class="result-description">
+                  L'assistito è già presente nel Registro Ex Esposti Amianto.
+                  Non è necessario inserirlo nuovamente.
+                </p>
+              </div>
+            </div>
+            <div class="wizard-footer">
+              <button class="btn-secondary" (click)="backToSearch()">
+                <i class="fas fa-arrow-left"></i>
+                Torna alla ricerca
+              </button>
+              <button class="btn-primary" (click)="goToExistingAssistito()">
+                <i class="fas fa-eye"></i>
+                Vai al dettaglio assistito
+              </button>
+            </div>
+          }
+
+          <!-- Risultato: Errore tecnico nel servizio AURA -->
+          @if (searchResultType() === 'aura_error') {
+            <div class="result-box result-aura-error">
+              <div class="result-icon">
+                <i class="fas fa-times-circle"></i>
+              </div>
+              <div class="result-content">
+                <h3 class="result-title">Servizio AURA non disponibile</h3>
+                <p class="result-description">
+                  Non è stato possibile verificare l'assistito sul sistema AURA per un problema tecnico del servizio.
+                  Riprova più tardi; se il problema persiste, contatta l'assistenza.
+                </p>
+              </div>
+            </div>
+            <div class="wizard-footer">
+              <button class="btn-secondary" (click)="backToSearch()">
+                <i class="fas fa-arrow-left"></i>
+                Torna alla ricerca
+              </button>
+            </div>
+          }
+
+          <!-- Risultato: Non trovato -->
+          @if (searchResultType() === 'not_found') {
+            <div class="result-box result-not-found">
+              <div class="result-icon">
+                <i class="fas fa-info-circle"></i>
+              </div>
+              <div class="result-content">
+                <h3 class="result-title">Assistito non presente</h3>
+                <p class="result-description">
+                  L'assistito non è stato trovato negli archivi AURA e REEA.
+                  Clicca su "Continua" per compilare manualmente i dati anagrafici.
+                </p>
+              </div>
+            </div>
+            <div class="wizard-footer">
+              <button class="btn-secondary" (click)="backToSearch()">
+                <i class="fas fa-arrow-left"></i>
+                Torna alla ricerca
+              </button>
+              <button class="btn-primary" (click)="proceedToAnagrafica()">
+                Continua
+                <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Step 2: Anagrafica -->
+  @if (currentStep() === 1) {
+    <div class="wizard-card">
+      <h2 class="section-title">
+        <i class="fas fa-user"></i>
+        Dati Anagrafici
+      </h2>
+      @if (!isFromAura()) {
+        <p class="section-description">
+          Completa i dati anagrafici dell'assistito. I campi con <span class="required">*</span> sono obbligatori.
+        </p>
+      }
+
+      <form [formGroup]="anagraficaForm" class="anagrafica-form">
+
+        <!-- ── Riga superiore: Dati Identificativi + Nascita (sx) | Residenza (dx) ── -->
+        <div class="form-sections-row">
+
+          <!-- Colonna sinistra: Dati Identificativi + Dati di Nascita -->
+          <div>
+
+        <!-- Sezione Dati Identificativi -->
+        <div class="form-section">
+          <h3 class="subsection-title">Dati Identificativi</h3>
+          <div class="form-row">
+            <div class="form-field" style="grid-column: 1 / -1;">
+              <label class="field-label">Codice Fiscale <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input
+                  matInput
+                  formControlName="codiceFiscale"
+                  placeholder="ES. RSSMRA70A01L219K"
+                  maxlength="16"
+                  style="text-transform: uppercase;"
+                />
+                @if (hasError(anagraficaForm, 'codiceFiscale')) {
+                  <mat-error>Codice Fiscale obbligatorio e deve essere valido (16 caratteri)</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label">Cognome <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="cognome" />
+                @if (hasError(anagraficaForm, 'cognome')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'cognome') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Nome <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="nome" />
+                @if (hasError(anagraficaForm, 'nome')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'nome') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field" style="grid-column: 1 / -1;">
+              <label class="field-label">Data di Nascita <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input
+                  matInput
+                  [matDatepicker]="dataNascitaAnagraficaPicker"
+                  formControlName="dataNascita"
+                  placeholder="gg/mm/aaaa"
+                />
+                <mat-datepicker-toggle matSuffix [for]="dataNascitaAnagraficaPicker"></mat-datepicker-toggle>
+                <mat-datepicker #dataNascitaAnagraficaPicker></mat-datepicker>
+                @if (hasError(anagraficaForm, 'dataNascita')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'dataNascita') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezione Nascita -->
+        <div class="form-section">
+          <h3 class="subsection-title">Dati di Nascita</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label">Sesso <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-select formControlName="sesso" placeholder="Seleziona">
+                  @for (opt of sessoOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+                @if (hasError(anagraficaForm, 'sesso')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'sesso') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Stato di Nascita <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-select formControlName="statoNascita" placeholder="Seleziona"
+                  (selectionChange)="onStatoNascitaChange($event.value)">
+                  @for (n of nazioniOptions(); track n.nazione_istat_cod) {
+                    <mat-option [value]="n.nazione_istat_cod">{{ n.nazione_desc_it }}</mat-option>
+                  }
+                </mat-select>
+                @if (hasError(anagraficaForm, 'statoNascita')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'statoNascita') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+          @if (!isNascitaEstera) {
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label">Provincia di Nascita <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-select
+                  formControlName="provinciaNascita"
+                  placeholder="Seleziona"
+                  (selectionChange)="onProvinciaNascitaChange($event.value)"
+                >
+                  <mat-option [value]="null">-- Nessuna --</mat-option>
+                  @for (p of provinceOptions(); track p.provincia_id) {
+                    <mat-option [value]="p.provincia_id">{{ p.provincia_desc }} ({{ p.provincia_sigla }})</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Comune di Nascita <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-select
+                  formControlName="comuneNascita"
+                  placeholder="Seleziona comune"
+                >
+                  @if (!anagraficaForm.get('provinciaNascita')?.value) {
+                    <mat-option disabled value="">Seleziona prima una provincia</mat-option>
+                  }
+                  @for (c of comuniNascitaOptions(); track c.comune_cod) {
+                    <mat-option [value]="c.comune_cod">{{ c.comune_desc }}</mat-option>
+                  }
+                </mat-select>
+                @if (hasError(anagraficaForm, 'comuneNascita')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'comuneNascita') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+          }
+        </div>
+
+          </div> <!-- /colonna sinistra -->
+
+          <!-- Colonna destra: Residenza -->
+          <div>
+
+        <!-- Sezione Residenza -->
+        <div class="form-section">
+          <h3 class="subsection-title">Residenza</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label">Stato <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-select formControlName="statoResidenza" placeholder="Seleziona"
+                  (selectionChange)="onStatoResidenzaChange($event.value)">
+                  @for (n of nazioniOptions(); track n.nazione_istat_cod) {
+                    <mat-option [value]="n.nazione_istat_cod">{{ n.nazione_desc_it }}</mat-option>
+                  }
+                </mat-select>
+                @if (hasError(anagraficaForm, 'statoResidenza')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'statoResidenza') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            @if (!isResidenzaEstera) {
+            <div class="form-field">
+              <label class="field-label">Provincia <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-select
+                  formControlName="provinciaResidenza"
+                  placeholder="Seleziona"
+                  (selectionChange)="onProvinciaResidenzaChange($event.value)"
+                >
+                  <mat-option [value]="null">-- Nessuna --</mat-option>
+                  @for (p of provinceOptions(); track p.provincia_id) {
+                    <mat-option [value]="p.provincia_id">{{ p.provincia_desc }} ({{ p.provincia_sigla }})</mat-option>
+                  }
+                </mat-select>
+                @if (hasError(anagraficaForm, 'provinciaResidenza')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'provinciaResidenza') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            }
+          </div>
+          @if (!isResidenzaEstera) {
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label">Comune <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-select
+                  formControlName="comuneResidenza"
+                  placeholder="Seleziona comune"
+                  (selectionChange)="onComuneResidenzaChange($event.value)"
+                >
+                  @if (!anagraficaForm.get('provinciaResidenza')?.value) {
+                    <mat-option disabled value="">Seleziona prima una provincia</mat-option>
+                  }
+                  @for (c of comuniResidenzaOptions(); track c.comune_cod) {
+                    <mat-option [value]="c.comune_cod">{{ c.comune_desc }}</mat-option>
+                  }
+                </mat-select>
+                @if (hasError(anagraficaForm, 'comuneResidenza')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'comuneResidenza') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-field">
+              <label class="field-label">CAP <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="capResidenza" maxlength="5" (input)="onCapInput($event)" />
+                @if (hasError(anagraficaForm, 'capResidenza')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'capResidenza') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+          }
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label">Indirizzo <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="indirizzoResidenza" />
+                @if (hasError(anagraficaForm, 'indirizzoResidenza')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'indirizzoResidenza') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Civico</label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="civicoResidenza" />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sezione Contatti -->
+        <div class="form-section">
+          <h3 class="subsection-title">Contatti</h3>
+          <div class="form-row">
+            <div class="form-field">
+              <label class="field-label">Telefono <span class="required">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="telefono" />
+                @if (hasError(anagraficaForm, 'telefono')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'telefono') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+            <div class="form-field">
+              <label class="field-label">E-mail</label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="email" type="email" />
+                @if (hasError(anagraficaForm, 'email')) {
+                  <mat-error>{{ getErrorMessage(anagraficaForm, 'email') }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+          </div> <!-- /colonna destra -->
+        </div> <!-- /form-sections-row -->
+
+        <!-- Sezione Domicilio (nascosta per soggetti AURA: i dati vengono dall'anagrafe) -->
+        @if (!isFromAura()) {
+        <div class="form-section">
+          <h3 class="subsection-title">Domicilio</h3>
+          <div class="domicilio-checkbox">
+            <mat-checkbox formControlName="domicilioCoincide" (change)="onDomicilioCoincideChange()">
+              Il domicilio coincide con la residenza
+            </mat-checkbox>
+          </div>
+
+          @if (!anagraficaForm.get('domicilioCoincide')?.value) {
+            <div class="form-row">
+              <div class="form-field">
+                <label class="field-label">Stato <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-select formControlName="statoDomicilio" placeholder="Seleziona"
+                    (selectionChange)="onStatoDomicilioChange($event.value)">
+                    @for (n of nazioniOptions(); track n.nazione_istat_cod) {
+                      <mat-option [value]="n.nazione_istat_cod">{{ n.nazione_desc_it }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              @if (!isDomicilioEstero) {
+              <div class="form-field">
+                <label class="field-label">Provincia <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-select
+                    formControlName="provinciaDomicilio"
+                    placeholder="Seleziona"
+                    (selectionChange)="onProvinciaDomicilioChange($event.value)"
+                  >
+                    <mat-option [value]="null">-- Nessuna --</mat-option>
+                    @for (p of provinceOptions(); track p.provincia_id) {
+                      <mat-option [value]="p.provincia_id">{{ p.provincia_desc }} ({{ p.provincia_sigla }})</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              }
+            </div>
+            @if (!isDomicilioEstero) {
+            <div class="form-row">
+              <div class="form-field">
+                <label class="field-label">Comune <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-select
+                    formControlName="comuneDomicilio"
+                    placeholder="Seleziona comune"
+                    (selectionChange)="onComuneDomicilioChange($event.value)"
+                  >
+                    @if (!anagraficaForm.get('provinciaDomicilio')?.value) {
+                      <mat-option disabled value="">Seleziona prima una provincia</mat-option>
+                    }
+                    @for (c of comuniDomicilioOptions(); track c.comune_cod) {
+                      <mat-option [value]="c.comune_cod">{{ c.comune_desc }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-field">
+                <label class="field-label">CAP <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input matInput formControlName="capDomicilio" maxlength="5" />
+                </mat-form-field>
+              </div>
+            </div>
+            }
+            <div class="form-row">
+              <div class="form-field">
+                <label class="field-label">Indirizzo <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input matInput formControlName="indirizzoDomicilio" />
+                </mat-form-field>
+              </div>
+              <div class="form-field">
+                <label class="field-label">Civico</label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input matInput formControlName="civicoDomicilio" />
+                </mat-form-field>
+              </div>
+            </div>
+          }
+        </div>
+        }
+
+      </form>
+
+      <!-- Footer Step 2 -->
+      <div class="wizard-footer">
+        <button class="btn-secondary" (click)="goBackToStep1()">
+          <i class="fas fa-arrow-left"></i>
+          Indietro
+        </button>
+        <button class="btn-primary" (click)="goToStep3()" [disabled]="cfInAuraChecking()">
+          @if (cfInAuraChecking()) {
+            <mat-spinner diameter="18"></mat-spinner>
+            Verifica CF...
+          } @else {
+            Avanti
+            <i class="fas fa-arrow-right"></i>
+          }
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Step 3: Luoghi Esposizione -->
+  @if (currentStep() === 2) {
+    <div class="wizard-card">
+      <h2 class="section-title">
+        <i class="fas fa-industry"></i>
+        Luoghi di Esposizione
+      </h2>
+      <p class="section-description">
+        Inserisci i luoghi di lavoro dove il soggetto è stato esposto all'amianto.
+      </p>
+
+      <div class="luoghi-esposizione">
+        @for (luogo of luoghiEsposizione(); track $index; let i = $index) {
+          <div class="luogo-card">
+            <div class="luogo-header">
+              <span class="luogo-number">Luogo {{ i + 1 }}</span>
+              @if (luoghiEsposizione().length > 1) {
+                <button class="btn-remove" (click)="removeLuogoEsposizione(i)">
+                  <i class="fas fa-times"></i>
+                </button>
+              }
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label class="field-label">Azienda <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input
+                    matInput
+                    [value]="luogo.azienda"
+                    (input)="updateLuogoEsposizione(i, 'azienda', $any($event.target).value)"
+                  />
+                </mat-form-field>
+              </div>
+              <div class="form-field">
+                <label class="field-label">Mansione <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <input
+                    matInput
+                    [value]="luogo.mansione"
+                    (input)="updateLuogoEsposizione(i, 'mansione', $any($event.target).value)"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label class="field-label">Provincia Azienda <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-select
+                    [value]="luogo.provinciaAziendaId"
+                    (selectionChange)="onProvinciaEsposizioneChange(i, $event.value)"
+                    placeholder="Seleziona provincia"
+                  >
+                    <mat-option [value]="null">-- Nessuna --</mat-option>
+                    @for (p of provinceOptions(); track p.provincia_id) {
+                      <mat-option [value]="p.provincia_id">{{ p.provincia_desc }} ({{ p.provincia_sigla }})</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-field">
+                <label class="field-label">Comune Azienda <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-select
+                    [value]="luogo.comuneAziendaCod"
+                    (selectionChange)="onComuneEsposizioneChange(i, $event.value)"
+                    placeholder="Seleziona comune"
+                  >
+                    @if (!luogo.provinciaAziendaId) {
+                      <mat-option disabled value="">Seleziona prima una provincia</mat-option>
+                    }
+                    @for (c of (comuniEsposizioneOptions()[i] || []); track c.comune_cod) {
+                      <mat-option [value]="c.comune_cod">{{ c.comune_desc }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label class="field-label">Anno Inizio <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-select
+                    [value]="luogo.annoInizio"
+                    (selectionChange)="updateLuogoEsposizione(i, 'annoInizio', $event.value)"
+                    placeholder="Seleziona anno"
+                  >
+                    <mat-option [value]="null">-- Nessuno --</mat-option>
+                    @for (anno of anniOptions; track anno) {
+                      <mat-option [value]="anno">{{ anno }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="form-field">
+                <label class="field-label">Anno Fine <span class="required">*</span></label>
+                <mat-form-field appearance="outline" class="full-width"
+                  [class.anno-conflict]="hasAnnoConflict(luogo)">
+                  <mat-select
+                    [value]="luogo.annoFine"
+                    (selectionChange)="updateLuogoEsposizione(i, 'annoFine', $event.value)"
+                    placeholder="Seleziona anno"
+                  >
+                    <mat-option [value]="null">-- Nessuno --</mat-option>
+                    @for (anno of anniOptions; track anno) {
+                      <mat-option [value]="anno">{{ anno }}</mat-option>
+                    }
+                  </mat-select>
+                  @if (hasAnnoConflict(luogo)) {
+                    <mat-error>Anno inizio deve essere minore o uguale all'anno fine</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+
+            @if (luogoHasErrors()[i]) {
+              <div class="luogo-error-msg">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Compilare tutti i campi obbligatori.
+                  @if (hasAnnoConflict(luogo)) { Anno inizio deve essere minore o uguale all'anno fine. }
+                </span>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Aggiungi luogo -->
+        <button class="btn-add-luogo" (click)="addLuogoEsposizione()">
+          <i class="fas fa-plus"></i>
+          Vuoi aggiungere un altro luogo di esposizione?
+        </button>
+      </div>
+
+      <!-- Footer Step 3 -->
+      <div class="wizard-footer">
+        <button class="btn-secondary" (click)="goBackToStep2()">
+          <i class="fas fa-arrow-left"></i>
+          Indietro
+        </button>
+        <button class="btn-primary" (click)="goToStep4()">
+          Avanti
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Step 4: Riepilogo -->
+  @if (currentStep() === 3) {
+    <div class="wizard-card">
+      <h2 class="section-title">
+        <i class="fas fa-clipboard-check"></i>
+        Riepilogo
+      </h2>
+      <p class="section-description">
+        Verifica i dati inseriti e seleziona l'ASL di assistenza prima di salvare.
+      </p>
+
+      <div class="riepilogo-content">
+
+        <!-- ── Riga 1: Dati Identificativi | Anagrafica | Residenza ── -->
+        <div class="riepilogo-row riepilogo-row-3">
+
+        <!-- Riepilogo Dati Identificativi -->
+        <div class="riepilogo-section">
+          <h3 class="riepilogo-title">Dati Identificativi</h3>
+          <div class="riepilogo-grid">
+            @if (anagraficaForm.get('codiceFiscale')?.value) {
+              <div class="riepilogo-item">
+                <span class="label">Codice Fiscale</span>
+                <span class="value">{{ anagraficaForm.get('codiceFiscale')?.value | uppercase }}</span>
+              </div>
+            }
+            @if (anagraficaForm.get('cognome')?.value) {
+              <div class="riepilogo-item">
+                <span class="label">Cognome</span>
+                <span class="value">{{ anagraficaForm.get('cognome')?.value | uppercase }}</span>
+              </div>
+            }
+            @if (anagraficaForm.get('nome')?.value) {
+              <div class="riepilogo-item">
+                <span class="label">Nome</span>
+                <span class="value">{{ anagraficaForm.get('nome')?.value | uppercase }}</span>
+              </div>
+            }
+            @if (anagraficaForm.get('dataNascita')?.value) {
+              <div class="riepilogo-item">
+                <span class="label">Data di Nascita</span>
+                <span class="value">{{ anagraficaForm.get('dataNascita')?.value | date:'dd/MM/yyyy' }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Riepilogo Anagrafica -->
+        <div class="riepilogo-section">
+          <h3 class="riepilogo-title">Anagrafica</h3>
+          <div class="riepilogo-grid">
+            <div class="riepilogo-item">
+              <span class="label">Sesso</span>
+              <span class="value">{{ getSessoLabel(anagraficaForm.get('sesso')?.value) }}</span>
+            </div>
+            <div class="riepilogo-item">
+              <span class="label">Luogo di Nascita</span>
+              <span class="value">
+                {{ anagraficaForm.get('comuneNascita')?.value }}
+                @if (anagraficaForm.get('provinciaNascita')?.value) {
+                  - {{ getProvinciaLabel(anagraficaForm.get('provinciaNascita')?.value) }}
+                }
+                @if (anagraficaForm.get('statoNascita')?.value) {
+                  - {{ getNazioneLabel(anagraficaForm.get('statoNascita')?.value) }}
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Riepilogo Residenza -->
+        <div class="riepilogo-section">
+          <h3 class="riepilogo-title">Residenza</h3>
+          <div class="riepilogo-grid">
+            @if (anagraficaForm.get('comuneResidenza')?.value) {
+              <div class="riepilogo-item riepilogo-item-full">
+                <span class="label">Indirizzo</span>
+                <span class="value">
+                  {{ anagraficaForm.get('indirizzoResidenza')?.value }}
+                  @if (anagraficaForm.get('civicoResidenza')?.value) {
+                    , {{ anagraficaForm.get('civicoResidenza')?.value }}
+                  }
+                </span>
+              </div>
+              <div class="riepilogo-item">
+                <span class="label">CAP</span>
+                <span class="value">{{ anagraficaForm.get('capResidenza')?.value }}</span>
+              </div>
+              <div class="riepilogo-item">
+                <span class="label">Comune</span>
+                <span class="value">{{ anagraficaForm.get('comuneResidenza')?.value }}</span>
+              </div>
+              <div class="riepilogo-item">
+                <span class="label">Provincia</span>
+                <span class="value">{{ getProvinciaLabel(anagraficaForm.get('provinciaResidenza')?.value) }}</span>
+              </div>
+              <div class="riepilogo-item">
+                <span class="label">Stato</span>
+                <span class="value">{{ getNazioneLabel(anagraficaForm.get('statoResidenza')?.value) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        </div> <!-- /riepilogo-row-3 riga 1 -->
+
+        <!-- ── Riga 2: Domicilio | Contatti | Luoghi Esposizione ── -->
+        <div class="riepilogo-row riepilogo-row-3">
+
+        <!-- Riepilogo Domicilio -->
+        <div class="riepilogo-section">
+          <h3 class="riepilogo-title">Domicilio</h3>
+          <div class="riepilogo-grid">
+            @if (anagraficaForm.get('domicilioCoincide')?.value) {
+              <div class="riepilogo-item riepilogo-item-full">
+                <span class="value domicilio-coincide">
+                  <i class="fas fa-check-circle"></i>
+                  Domicilio uguale alla residenza
+                </span>
+              </div>
+            } @else {
+              <div class="riepilogo-item riepilogo-item-full">
+                <span class="label">Indirizzo</span>
+                <span class="value">
+                  {{ anagraficaForm.get('indirizzoDomicilio')?.value }}
+                  @if (anagraficaForm.get('civicoDomicilio')?.value) {
+                    , {{ anagraficaForm.get('civicoDomicilio')?.value }}
+                  }
+                </span>
+              </div>
+              @if (anagraficaForm.get('capDomicilio')?.value) {
+                <div class="riepilogo-item">
+                  <span class="label">CAP</span>
+                  <span class="value">{{ anagraficaForm.get('capDomicilio')?.value }}</span>
+                </div>
+              }
+              @if (anagraficaForm.get('comuneDomicilio')?.value) {
+                <div class="riepilogo-item">
+                  <span class="label">Comune</span>
+                  <span class="value">{{ anagraficaForm.get('comuneDomicilio')?.value }}</span>
+                </div>
+              }
+              @if (anagraficaForm.get('provinciaDomicilio')?.value) {
+                <div class="riepilogo-item">
+                  <span class="label">Provincia</span>
+                  <span class="value">{{ getProvinciaLabel(anagraficaForm.get('provinciaDomicilio')?.value) }}</span>
+                </div>
+              }
+              <div class="riepilogo-item">
+                <span class="label">Stato</span>
+                <span class="value">{{ getNazioneLabel(anagraficaForm.get('statoDomicilio')?.value) }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Riepilogo Contatti -->
+        <div class="riepilogo-section">
+          <h3 class="riepilogo-title">Contatti</h3>
+          <div class="contatti-groups">
+
+            <!-- Gruppo Telefono -->
+            <div class="contatti-group">
+              <span class="contatti-group-label">Telefono</span>
+              @for (tel of auraTelefoni(); track tel) {
+                <div class="contatti-group-item">
+                  <span class="aura-badge">AURA</span>
+                  <span class="value">{{ tel }}</span>
+                </div>
+              }
+              @if (anagraficaForm.get('telefono')?.value) {
+                <div class="contatti-group-item">
+                  <span class="value">{{ anagraficaForm.get('telefono')?.value }}</span>
+                </div>
+              }
+              @if (auraTelefoni().length === 0 && !anagraficaForm.get('telefono')?.value) {
+                <span class="value no-data">—</span>
+              }
+            </div>
+
+            <!-- Gruppo E-mail -->
+            <div class="contatti-group">
+              <span class="contatti-group-label">E-mail</span>
+              @for (em of auraEmails(); track em) {
+                <div class="contatti-group-item">
+                  <span class="aura-badge">AURA</span>
+                  <span class="value">{{ em }}</span>
+                </div>
+              }
+              @if (anagraficaForm.get('email')?.value) {
+                <div class="contatti-group-item">
+                  <span class="value">{{ anagraficaForm.get('email')?.value }}</span>
+                </div>
+              }
+              @if (auraEmails().length === 0 && !anagraficaForm.get('email')?.value) {
+                <span class="value no-data">—</span>
+              }
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Riepilogo Luoghi Esposizione -->
+        <div class="riepilogo-section">
+          <h3 class="riepilogo-title">Luoghi di Esposizione</h3>
+          <div class="luoghi-riepilogo">
+            @for (luogo of luoghiEsposizione(); track $index; let i = $index) {
+              @if (luogo.azienda) {
+                <div class="luogo-riepilogo-item">
+                  <span class="luogo-badge">{{ i + 1 }}</span>
+                  <div class="luogo-info">
+                    <strong>{{ luogo.azienda }}</strong>
+                    @if (luogo.comuneAziendaDesc) {
+                      - {{ luogo.comuneAziendaDesc }}
+                    }
+                    @if (luogo.mansione) {
+                      <br><span class="mansione">Mansione: {{ luogo.mansione }}</span>
+                    }
+                    @if (luogo.annoInizio || luogo.annoFine) {
+                      <br><span class="periodo">
+                        Periodo: {{ luogo.annoInizio || '?' }} - {{ luogo.annoFine || 'in corso' }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        </div> <!-- /riepilogo-row-3 riga 2 -->
+
+        <!-- ── Esenzioni AURA (solo lettura, visibili solo se presenti) ── -->
+        @if (isFromAura() && auraEsenzioni().length > 0) {
+          <div class="riepilogo-section riepilogo-section-full">
+            <h3 class="riepilogo-title">Esenzioni</h3>
+            <table class="aura-esenzioni-table">
+              <thead>
+                <tr>
+                  <th>Codice esenzione</th>
+                  <th>Esenzione</th>
+                  <th>Codice diagnosi</th>
+                  <th>Diagnosi</th>
+                  <th>Data emissione</th>
+                  <th>Data scadenza</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (e of auraEsenzioni(); track e.esenzione_cod + e.diagnosi_cod) {
+                  <tr>
+                    <td>{{ e.esenzione_cod }}</td>
+                    <td>{{ e.esenzione_desc || '—' }}</td>
+                    <td>{{ e.diagnosi_cod || '—' }}</td>
+                    <td>{{ e.diagnosi_desc || '—' }}</td>
+                    <td>{{ e.esenzione_data_emissione ? (e.esenzione_data_emissione | date:'dd/MM/yyyy') : '—' }}</td>
+                    <td>{{ e.esenzione_data_scadenza ? (e.esenzione_data_scadenza | date:'dd/MM/yyyy') : '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        <!-- ── Warning decesso / emigrazione + divider ── -->
+        @if (auraHasDecesso() || auraHasFineAsl()) {
+          <hr class="riepilogo-divider">
+          <div class="riepilogo-warnings">
+            @if (auraHasDecesso()) {
+              <div class="riepilogo-warning-box riepilogo-warning-box--danger">
+                <i class="fas fa-exclamation-triangle riepilogo-warning-icon"></i>
+                <div class="riepilogo-warning-content">
+                  <strong>Attenzione: soggetto deceduto</strong>
+                  <span>Data di decesso: <strong>{{ auraData()!.data_decesso | date: 'dd/MM/yyyy' }}</strong></span>
+                  <span>L'assistito sarà registrato con stato <strong>Escluso per decesso</strong>.</span>
+                </div>
+              </div>
+            }
+            @if (auraHasFineAsl() && !auraHasDecesso()) {
+              <div class="riepilogo-warning-box riepilogo-warning-box--warning">
+                <i class="fas fa-exclamation-triangle riepilogo-warning-icon"></i>
+                <div class="riepilogo-warning-content">
+                  <strong>Attenzione: soggetto emigrato</strong>
+                  <span>Data fine assistenza: <strong>{{ auraData()!.data_fine_asl | date: 'dd/MM/yyyy' }}</strong></span>
+                  <span>L'assistito sarà registrato con stato <strong>Escluso per emigrazione</strong>.</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- ── Riga 3: ASL | Data Presentazione Istanza ── -->
+        <div class="riepilogo-row riepilogo-row-2">
+
+        <!-- ASL di Assistenza -->
+        <div class="riepilogo-section asl-section">
+          <h3 class="riepilogo-title">ASL di Assistenza</h3>
+          <div class="riepilogo-grid">
+            <div class="riepilogo-item riepilogo-item-full">
+              @if (isFromAura()) {
+                <!-- Read-only: dato proveniente da AURA -->
+                <span class="value">{{ aslAuraDesc() || '—' }}</span>
+              } @else {
+                <!-- Selezione manuale -->
+                <mat-form-field appearance="outline" class="full-width" [class.field-error]="aslManualeError()">
+                  <mat-select
+                    [value]="aslManualeId()"
+                    (selectionChange)="aslManualeId.set($event.value); aslManualeError.set(false)"
+                  >
+                    @for (asl of aslOptions(); track asl.asl_id) {
+                      <mat-option [value]="asl.asl_id">{{ asl.asl_azienda_desc }}</mat-option>
+                    }
+                  </mat-select>
+                  @if (aslManualeError()) {
+                    <mat-error>Selezionare l'ASL di assistenza dalla lista</mat-error>
+                  }
+                </mat-form-field>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Data Presentazione Istanza (obbligatoria per tutti) -->
+        <div class="riepilogo-section" [formGroup]="riepilogoForm">
+          <h3 class="riepilogo-title">
+            Data Presentazione Istanza <span class="required">*</span>
+          </h3>
+          <div class="riepilogo-grid">
+            <div class="riepilogo-item">
+              <mat-form-field appearance="outline" class="full-width">
+                <input
+                  matInput
+                  [matDatepicker]="dataPresentazionePicker"
+                  formControlName="dataPresentazioneIstanza"
+                  placeholder="gg/mm/aaaa"
+                  [max]="today"
+                />
+                <mat-datepicker-toggle matSuffix [for]="dataPresentazionePicker"></mat-datepicker-toggle>
+                <mat-datepicker #dataPresentazionePicker></mat-datepicker>
+                @if (riepilogoForm.get('dataPresentazioneIstanza')?.hasError('required') && riepilogoForm.get('dataPresentazioneIstanza')?.touched) {
+                  <mat-error>Campo obbligatorio</mat-error>
+                }
+                @if (riepilogoForm.get('dataPresentazioneIstanza')?.hasError('matDatepickerMax')) {
+                  <mat-error>La data non può essere futura</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        </div> <!-- /riepilogo-row-2 riga 3 -->
+
+        <!-- Trattamento dati personali -->
+        <div class="riepilogo-section trattamento-dati-section">
+          <mat-checkbox
+            [checked]="trattamentoDatiAccettato()"
+            (change)="trattamentoDatiAccettato.set($event.checked)"
+            class="trattamento-dati-checkbox"
+          >
+            {{ testoDatiPersonali() }}
+          </mat-checkbox>
+        </div>
+
+      </div>
+
+      <!-- Footer Step 4 -->
+      <div class="wizard-footer">
+        <button class="btn-secondary" (click)="goBackToStep3()">
+          <i class="fas fa-arrow-left"></i>
+          Indietro
+        </button>
+        @if (trattamentoDatiAccettato()) {
+          <button
+            class="btn-save"
+            (click)="onSalva()"
+            [disabled]="isSaving()"
+          >
+            @if (isSaving()) {
+              <mat-spinner diameter="20"></mat-spinner>
+              Salvataggio...
+            } @else {
+              <i class="fa-regular fa-floppy-disk"></i>
+              Salva
+            }
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+</div>

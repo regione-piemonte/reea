@@ -1,0 +1,161 @@
+// SELEZIONE ASSISTITI - Styles
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.page-container {
+  @include page-container;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-link {
+  margin-bottom: $spacing-lg;
+  .back-button {
+    @include back-link;
+    font-size: 14px;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: $font-weight-semibold;
+  color: $text-primary;
+  margin: 0 0 $spacing-sm 0;
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: $text-secondary;
+  margin: 0 0 $spacing-xl 0;
+}
+
+// Loading spinner
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+// Riga superiore: due section-card affiancate
+.sections-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-xl;
+}
+
+// Card bianca container
+.section-card {
+  border-radius: $radius-lg;
+  padding: $spacing-xl;
+  box-shadow: $shadow-md;
+  border: 2px solid #bedbff;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: $font-weight-semibold;
+  color: $text-secondary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 $spacing-lg 0;
+}
+
+// Lista verticale item-card (colonne sinistra/destra)
+.items-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// Griglia 2 colonne per i pulsanti in basso
+.items-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+// Pulsante blu con titolo e sottotitolo
+.item-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 70px;
+  padding: $spacing-md $spacing-lg;
+  border-radius: $radius-md;
+  // REEA-CDU-000-V01
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  background-color: #005ca9;
+  color: white;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #004080;
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+    border-color: rgba(0, 0, 0, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Varianti colore per sezioni e preadesioni
+.item-card--sezione {
+  background-color:#016db3;
+
+  &:hover {
+    background-color: #035ca4;
+  }
+}
+
+.item-card--chiaro {
+  background-color: #168cd6;
+
+  &:hover {
+    background-color: #0366b7;
+  }
+}
+
+.item-card--scuro {
+  background-color: #168cd6;
+
+  &:hover {
+    background-color: #0366b7;
+  }
+}
+
+.item-title {
+  font-size: 14px;
+  font-weight: $font-weight-semibold;
+  line-height: 1.3;
+}
+
+.item-desc {
+  font-size: 12px;
+  font-weight: $font-weight-regular;
+  opacity: 0.82;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+// Responsive
+@include respond-to(md) {
+  .page-container {
+    padding: $spacing-lg;
+  }
+
+  .sections-row {
+    grid-template-columns: 1fr;
+  }
+
+  .items-row {
+    grid-template-columns: 1fr;
+  }
+}

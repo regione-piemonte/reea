@@ -1,0 +1,19 @@
+productName: reea
+componentName: reeafe
+
+stages:
+  build: yes
+
+build:
+  buildFlow: sequential
+  buildTool: docker
+  buildToolVersion: generic
+  buildEnvironment: generic
+  
+packageType: docker_image
+
+instanceDependent: yes
+
+builds_to_execute:
+  reeabe:
+    artifactsToPublish: docker

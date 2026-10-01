@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.2.0",
+    "generators": {
+      "reea-api": {
+        "generatorName": "typescript-angular",
+        "inputSpec": "http://localhost:8080/reeabe/api-docs",
+        "output": "./src/app/api",
+        "additionalProperties": {
+          "ngVersion": "19.0.0",
+          "providedInRoot": true,
+          "stringEnums": true,
+          "enumPropertyNaming": "UPPERCASE",
+          "modelPropertyNaming": "camelCase"
+        }
+      }
+    }
+  }
+}

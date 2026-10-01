@@ -1,0 +1,81 @@
+<!-- Header Component -->
+<app-header title="Registro Ex Esposti Amianto"></app-header>
+
+<div class="page-container">
+  <!-- Back Link -->
+  <div class="back-link">
+    <!-- <button class="back-button">
+      <i class="fa-solid fa-arrow-left"></i>
+      <span>Torna all'area personale</span>
+    </button> -->
+  </div>
+
+  <!-- Titolo pagina -->
+  <h2 class="page-title">Selezione Assistiti</h2>
+  <p class="page-subtitle">Seleziona la categoria di assistiti che desideri visualizzare</p>
+
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else {
+
+    <!-- Riga superiore: Fonti + Sezioni -->
+    <div class="sections-row">
+
+      <!-- Card Sinistra: Fonti -->
+      <div class="section-card">
+        <h3 class="section-title">Seleziona la fonte di provenienza</h3>
+        <div class="items-list">
+          @for (p of categorieSinistra(); track p.parametro_id) {
+            @if (!isInail() || p.parametro_cod === 'PULSANTE3') {
+              <button class="item-card" (click)="selezionaPulsante(p)">
+                <span class="item-title">{{ p.parametro_desc }}</span>
+                <span class="item-desc">{{ p.parametro_valore }}</span>
+              </button>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Card Destra: Sezioni -->
+      @if (!isInail()) {
+        <div class="section-card">
+          <h3 class="section-title">Seleziona la sezione</h3>
+          <div class="items-list">
+            @for (p of categorieDestra(); track p.parametro_id) {
+              <button class="item-card item-card--sezione" (click)="selezionaPulsante(p)">
+                <span class="item-title">{{ p.parametro_desc }}</span>
+                <span class="item-desc">{{ p.parametro_valore }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+
+    @if (!isPseudo() && !isInail()) {
+      <!-- Card Inferiore: Preadesioni per l'istruttoria -->
+      <div class="section-card">
+        <h3 class="section-title">Seleziona le preadesioni per l'istruttoria</h3>
+        <div class="items-row">
+          @for (p of categorieBasso(); track p.parametro_id) {
+            @if (!(isCrpt() && p.parametro_cod === 'PULSANTE9') && !(isSpresalNonPseudo() && p.parametro_cod === 'PULSANTE8')) {
+              <button
+                class="item-card"
+                [class.item-card--chiaro]="isGrigioChiaro(p)"
+                [class.item-card--scuro]="isGrigioScuro(p)"
+                (click)="selezionaPulsante(p)"
+              >
+                <span class="item-title">{{ p.parametro_desc }}</span>
+                <span class="item-desc">{{ p.parametro_valore }}</span>
+              </button>
+            }
+          }
+        </div>
+      </div>
+    }
+
+  }
+</div>

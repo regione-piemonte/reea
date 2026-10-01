@@ -1,0 +1,120 @@
+<div class="dialog-container">
+
+  <div class="dialog-header">
+    <div class="header-info">
+      <h2 class="dialog-title">Importa Dati da File</h2>
+    </div>
+    <button class="close-button" (click)="onAnnulla()" aria-label="Chiudi"
+            [disabled]="isLocked()" [style.opacity]="isLocked() ? '0.3' : '1'" [style.cursor]="isLocked() ? 'not-allowed' : 'pointer'">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <div class="dialog-content">
+
+    <div class="form-field">
+      <label class="field-label">
+        Fonte <span class="required">*</span>
+      </label>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-select [formControl]="fonteProvenienzaControl" placeholder="Seleziona fonte" [disabled]="isLocked()">
+          @for (fonte of fontiOptions(); track fonte.value) {
+            <mat-option [value]="fonte.value">{{ fonte.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form-field">
+      <label class="field-label">Carica file</label>
+
+      <div
+        class="dropzone"
+        [class.dragover]="isDragOver()"
+        [class.has-file]="selectedFile()"
+        tabindex="0"
+        (dragover)="!isLocked() && onDragOver($event)"
+        (dragleave)="!isLocked() && onDragLeave($event)"
+        (drop)="!isLocked() && onDrop($event)"
+        (click)="!isLocked() && triggerFileInput(fileInput)"
+        (keydown.enter)="!isLocked() && triggerFileInput(fileInput)"
+        [style.pointer-events]="isLocked() ? 'none' : 'auto'"
+        [style.opacity]="isLocked() && !selectedFile() ? '0.5' : '1'"
+      >
+        <input
+          #fileInput
+          type="file"
+          [accept]="acceptedFormats"
+          (change)="onFileSelected($event)"
+          hidden
+        />
+
+        @if (!selectedFile()) {
+          <div class="dropzone-content">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <p class="dropzone-text">Trascina il file qui o clicca per selezionarlo</p>
+            <p class="dropzone-hint">Formati supportati: CSV, Excel (.xlsx, .xls)</p>
+          </div>
+        }
+
+        @if (selectedFile()) {
+          <div class="file-selected">
+            <div class="file-info">
+              <i class="fas fa-file-excel file-icon"></i>
+              <div class="file-details">
+                <span class="file-name">{{ selectedFile()!.name }}</span>
+                <span class="file-size">{{ formatFileSize(selectedFile()!.size) }}</span>
+              </div>
+            </div>
+            <button
+              class="remove-file-btn"
+              (click)="removeFile(); $event.stopPropagation()"
+              aria-label="Rimuovi file"
+              [disabled]="isLocked()"
+              [style.opacity]="isLocked() ? '0.3' : '1'"
+              [style.cursor]="isLocked() ? 'not-allowed' : 'pointer'"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (uploadError()) {
+      <div class="upload-error-banner">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ uploadError() }}</span>
+      </div>
+    }
+
+    @if (selectedFile() && fonteProvenienzaControl.value && !isFileNameValid()) {
+      <div class="file-name-warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        Selezionare il file corretto per la fonte selezionata.
+      </div>
+    }
+
+    @if (isUploading()) {
+      <div class="upload-progress">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <p class="upload-text">Caricamento in corso...</p>
+      </div>
+    }
+
+  </div>
+
+  <div class="dialog-footer">
+    <button class="btn-annulla" (click)="onReset()" [disabled]="isUploading()">
+      Annulla
+    </button>
+    <button
+      class="btn-importa"
+      (click)="onImporta()"
+      [disabled]="!isFormValid() || isUploading() || !!uploadError()"
+    >
+      @if (isUploading()) { Caricamento... } @else { Importa }
+    </button>
+  </div>
+
+</div>

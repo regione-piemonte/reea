@@ -1,0 +1,126 @@
+<app-header title="Registro Ex Esposti Amianto"></app-header>
+
+<div class="sp-page">
+  <div class="sp-container">
+
+    @if (step() === 'ruolo') {
+
+      <!-- Step 1: Ruolo + Collocazione -->
+      <div class="sp-section-title">Profilo di Accesso</div>
+
+      <div class="sp-profili-grid">
+        @for (r of ruoli(); track r.codice) {
+          <div
+            class="sp-profilo-tile"
+            [class.sp-profilo-tile--selected]="ruoloScelto() === r.codice"
+            tabindex="0"
+            (click)="selezionaRuolo(r.codice)"
+            (keydown.enter)="selezionaRuolo(r.codice)">
+
+            <div class="sp-profilo-icon">
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <span class="sp-profilo-label">{{ r.descrizione }}</span>
+
+            @if (ruoloScelto() === r.codice) {
+              <i class="fas fa-check-circle sp-tile-check-inline"></i>
+            }
+          </div>
+        }
+      </div>
+
+      @if (ruoloScelto() && collocazioni().length > 0) {
+        <div class="sp-section-title sp-section-title--mt">Collocazione</div>
+        <div class="sp-collocazioni-list">
+          @for (c of collocazioni(); track c.codice) {
+            <div
+              class="sp-collocazione-row"
+              [class.sp-collocazione-row--selected]="collocazioneScelta() === c.codice"
+              tabindex="0"
+              (click)="selezionaCollocazione(c.codice)"
+              (keydown.enter)="selezionaCollocazione(c.codice)">
+
+              <div class="sp-radio">
+                <div class="sp-radio-inner" [class.sp-radio-inner--filled]="collocazioneScelta() === c.codice"></div>
+              </div>
+
+              <div class="sp-col-info">
+                <span class="sp-col-codice">{{ c.codice }} - {{ c.descrizione }}</span>
+                <span class="sp-col-azienda">{{ c.codiceAzienda }} - {{ c.descrizioneAzienda }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (errore()) {
+        <p class="sp-errore">
+          <i class="fas fa-triangle-exclamation"></i> {{ errore() }}
+        </p>
+      }
+
+      <div class="sp-azioni">
+        <button
+          class="sp-btn-prosegui"
+          [disabled]="!canProceedStep1()"
+          (click)="proseguiStep1()">
+          @if (loading()) {
+            <span class="sp-spinner"></span> Caricamento...
+          } @else {
+            PROSEGUI
+          }
+        </button>
+      </div>
+
+    } @else {
+
+      <!-- Step 2: Profilo -->
+      <div class="sp-section-title">Seleziona Profilo</div>
+
+      <div class="sp-profili-grid">
+        @for (p of profili(); track p.codice) {
+          <div
+            class="sp-profilo-tile"
+            [class.sp-profilo-tile--selected]="profiloScelto() === p.codice"
+            tabindex="0"
+            (click)="selezionaProfilo(p.codice)"
+            (keydown.enter)="selezionaProfilo(p.codice)">
+
+            <div class="sp-profilo-icon">
+              <i class="fas fa-id-badge"></i>
+            </div>
+            <span class="sp-profilo-label">{{ p.descrizione }}</span>
+
+            @if (profiloScelto() === p.codice) {
+              <i class="fas fa-check-circle sp-tile-check-inline"></i>
+            }
+          </div>
+        }
+      </div>
+
+      @if (errore()) {
+        <p class="sp-errore">
+          <i class="fas fa-triangle-exclamation"></i> {{ errore() }}
+        </p>
+      }
+
+      <div class="sp-azioni">
+        <button class="sp-btn-indietro" (click)="tornaAStep1()">
+          <i class="fas fa-arrow-left"></i> Indietro
+        </button>
+        <button
+          class="sp-btn-prosegui"
+          [disabled]="!canProceedStep2()"
+          (click)="proseguiStep2()">
+          @if (loading()) {
+            <span class="sp-spinner"></span> Accesso in corso...
+          } @else {
+            PROSEGUI
+          }
+        </button>
+      </div>
+
+    }
+
+  </div>
+</div>

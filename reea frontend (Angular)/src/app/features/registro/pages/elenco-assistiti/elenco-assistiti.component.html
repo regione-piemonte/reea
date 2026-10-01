@@ -1,0 +1,848 @@
+<app-header title="Registro Ex Esposti Amianto"></app-header>
+
+<!-- Overlay ricerca: blocca la pagina mentre la ricerca è in corso -->
+@if (loading()) {
+  <div class="search-loading-overlay">
+    <div class="search-loading-card">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p class="search-loading-message">Ricerca in corso...</p>
+    </div>
+  </div>
+}
+
+<!-- Overlay export: caricamento -->
+@if (exportLoading()) {
+  <div class="export-overlay">
+    <div class="export-overlay-card">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p class="export-overlay-message">{{ exportMessage() }}</p>
+    </div>
+  </div>
+}
+
+<!-- Overlay export: errore --->
+@if (exportError()) {
+  <div class="export-overlay">
+    <div class="export-overlay-card export-overlay-card--error">
+      <button class="export-overlay-close" (click)="chiudiExportError()" aria-label="Chiudi">
+        <i class="fas fa-times"></i>
+      </button>
+      <i class="fas fa-exclamation-circle export-overlay-error-icon"></i>
+      <p class="export-overlay-message">{{ exportError() }}</p>
+    </div>
+  </div>
+}
+
+<!-- Overlay export: successo -->
+@if (exportSuccess()) {
+  <div class="export-overlay" tabindex="0" (click)="chiudiExportSuccess()" (keydown.enter)="chiudiExportSuccess()">
+    <div class="export-overlay-card export-overlay-card--success">
+      <i class="fas fa-check-circle export-overlay-success-icon"></i>
+      <p class="export-overlay-message">{{ exportSuccess() }}</p>
+    </div>
+  </div>
+}
+
+<div class="page-container">
+  <div class="back-link">
+    <button class="back-button" (click)="tornaAllaSelezione()">
+      <i class="fas fa-arrow-left"></i>
+      Torna alla selezione
+    </button>
+  </div>
+
+  <div class="main-content-card">
+    <mat-tab-group class="elenco-tab-group" animationDuration="0ms">
+
+      <!-- ===== TAB ELENCO ASSISTITI ===== -->
+      <mat-tab [label]="isInail() ? 'IMPORTA FILE' : 'ELENCO ASSISTITI'">
+        <div class="tab-content">
+
+    <section class="filters-section">
+      <div class="section-header">
+        @if (!isInail()) {
+          <h2 class="section-title">Elenco Assistiti</h2>
+        }
+
+        <div class="section-actions">
+          @if (!isPseudo()) {
+            <button class="btn-outline" (click)="importaDaFile()">
+              <i class="fa-solid fa-arrow-up-from-bracket"></i>
+              Importa dati da file
+            </button>
+            <button class="btn-outline" (click)="apriArchivioFile()">
+              <i class="fa-regular fa-folder-open"></i>
+              Archivio file
+            </button>
+            @if (!isInail()) {
+              <button class="btn-primary" (click)="aggiungiAssistito()">
+                <i class="fas fa-plus"></i>
+                Aggiungi assistito
+              </button>
+            }
+          }
+        </div>
+      </div>
+
+      @if (!isInail()) {
+      <form [formGroup]="filterForm" class="filters-form">
+        @if (isInail()) {
+          <div class="filter-inail-fixed">
+            <span class="filter-label">Fonte</span>
+            <span class="filter-inail-badge">INAIL </span>
+          </div>
+        } @else {
+        <div class="filters-grid" [class.filters-grid--pseudo]="isPseudo()">
+          <div class="filters-column filters-column-left">
+            <div class="filter-row-inline">
+              <div class="filter-field">
+                <label class="filter-label">Fonte</label>
+                <mat-form-field appearance="outline">
+                  <mat-select formControlName="fonteProvenienza" multiple placeholder="Seleziona"
+                              (selectionChange)="onFonteSelectionChange($event)">
+                    <mat-select-trigger>{{ getFontiDisplayLabel() }}</mat-select-trigger>
+                    <mat-option [value]="'all'" [class.select-all-option]="true">
+                      Tutte le Fonti
+                    </mat-option>
+                    @for (fonte of fontiOptions(); track fonte.value) {
+                      <mat-option [value]="fonte.value">{{ fonte.label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+              <div class="filter-field">
+                <label class="filter-label">ASL di Assistenza</label>
+                <mat-form-field appearance="outline">
+                  <mat-select formControlName="assistenzaAslId" placeholder="Seleziona">
+                    <mat-option [value]="''">Seleziona</mat-option>
+                    <mat-option [value]="'all'">Tutte le ASL</mat-option>
+                    @for (asl of aslOptions(); track asl.value) {
+                      <mat-option [value]="asl.value">{{ asl.label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="filter-field">
+              <label class="filter-label">Sezione</label>
+              <mat-form-field appearance="outline">
+                <mat-select formControlName="sezione" multiple placeholder="Seleziona"
+                            (selectionChange)="onSezioneSelectionChange($event)">
+                  <mat-select-trigger>{{ getSezioniDisplayLabel() }}</mat-select-trigger>
+                  <mat-option [value]="'all'" [class.select-all-option]="true">
+                    Tutte le Sezioni
+                  </mat-option>
+                  @for (sez of sezioneOptions; track sez.value) {
+                    <mat-option [value]="sez.value">{{ sez.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="filter-field">
+              <label class="filter-label">Stato</label>
+              <mat-form-field appearance="outline">
+                <mat-select formControlName="stato" multiple placeholder="Seleziona"
+                            (selectionChange)="onStatoSelectionChange($event)">
+                  <mat-select-trigger>{{ getStatiDisplayLabel() }}</mat-select-trigger>
+                  <mat-option [value]="'all'" [class.select-all-option]="true">
+                    Tutti gli Stati
+                  </mat-option>
+                  @for (stato of statiOptions(); track stato.value) {
+                    <mat-option [value]="stato.value">{{ stato.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- REEA-CDU-003-V01-HomePage - VARIAZIONI - 2 -->
+            <div class="filter-field">
+              <label class="filter-label">Sorveglianza</label>
+              <mat-form-field appearance="outline">
+                <mat-select formControlName="inseritoInSorveglianza" multiple placeholder="Seleziona">
+                  @for (opt of inseritoSorveglianzaOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- REEA-CDU-003-V01-HomePage - VARIAZIONI - 2 -->
+            <div class="filter-field">
+              <label class="filter-label">Elenco INAIL</label>
+              <mat-form-field appearance="outline">
+                <mat-select formControlName="elencoInail" multiple placeholder="Seleziona">
+                  @for (elenco of elencoInailOptions; track elenco.value) {
+                    <mat-option [value]="elenco.value">{{ elenco.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+
+          @if (!isPseudo()) {
+          <div class="filters-column filters-column-right">
+            <div class="filter-field">
+              <label class="filter-label">Codice Fiscale</label>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="codiceFiscale" placeholder="Cerca...">
+              </mat-form-field>
+            </div>
+
+            <div class="filter-field">
+              <label class="filter-label">Cognome</label>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="cognome" placeholder="Cerca...">
+              </mat-form-field>
+            </div>
+
+            <div class="filter-field">
+              <label class="filter-label">Nome</label>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="nome" placeholder="Cerca...">
+              </mat-form-field>
+            </div>
+
+            <div class="filter-field">
+              <label class="filter-label">Data di nascita</label>
+              <mat-form-field appearance="outline">
+                <input matInput [matDatepicker]="picker" formControlName="dataNascita" placeholder="gg/mm/aaaa">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+
+            <div class="filter-field">
+              <label class="filter-label">Iniziale cognome</label>
+              <mat-form-field appearance="outline">
+                <mat-select placeholder="Filtra da A" [value]="_cognomeLettRange()" [compareWith]="compareLettRange" (selectionChange)="setLetterRange($event.value)">
+                  <mat-option [value]="null">Tutti</mat-option>
+                  <mat-option [value]="{da:'A',a:'C'}">A – C</mat-option>
+                  <mat-option [value]="{da:'D',a:'G'}">D – G</mat-option>
+                  <mat-option [value]="{da:'H',a:'P'}">H – P</mat-option>
+                  <mat-option [value]="{da:'Q',a:'Z'}">Q – Z</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          }
+
+        </div>
+
+        <div class="filters-actions">
+          <button class="btn-secondary" type="button" (click)="annullaFiltri()">
+            <i class="fas fa-times"></i>
+            Annulla filtri
+          </button>
+          <button class="btn-primary" type="button" (click)="applicaFiltri()">
+            <i class="fas fa-filter"></i>
+            Applica filtri
+          </button>
+        </div>
+        } <!-- end @else (!isInail) -->
+      </form>
+      } <!-- end @if (!isInail) filters -->
+    </section>
+
+    @if (!isInail()) {
+    <div class="table-info">
+      <span class="total-count">
+      {{ stepDisplayStart() }} -
+      {{ stepDisplayEnd() }}
+      @if (totalRecordsDB() > stepDisplayTotal()) {
+        di {{ stepDisplayTotal() }} su {{ totalRecordsDB() }} assistiti trovati
+        @if (!showEsportaExcel && totalElements() >= 1000) {
+          <span class="total-db-count">(la visualizzazione è limitata ai primi {{ totalElements() }} risultati)</span>
+        }
+      } @else {
+        di {{ stepDisplayTotal() }} assistiti trovati
+      }
+      </span>
+    </div>
+
+    <div class="table-container">
+    <table mat-table [dataSource]="assistiti()" class="assistiti-table">
+      <ng-container matColumnDef="numeroRegistro">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">ID</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'numeroRegistro' && sortDirection() === 'asc'"
+                 (click)="toggleSort('numeroRegistro', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('numeroRegistro', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'numeroRegistro' && sortDirection() === 'desc'"
+                 (click)="toggleSort('numeroRegistro', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('numeroRegistro', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.numeroRegistro }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="cognomeNome">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Cognome<br>Nome</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'cognomeNome' && sortDirection() === 'asc'"
+                 (click)="toggleSort('cognomeNome', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('cognomeNome', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'cognomeNome' && sortDirection() === 'desc'"
+                 (click)="toggleSort('cognomeNome', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('cognomeNome', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <span class="name-text">{{ isPseudo() ? '*****' : (element.cognome + ' ' + element.nome) }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dataAdesione">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Data Adesione</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'dataAdesione' && sortDirection() === 'asc'"
+                 (click)="toggleSort('dataAdesione', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('dataAdesione', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'dataAdesione' && sortDirection() === 'desc'"
+                 (click)="toggleSort('dataAdesione', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('dataAdesione', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          {{ (element.dataAdesione || element.dataPresentazioneIstanza) ? ((element.dataAdesione || element.dataPresentazioneIstanza) | date:'dd/MM/yyyy') : '-' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dataNascita">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Data di<br>Nascita</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'dataNascita' && sortDirection() === 'asc'"
+                 (click)="toggleSort('dataNascita', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('dataNascita', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'dataNascita' && sortDirection() === 'desc'"
+                 (click)="toggleSort('dataNascita', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('dataNascita', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">{{ isPseudo() ? '*****' : (element.dataNascita | date:'dd/MM/yyyy') }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="aslCompetenza">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">ASL di<br>Assistenza</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'aslCompetenza' && sortDirection() === 'asc'"
+                 (click)="toggleSort('aslCompetenza', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('aslCompetenza', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'aslCompetenza' && sortDirection() === 'desc'"
+                 (click)="toggleSort('aslCompetenza', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('aslCompetenza', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">{{ element.aslCompetenza }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sezione">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Sezione</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'sezione' && sortDirection() === 'asc'"
+                 (click)="toggleSort('sezione', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('sezione', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'sezione' && sortDirection() === 'desc'"
+                 (click)="toggleSort('sezione', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('sezione', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">{{ getSezioneLabel(element.sezione) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="sorveglianza">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Sorveglianza</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'sorveglianza' && sortDirection() === 'asc'"
+                 (click)="toggleSort('sorveglianza', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('sorveglianza', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'sorveglianza' && sortDirection() === 'desc'"
+                 (click)="toggleSort('sorveglianza', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('sorveglianza', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">{{ getSorveglianzaLabel(element.insertoInSorveglianza) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="elencoInail">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Elenco<br>INAIL</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'elencoInail' && sortDirection() === 'asc'"
+                 (click)="toggleSort('elencoInail', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('elencoInail', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'elencoInail' && sortDirection() === 'desc'"
+                 (click)="toggleSort('elencoInail', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('elencoInail', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">{{ getElencoInailLabel(element.tipoElencoInail) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fonte">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Fonte</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'fonte' && sortDirection() === 'asc'"
+                 (click)="toggleSort('fonte', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('fonte', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'fonte' && sortDirection() === 'desc'"
+                 (click)="toggleSort('fonte', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('fonte', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <a href="#" class="fonte-link"
+             matTooltip="CLICCA PER VEDERE FONTI ASSOCIATE"
+             (click)="apriFontiAggiornamento(element); $event.stopPropagation(); $event.preventDefault()">
+            {{ getLastFonte(element) }}
+            @if (hasMultipleFonti(element)) {
+              <span class="multi-fonte-indicator" matTooltip="Fonte aggiornata più volte">...</span>
+            }
+          </a>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="stato">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="header-with-sort">
+            <span class="header-content">Stato</span>
+            <div class="sort-arrows">
+              <i class="fas fa-caret-up sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'stato' && sortDirection() === 'asc'"
+                 (click)="toggleSort('stato', 'asc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('stato', 'asc'); $event.stopPropagation()"></i>
+              <i class="fas fa-caret-down sort-arrow" tabindex="0"
+                 [class.active]="sortColumn() === 'stato' && sortDirection() === 'desc'"
+                 (click)="toggleSort('stato', 'desc'); $event.stopPropagation()"
+                 (keydown.enter)="toggleSort('stato', 'desc'); $event.stopPropagation()"></i>
+            </div>
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <app-status-badge [stato]="element.stato"></app-status-badge>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Azioni</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+          <mat-menu #menu="matMenu" class="actions-menu">
+            <button mat-menu-item (click)="visualizzaDettaglio(element)" class="menu-item-view">
+              <i class="fa-regular fa-eye"></i>
+              <span>Dettaglio assistito</span>
+            </button>
+            <button mat-menu-item (click)="apriStoriaStati(element)" class="menu-item-history">
+              <i class="fas fa-history"></i>
+              <span>Storia stati</span>
+            </button>
+            @if (!isPseudo() && !isInail()) {
+              <button mat-menu-item (click)="apriNote(element)" class="menu-item-note">
+                <i class="fa-regular fa-file-lines"></i>
+                <span>Note</span>
+              </button>
+              @if (element.stato === 'Da valutare' && !isSpresal() && valutazioneElencoOn()) {
+                <button mat-menu-item (click)="valutaSingoloAssistito(element)" class="menu-item-validate">
+                  <i class="fa-regular fa-circle-check"></i>
+                  <span>Valuta assistito</span>
+                </button>
+              }
+              @if (element.stato === 'Non eleggibile' && !isSpresal() && valutazioneElencoOn()) {
+                <button mat-menu-item (click)="cambiaValutazioneSingolo(element)" class="menu-item-validate">
+                  <i class="fa-regular fa-circle-check"></i>
+                  <span>Cambia valutazione</span>
+                </button>
+              }
+              @if (element.stato === 'Eleggibile' && !isCrpt() && presaInCaricoElencoOn()) {
+                <button mat-menu-item (click)="prendiInCaricoSingolo(element)" class="menu-item-validate">
+                  <i class="fa-regular fa-circle-check"></i>
+                  <span>Prendi in carico</span>
+                </button>
+              }
+              @if ((element.stato === 'Preso in carico' || element.stato === 'Non preso in carico') && !isCrpt() && presaInCaricoElencoOn()) {
+                <button mat-menu-item (click)="cambiaPresaInCaricoSingolo(element)" class="menu-item-validate">
+                  <i class="fa-regular fa-circle-check"></i>
+                  <span>Cambia presa in carico</span>
+                </button>
+              }
+              @if (element.stato === 'Avviato alla sorveglianza' && (isSpresalNonPseudo() || isCSI()) && concludiSorveglianzaElencoOn()) {
+                <button mat-menu-item (click)="concludiSorveglianzaSingolo(element)" class="menu-item-validate">
+                  <i class="fa-regular fa-circle-check"></i>
+                  <span>Concludi sorveglianza</span>
+                </button>
+              }
+            }
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+          class="table-row"></tr>
+    </table>
+
+    @if (!loading() && assistiti().length === 0) {
+      <div class="no-data">
+        <i class="fas fa-inbox"></i>
+        <p>Nessun assistito trovato</p>
+      </div>
+    }
+    </div>
+
+    <div class="pagination-section">
+      @if (!isPseudo() && showEsportaExcel) {
+        <button class="btn-export" (click)="esportaExcel()" [disabled]="exportLoading()">
+          <i class="fas fa-download"></i>
+          Esporta in Excel
+        </button>
+        @if (stepSize() > 0 && totalRecordsDB() > stepSize() && totalRecordsDB() > stepDisplayTotal()) {
+          <button class="btn-primary btn-prossimo-step" tabindex="0"
+                  (click)="caricaProssimoStep()"
+                  (keydown.enter)="caricaProssimoStep()"
+                  [disabled]="loading() || totalElements() === 0">
+            <i class="fas fa-forward-step"></i>
+            Carica assistiti successivi
+          </button>
+        }
+      }
+      <div class="pagination-controls">
+        <span class="pagination-info">
+          Pagina {{ currentPage() + 1 }} di {{ getTotalPages() }}
+        </span>
+        <div class="pagination-buttons">
+          <button class="btn-pagination" (click)="goToFirstPage()" [disabled]="currentPage() === 0">
+            <i class="fas fa-angle-double-left"></i>
+          </button>
+          <button class="btn-pagination" (click)="goToPreviousPage()" [disabled]="currentPage() === 0">
+            <i class="fas fa-angle-left"></i>
+          </button>
+          <button class="btn-pagination" (click)="goToNextPage()" [disabled]="currentPage() >= getTotalPages() - 1">
+            <i class="fas fa-angle-right"></i>
+          </button>
+          <button class="btn-pagination" (click)="goToLastPage()" [disabled]="currentPage() >= getTotalPages() - 1">
+            <i class="fas fa-angle-double-right"></i>
+          </button>
+        </div>
+        
+      </div>
+    </div>
+    } <!-- end @if (!isInail) table+pagination -->
+
+    <!-- <div class="bulk-actions">
+        <div class="bulk-actions-buttons">
+          <button class="btn-bulk-validate" (click)="valutaAssistiti()">
+            <i class="fas fa-check-circle"></i>
+            Valuta assistiti in stato 'Da valutare'
+          </button>
+
+          <button class="btn-bulk-send" (click)="inviaAllaSorveglianza()">
+            <i class="fas fa-paper-plane"></i>
+            Invia alla sorveglianza assistiti 'Eleggibili'
+          </button>
+        </div>
+    </div> -->
+
+        </div>
+      </mat-tab>
+
+      <!-- ===== TAB EXPORT ===== -->
+      @if (!isInail()) {
+      <mat-tab label="EXPORT DATI MASSIVI">
+        <div class="tab-content tab-content--export">
+
+          <!-- Filtro ASL: badge fisso per SPRESAL, select per CRPT/CSI/CRPT_PSEUDO/SPRESAL_PSEUDO/EPI_PSEUDO -->
+          @if (!isPseudo() || isCrptPseudo() || isSpresalPseudo() || isEpiPseudo()) {
+          <div class="exp-filtro-row">
+            <div class="exp-filtro-field">
+              <label class="exp-filtro-label">ASL di competenza</label>
+              @if (isSpresalNonPseudo()) {
+                <span class="filter-inail-badge">
+                  <i class="fa-solid fa-lock"></i>
+                  {{ exportAslLabel() }}
+                </span>
+              } @else {
+                <select class="exp-filtro-select"
+                        (change)="exportAslFiltro.set($any($event.target).value)">
+                  <option value="" disabled selected>Seleziona una ASL</option>
+                  @for (asl of aslOptions(); track asl.value) {
+                    <option [value]="asl.value">{{ asl.label }}</option>
+                  }
+                </select>
+              }
+            </div>
+          </div>
+          }
+
+
+
+          <div class="exp-btn-row">
+            @if (!isPseudo()) {
+              <button class="exp-btn exp-btn--chiaro" (click)="esportaChiaro()" [disabled]="exportChiaroLoading() || exportPseudoLoading() || ((!isPseudo() || isCrptPseudo() || isSpresalPseudo() || isEpiPseudo()) && !exportAslFiltro())">
+                @if (exportChiaroLoading()) {
+                  <mat-spinner diameter="16"></mat-spinner> In corso...
+                } @else {
+                  <i class="fa-solid fa-file-excel"></i> Dati in chiaro
+                }
+              </button>
+            }
+            @if (!isSpresalNonPseudo()) {
+              <button class="exp-btn exp-btn--pseudo" (click)="esportaPseudo()" [disabled]="exportChiaroLoading() || exportPseudoLoading() || ((!isPseudo() || isCrptPseudo() || isSpresalPseudo() || isEpiPseudo()) && !exportAslFiltro())">
+                @if (exportPseudoLoading()) {
+                  <mat-spinner diameter="16"></mat-spinner> In corso...
+                } @else {
+                  <i class="fa-solid fa-user-secret"></i> Dati pseudonimizzati
+                }
+              </button>
+            }
+            @if (isCrpt() || isCSI()) {
+              <div class="exp-allegato4-inline">
+                <select class="exp-filtro-select"
+                        [value]="allegato4Anno()"
+                        (change)="allegato4Anno.set(+$any($event.target).value)">
+                  @for (anno of allegato4AnniOptions; track anno) {
+                    <option [value]="anno">{{ anno }}</option>
+                  }
+                </select>
+                <button class="exp-btn exp-btn--allegato4"
+                        (click)="avviaExportAllegato4()"
+                        [disabled]="allegato4Loading()">
+                  @if (allegato4Loading()) {
+                    <mat-spinner diameter="16"></mat-spinner> In corso...
+                  } @else {
+                    <i class="fa-solid fa-file-export"></i> Dati per l'Allegato 4
+                  }
+                </button>
+              </div>
+            }
+          </div>
+
+          <!-- Archivio file di export -->
+          @if (exportArchivio().length > 0) {
+            <h3 class="exp-archivio-title">Archivio file di export</h3>
+            <table class="exp-table">
+              <thead>
+                <tr>
+                  <th>Id elaborazione</th>
+                  <th>Tipo</th>
+                  <th>File</th>
+                  <th>Stato</th>
+                  <th>Data richiesta</th>
+                  <th>Data generazione</th>
+                  <th>Operatore</th>
+                  <th>Azioni</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of exportArchivioSlice(); track row.idElaborazione) {
+                  @if (!isPseudo() || row.tipo === 'pseudo') {
+                  <tr>
+                    <td>{{ row.idElaborazione }}</td>
+                    <td>
+                      @if (row.tipo === 'chiaro') {
+                        <span class="exp-badge exp-badge--chiaro">In chiaro</span>
+                      } @else if (row.tipo === 'pseudo') {
+                        <span class="exp-badge exp-badge--pseudo">Pseudonimizzato</span>
+                      } @else {
+                        <span class="exp-badge exp-badge--allegato4">Allegato 4{{ row.anno ? ' (' + row.anno + ')' : '' }}</span>
+                      }
+                    </td>
+                    <td class="exp-td-file">
+                      <i class="fa-solid fa-file-excel exp-icon-excel"></i>
+                      {{ row.nome }}
+                    </td>
+                    <td><span class="exp-badge" [class.exp-badge--ok]="row.stato === 'ELABORAZIONE TERMINATA'" [class.exp-badge--pending]="row.stato !== 'ELABORAZIONE TERMINATA'">{{ row.stato }}</span></td>
+                    <td>{{ row.dataRichiesta }}</td>
+                    <td>{{ row.dataGenerazione }}</td>
+                    <td>{{ row.operatore }}</td>
+                    <td>
+                      @if (row.tipo === 'allegato4') {
+                        <button class="exp-btn-download"
+                          (click)="downloadAllegato4(row.idElaborazione, row.nome)"
+                          [disabled]="!row.idElaborazione || downloadingRowIds().has(row.idElaborazione!)">
+                          @if (downloadingRowIds().has(row.idElaborazione!)) {
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                          } @else {
+                            <i class="fa-solid fa-download"></i>
+                          }
+                          Download
+                        </button>
+                      } @else {
+                        <button class="exp-btn-download"
+                          (click)="downloadExportTotali(row.fileId, row.blobUrl, row.nome, row.idElaborazione)"
+                          [disabled]="row.stato !== 'ELABORAZIONE TERMINATA' || downloadingRowIds().has(row.idElaborazione ?? row.fileId ?? 0)">
+                          @if (downloadingRowIds().has(row.idElaborazione ?? row.fileId ?? 0)) {
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                          } @else {
+                            <i class="fa-solid fa-download"></i>
+                          }
+                          Download
+                        </button>
+                      }
+                    </td>
+                  </tr>
+                  }
+                }
+              </tbody>
+            </table>
+            <div class="pagination-section" style="justify-content: flex-end">
+              <div class="pagination-controls">
+                <span class="pagination-info">
+                  Pagina {{ exportArchivioPage() + 1 }} di {{ getExportTotalPages() }}
+                </span>
+                <div class="pagination-buttons">
+                  <button class="btn-pagination" (click)="goToExportFirstPage()" [disabled]="exportArchivioPage() === 0">
+                    <i class="fas fa-angle-double-left"></i>
+                  </button>
+                  <button class="btn-pagination" (click)="goToExportPreviousPage()" [disabled]="exportArchivioPage() === 0">
+                    <i class="fas fa-angle-left"></i>
+                  </button>
+                  <button class="btn-pagination" (click)="goToExportNextPage()" [disabled]="exportArchivioPage() >= getExportTotalPages() - 1">
+                    <i class="fas fa-angle-right"></i>
+                  </button>
+                  <button class="btn-pagination" (click)="goToExportLastPage()" [disabled]="exportArchivioPage() >= getExportTotalPages() - 1">
+                    <i class="fas fa-angle-double-right"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+
+
+        </div>
+      </mat-tab>
+      }
+
+      <!-- ===== TAB IMPORT PDF FILESYSTEM (solo CSI) ===== -->
+      @if (isCSI()) {
+      <mat-tab label="IMPORT PDF FILESYSTEM">
+        <div class="tab-content tab-content--import-pdf">
+
+          <div class="ipdf-header">
+            <div>
+              <h3 class="ipdf-title">Carica file PDF sul filesystem</h3>
+              <p class="ipdf-subtitle">Carica un file PDF alla volta nella cartella selezionata.</p>
+            </div>
+          </div>
+
+          <!-- Cartella destinazione -->
+          <div class="ipdf-row">
+            <label class="ipdf-label">Cartella destinazione</label>
+            <input class="ipdf-input"
+                   type="text"
+                   [value]="pdfFsCartella()"
+                   (input)="pdfFsCartella.set($any($event.target).value)"
+                   placeholder="es. storia_professionale">
+          </div>
+
+          <!-- Bottone upload -->
+          <div class="ipdf-row">
+            <label class="ipdf-upload-btn" [class.ipdf-upload-btn--loading]="pdfFsUploading()">
+              @if (pdfFsUploading()) {
+                <mat-spinner diameter="18"></mat-spinner>
+                <span>Caricamento in corso...</span>
+              } @else {
+                <i class="fas fa-upload"></i>
+                <span>Seleziona PDF da caricare</span>
+              }
+              <input type="file" accept=".pdf" hidden
+                     (change)="uploadPdfFilesystem($event)"
+                     [disabled]="pdfFsUploading()">
+            </label>
+          </div>
+
+          <!-- Lista file caricati nella sessione -->
+          @if (pdfFsFiles().length > 0) {
+            <div class="ipdf-list-section">
+              <h4 class="ipdf-list-title">File caricati in questa sessione</h4>
+              <ul class="ipdf-list">
+                @for (f of pdfFsFiles(); track f.percorso) {
+                  <li class="ipdf-item">
+                    <i class="fas fa-file-pdf ipdf-icon-pdf"></i>
+                    <div class="ipdf-item-info">
+                      <span class="ipdf-item-name" [title]="f.nomeFile">{{ f.nomeFile }}</span>
+                      <span class="ipdf-item-path" [title]="f.percorso">{{ f.percorso }}</span>
+                    </div>
+                    <div class="ipdf-item-actions">
+                      <button class="exp-btn-download" title="Scarica"
+                        (click)="downloadPdfFilesystem(f.percorso, f.nomeFile)">
+                        <i class="fa-solid fa-download"></i> Download
+                      </button>
+                      <button class="exp-btn-download ipdf-btn-delete" title="Elimina"
+                        (click)="eliminaPdfFilesystem(f.percorso)">
+                        <i class="fas fa-trash"></i> Elimina
+                      </button>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+        </div>
+      </mat-tab>
+      }
+
+    </mat-tab-group>
+  </div>
+</div>
+
+@if (centerNotif(); as notif) {
+  <div class="center-notif-backdrop">
+    <div class="center-notif-box notif-{{ notif.tipo }}" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+      <i class="center-notif-icon fas"
+         [class.fa-check-circle]="notif.tipo === 'success'"
+         [class.fa-times-circle]="notif.tipo === 'error'"
+         [class.fa-info-circle]="notif.tipo === 'info'"></i>
+      <span class="center-notif-text">{{ notif.text }}</span>
+      <button class="center-notif-btn" (click)="centerNotif.set(null)">OK</button>
+    </div>
+  </div>
+}

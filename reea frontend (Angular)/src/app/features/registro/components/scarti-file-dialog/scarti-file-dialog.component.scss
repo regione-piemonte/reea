@@ -1,0 +1,104 @@
+@use "sass:color";
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.dialog-container {
+  @include dialog-container(800px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dialog-header {
+  @include dialog-header;
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    .header-icon {
+      font-size: 22px;
+      color: $color-danger;
+    }
+    .dialog-title { @include dialog-title; margin: 0; }
+    .file-name { font-size: 12px; color: $text-secondary; display: block; margin-top: 2px; }
+  }
+  .close-button { @include dialog-close-btn; }
+}
+
+.dialog-content {
+  @include dialog-content;
+  padding: $spacing-lg;
+}
+
+.dialog-footer {
+  @include dialog-footer;
+  .btn-chiudi { @include button-primary; }
+}
+
+.scarti-count {
+  font-size: 13px;
+  color: $text-secondary;
+  margin-bottom: $spacing-md;
+  .badge-count {
+    display: inline-block;
+    background: $color-danger;
+    color: white;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 12px;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.table-wrapper {
+  border: 1px solid $border-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+}
+
+.scarti-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    background: #fafafa;
+    padding: 10px $spacing-md;
+    text-align: left;
+    font-weight: $font-weight-semibold;
+    color: $text-secondary;
+    border-bottom: 1px solid $border-light;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px $spacing-md;
+    color: $text-primary;
+    border-bottom: 1px solid $border-light;
+    vertical-align: top;
+    word-break: break-word;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: $bg-hover; }
+
+  .col-riga   { width: 80px; text-align: center; }
+  .col-codice { width: 160px; }
+  .col-desc   { width: auto; }
+}
+
+.errore-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  background: #fde8e8;
+  color: $color-danger;
+  white-space: nowrap;
+}
+
+.no-data { @include no-data; }
+
+::ng-deep .mat-mdc-dialog-surface {
+  padding: 0 !important;
+}

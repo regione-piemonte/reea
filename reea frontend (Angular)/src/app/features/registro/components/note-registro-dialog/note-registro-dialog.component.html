@@ -1,0 +1,71 @@
+<div class="dialog-container">
+
+  <!-- Header -->
+  <div class="dialog-header">
+    <div class="header-info">
+      <h2 class="dialog-title">Note Registro</h2>
+      <span class="assistito-info">
+        {{ assistito.cognome }} {{ assistito.nome }} - {{ assistito.codiceFiscale }}
+      </span>
+    </div>
+    <button class="close-button" (click)="onChiudi()" aria-label="Chiudi">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+
+  <!-- Contenuto -->
+  <div class="dialog-content">
+
+    @if (loading()) {
+      <div class="dialog-loading"><mat-spinner diameter="36"></mat-spinner></div>
+    } @else {
+
+      <!-- Tabella note -->
+      @if (note().length > 0) {
+        <div class="table-container">
+          <table mat-table [dataSource]="note()" class="note-table">
+
+            <ng-container matColumnDef="descrizione">
+              <th mat-header-cell *matHeaderCellDef>Nota</th>
+              <td mat-cell *matCellDef="let item">
+                @if (notaInModifica()?.nota_id === item.nota_id) {
+                  <mat-form-field appearance="outline" class="nota-edit-field">
+                    <textarea matInput [formControl]="editNotaControl" rows="2"></textarea>
+                  </mat-form-field>
+                } @else {
+                  {{ item.descrizione }}
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dataModifica">
+              <th mat-header-cell *matHeaderCellDef>Data</th>
+              <td mat-cell *matCellDef="let item">{{ item.data_modifica }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="operatoreModifica">
+              <th mat-header-cell *matHeaderCellDef>Operatore</th>
+              <td mat-cell *matCellDef="let item">{{ item.utente_modifica }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      } @else {
+        <div class="no-data">
+          <i class="fa-regular fa-file-lines"></i>
+          <p>Nessuna nota disponibile per questo assistito</p>
+        </div>
+      }
+
+    }
+
+  </div>
+
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <button class="btn-chiudi" (click)="onChiudi()">Chiudi</button>
+  </div>
+
+</div>

@@ -1,0 +1,56 @@
+// STORIA STATI DIALOG - Styles (Centralizzato)
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.dialog-container { @include dialog-container(800px); }
+.dialog-header {
+  @include dialog-header;
+  .header-info {
+    @include flex-column;
+    gap: 4px;
+    .dialog-title { @include dialog-title; color: #1c398e; }
+    .assistito-info { font-size: 14px; color: #090909; font-weight: 400; }
+  }
+  .close-button { @include dialog-close-btn; }
+}
+.dialog-content { @include dialog-content; }
+.dialog-footer { @include dialog-footer; .btn-chiudi { @include dialog-btn-chiudi; } }
+
+.table-container { overflow: hidden; }
+.storia-table { @include dialog-mat-table-blue; }
+.stato-badge { display: inline-block; font-size: 13px; font-weight: 500; color: #0b0b0b; }
+.no-data { @include dialog-no-data; }
+
+// Riga stato attuale
+::ng-deep .row-current td {
+  background-color: #f0f7ff !important;
+  font-weight: 500;
+}
+
+.stato-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dot-attuale {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #1c398e;
+  flex-shrink: 0;
+}
+
+// Colonna nota: permetti il wrap del testo
+::ng-deep .storia-table .mat-column-notaPassaggioStato {
+  white-space: normal;
+  word-break: break-word;
+  min-width: 160px;
+}
+
+@media (max-width: 768px) {
+  .dialog-container { width: 100%; }
+  .storia-table .mat-mdc-header-cell,
+  .storia-table .mat-mdc-cell { padding: 10px 12px !important; font-size: 12px !important; }
+}

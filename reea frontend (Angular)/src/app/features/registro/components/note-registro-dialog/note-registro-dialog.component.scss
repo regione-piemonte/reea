@@ -1,0 +1,88 @@
+// NOTE REGISTRO DIALOG - Styles (Centralizzato)
+@use "../../../../../styles/variables" as *;
+@use "../../../../../styles/mixins" as *;
+
+.dialog-container { @include dialog-container(850px); }
+.dialog-header {
+  @include dialog-header;
+  align-items: flex-start;
+  .header-info {
+    @include flex-column;
+    gap: 4px;
+    .dialog-title { @include dialog-title; color: #1c398e; }
+    .assistito-info { font-size: 14px; color: #4b5563; font-weight: 400; }
+  }
+  .close-button { @include dialog-close-btn; }
+}
+.dialog-content { @include dialog-content; }
+.dialog-footer { @include dialog-footer; .btn-chiudi { @include dialog-btn-chiudi; } }
+
+.table-container { @include table-wrapper; }
+
+.note-table {
+  @include dialog-mat-table;
+  // Override specifici per note-table
+  .mat-mdc-header-cell {
+    background-color: #eff6ff !important;
+    border-bottom: 1px solid #bedbff !important;
+    color: black !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    &:first-child { width: 55%; }
+    &:nth-child(2), &:nth-child(3) { width: 22.5%; }
+  }
+  .mat-mdc-cell {
+    border-bottom-color: #f3f4f6 !important;
+    vertical-align: top;
+    line-height: 1.5;
+    &:first-child {
+      color: #374151 !important;
+      white-space: normal;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      max-width: 420px;
+    }
+    &:nth-child(2), &:nth-child(3) { color: #6b7280 !important; white-space: nowrap; }
+  }
+}
+
+.no-data { @include dialog-no-data; }
+
+.dialog-loading {
+  display: flex;
+  justify-content: center;
+  padding: $spacing-xl;
+}
+
+.nota-form {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-lg;
+  margin-top: $spacing-lg;
+
+  .nota-textarea { flex: 1; }
+
+  .btn-salva-nota {
+    @include button-primary;
+    margin-top: 4px;
+    white-space: nowrap;
+    i { margin-right: $spacing-sm; }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+  }
+}
+
+.nota-edit-field { width: 100%; }
+
+.btn-icon-action {
+  @include btn-icon-edit;
+}
+
+@media (max-width: 768px) {
+  .dialog-container { width: 100%; }
+  .note-table .mat-mdc-header-cell,
+  .note-table .mat-mdc-cell {
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+    &:first-child { width: auto; }
+  }
+}
