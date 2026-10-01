@@ -1,0 +1,102 @@
+publiccodeYmlVersion: 0.7.0
+name: REEA (Registro Ex Esposti Amianto)
+applicationSuite: REEA
+url: https://github.com/regione-piemonte/reea.git
+softwareVersion: 1.0.0
+platforms:
+  - linux
+  - windows
+developmentStatus: development
+softwareType: standalone/web
+description:
+  it-IT:
+    localisedName: Registro Ex Esposti Amianto
+    shortDescription: Registro lavoratori ex esposti amianto sottoposti a vigilanza sanitaria
+    longDescription: >-
+      La soluzione informatizzata, denominata “REEA – Registro Ex Esposti
+      Amianto”, rappresenta un sistema integrato all’interno dell’ecosistema dei
+      servizi della sanità digitale del Piemonte, interoperabile con la base
+      dati anagrafica nazionale e rispondente alla normativa in corso relativa
+      allo specifico tema, finalizzato alla gestione di un archivio regionale
+      dei soggetti ex esposti ad amianto avviati all’attività di sorveglianza
+      sanitaria da parte delle ASL piemontesi.
+
+      Gli attori principali che concorrono alla gestione completa dell’attività
+      di sorveglianza sono il CRPT dell’AOU CDSS di Torino, titolare del
+      Registro, e gli SPreSAL, deputati alla presa in carico degli assistiti di
+      competenza di ciascuna ASL. Le funzionalità messe a disposizione dal
+      Registro sono di seguito sintetizzate:
+
+      caricamento e valutazione delle preadesioni da parte del CRPT;
+
+      caricamento degli elenchi INAIL A e B da parte dell’operatore INAIL;
+
+      presa in carico delle preadesioni e avvio della sorveglianza da parte
+      degli SPreSAL delle ASL;
+
+      caricamento dei dati di sorveglianza e degli elenchi NPLA (notifiche e
+      piani di lavoro amianto) da parte degli SPreSAL;
+
+      estrazione dati a fini epidemiologici e produzione report annuale per il
+      Ministero.
+
+      Il Registro è integrato con il PUA per la gestione degli accessi.
+
+      L’accesso all’applicativo prevede la profilazione dell’utente in funzione
+      dell’ente di appartenenza e del ruolo che ne condizionano il cono di
+      visibilità dei dati. I profili previsti sono:
+
+      CRPT AOU CDSS: titolare del registro;
+
+      SPreSAL delle 12 ASL del Piemonte: soggetto che svolge materialmente
+      l’attività di sorveglianza e alimenta il registro con tutte le
+      informazioni relative al percorso di sorveglianza stesso;
+
+      SSEPI e Centro Regionale Amianto: soggetto che svolge esclusivamente
+      attività di studio a fini epidemiologici;
+
+      INAIL: soggetto deputato esclusivamente all’alimentazione del registro con
+      gli elenchi INAIL.
+
+      In rapporto al ruolo e all’ente di appartenenza, come descritto sopra, la
+      visibilità dei dati è perimetrata come segue:
+
+      CRPT: in quanto titolare del Registro, ha visibilità in chiaro su tutti i
+      contenuti;
+
+      SPreSAL: ha visibilità in chiaro dei dati riferiti esclusivamente agli
+      assistiti di competenza della propria ASL, mentre ha visibilità dei dati
+      in forma pseudonimizzata su tutto il Piemonte;
+
+      SSEPI e Centro Regionale Amianto: considerata la finalità di studio
+      epidemiologico, hanno visibilità esclusivamente sui dati in forma
+      pseudonimizzata;
+
+      INAIL: in rapporto al ruolo, ha visibilità in chiaro esclusivamente sui
+      propri dati ai fini di eventuale verifica del corretto caricamento dei
+      dati di propria competenza. Non ha visibilità sui dati provenienti dalle
+      altre fonti nemmeno in forma pseudonimizzata.
+    documentation: https://github.com/regione-piemonte/reea/blob/main/reea%20docs/Manuale_Utente_REEA_RegistroExEspostiAmianto_V01.pdf
+    features:
+      - Gestione anagrafica assistiti
+      - Caricamento elenco preadesioni
+      - caricamento dati di monitoraggio
+      - scarico dati per analisi epidemiologica
+      - scarico dati per reportistica regionale e ministeriale
+      - valutazione delle preadesioni
+      - presa in carico delle preadesioni
+legal:
+  license: EUPL-1.2
+maintenance:
+  type: internal
+  contacts:
+    - name: Davide Elia
+      email: davide.elia@csi.it
+      phone: "3466299349"
+    - name: Laura Lo Russo
+      email: laura.lorusso@csi.it
+      phone: "3472485366"
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - it-IT
