@@ -1,0 +1,7 @@
+target/
+.git/
+.settings/
+.classpath
+.editorconfig
+.factorypath
+.project

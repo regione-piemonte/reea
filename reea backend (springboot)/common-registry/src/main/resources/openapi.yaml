@@ -1,0 +1,2434 @@
+openapi: 3.0.3
+
+info:
+  title: API Anagrafica
+  version: 1.0.0
+  description: >
+    API per la gestione CRUD della tabella Anagrafica e l'estrazione della lista anagrafiche del registro.
+    Permette di creare, leggere, aggiornare ed eliminare le anagrafiche e ottenere in sola visualizzazione
+    la lista delle anagraifiche del registro, ovvero:
+    join tra reea_t_soggetto, 
+              reea_t_registro,  
+              reea_r_soggetto_fonte,
+              reea_d_fonte,
+              reea_d_soggetto_stato.
+  contact:
+    name: CSI Piemonte
+
+servers:
+  - url: /api
+    description: url dell'api Anagrafica
+
+paths:
+  /batch/elaborazioneTracciati:
+   get:
+     summary: Avvia il batch di elaborazione tracciato dati
+     operationId: triggerBatchTracciati
+     tags:
+      - Batch
+     responses:
+      '200':
+        description: Batch avviato correttamente
+        content:
+          text/plain:
+            schema:
+              type: string	
+
+  /batch/aggiornamentoAnagraficheDaAura:
+   get:
+     summary: Avvia il batch di estrazione anagrafiche
+     operationId: triggerBatchAnagrafiche
+     tags:
+      - Batch
+     responses:
+      '200':
+        description: Batch avviato correttamente
+        content:
+          text/plain:
+            schema:
+              type: string
+
+  /anagrafiche:
+    get:
+      summary: Elenca tutte le anagrafiche in sola visualizzazione con dettaglio minimo.
+      operationId: getListaAnagrafiche
+      tags:
+        - ListaAnagrafiche
+      responses:
+        '200':
+          description: Lista anagrafiche recuperata correttamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AnagraficaDTO'
+
+    post:
+      summary: Crea una nuova anagrafica
+      operationId: createAnagrafica
+      tags:
+        - Anagrafica
+      requestBody:
+        description: Oggetto Anagrafica da creare
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnagraficaDTO'
+      responses:
+        '201':
+          description: Anagrafica creata correttamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnagraficaDTO'
+
+  /anagrafiche/{id}:
+    get:
+      summary: Recupera un'anagrafica per ID
+      operationId: getAnagraficaById
+      tags:
+        - Anagrafica
+      parameters:
+        - name: id
+          in: path
+          description: ID s_soggetto_id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Anagrafica trovata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnagraficaDTO'
+        '404':
+          description: Anagrafica non trovata
+
+    put:
+      summary: Aggiorna un'anagrafica esistente
+      operationId: updateAnagrafica
+      tags:
+        - Anagrafica
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Dati aggiornati dell'anagrafica
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnagraficaDTO'
+      responses:
+        '200':
+          description: Anagrafica aggiornata correttamente
+        '404':
+          description: Anagrafica non trovata
+
+    delete:
+      summary: Elimina un'anagrafica
+      operationId: deleteAnagrafica
+      tags:
+        - Anagrafica
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Anagrafica eliminata correttamente
+        '404':
+          description: Anagrafica non trovata
+
+components:
+  schemas:
+
+    ConcorrenzaCheckDTO:
+      type: object
+      description: Risposta al controllo di concorrenza import per fonte
+      properties:
+        bloccato:
+          type: boolean
+        messaggio:
+          type: string
+
+    ArchivioFileCaricatiDTO:
+      type: object
+      description: Rappresenta il DTO dei file caricati ( Excel )
+      properties:
+        nome_file:
+          type: string
+        elaborazione_id:
+          type: integer
+        fonte_provenienza:
+          type: string
+        stato:
+          type: string
+        record_totali:
+          type: integer
+        record_elaborati:
+          type: integer
+        record_scartati:
+          type: integer
+        record_errati:
+          type: integer
+        data_caricamento:
+          type: string
+          format: date-time
+        operatore:
+          type: string
+        azioni:
+          type: string
+        fileId:
+          type: integer
+
+    scartoFileDTO:
+      type: object
+      properties:
+        codice_errore:
+          type: string
+        descrizione_errore:
+          type: string
+        contenuto_riga_raw:
+          type: string
+        cognome:
+          type: string
+        nome:
+          type: string
+        data_nascita:
+          type: string
+        sesso:
+          type: string
+        codice_fiscale:
+          type: string
+        campo_extra:
+          type: string
+        target_tabella_nome:
+          type: string
+        target_record_id:
+          type: integer
+          format: int32
+
+
+    ParametroDTO:
+      type: object
+      description: Rappresenta il DTO di Parametro
+      properties:
+        parametro_id:
+          type: integer
+          format: int64
+          description: Primary Key (SERIAL)
+        parametro_cod:
+          type: string
+        parametro_desc:
+          type: string
+        parametro_valore:
+          type: string
+        parametro_tipo_id:
+          type: integer
+        validita_inizio: 
+          type: string
+          format: timestamp
+        validita_fine:
+          type: string
+          format: timestamp
+        data_creazione:
+          type: string
+          format: timestamp
+        data_modifica:
+          type: string
+          format: timestamp
+        data_cancellazione:
+          type: string
+          format: timestamp
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        utente_cancellazione:
+          type: string
+
+    FonteConDataDTO:
+      type: object
+      description: Rappresenta il DTO della cronologia delle fonti con relativa data
+      properties:        
+        fonte_desc:
+          type: string
+        data_creazione:
+          type: string
+          format: timestamp
+        data_adesione:
+          type: string
+          format: timestamp
+
+    SpresalDTO:
+      type: object
+      description: Rappresenta il DTO dello scarico excel Spresal
+      properties:
+        reg_spresal_anamnesi_id:
+          type: integer
+          format: int64
+          description: Primary Key
+        registro_id:
+          type: integer
+        codice_fiscale:
+          type: string
+        cognome:
+          type: string
+        nome:
+          type: string
+        data_nascita:
+          type: string
+          format: date
+        sesso:
+          type: string
+        id_aura:
+          type: integer
+        data_intervista:
+          type: string
+          format: date
+        nominativo_intervistatore:
+          type: string
+        fumatore:
+          type: boolean
+        sigarette:
+          type: boolean
+        sigarette_anni:
+          type: number
+        sigarette_eta_inizio:
+          type: number
+        sigarette_fuma_attualmente:
+          type: boolean
+        sigarette_eta_fine:
+          type: number
+        sigarette_die:
+          type: number
+        sigari:
+          type: boolean
+        sigari_anni:
+          type: number
+        sigari_eta_inizio:
+          type: number
+        sigari_fuma_attualmente:
+          type: boolean
+        sigari_eta_fine:
+          type: number
+        sigari_die:
+          type: number
+        pipa:
+          type: boolean
+        pipa_anni:
+          type: number
+        pipa_eta_inizio:
+          type: number
+        pipa_fuma_attualmente:
+          type: boolean
+        pipa_eta_fine:
+          type: number
+        pipa_die:
+          type: number
+        occupazione_num:
+          type: string
+        occupazione_anno_inizio:
+          type: string
+        occupazione_anno_fine:
+          type: string
+        occupazione_tipo:
+          type: string
+        occupazione_descrizione_lavoro:
+          type: string
+        occupazione_nome_e_indirizzo_ditta:
+          type: string
+        occupazione_attivita_ditta:
+          type: string
+        nota_attivita_con_amianto:
+          type: string
+        anamnesi_esposizione_amianto:
+          type: boolean
+        esposizione_professionale:
+          type: string
+        anno_fine_esposizione:
+          type: integer
+        livello_esposizione:
+          type: string
+        inserimento_in_sorveglianza:
+          type: boolean
+        id_spresal:
+          type: integer
+        validita_inizio:
+          type: string
+          format: date-time
+        validita_fine:
+          type: string
+          format: date-time
+        data_creazione:
+          type: string
+          format: date-time
+        data_modifica:
+          type: string
+          format: date-time
+        data_cancellazione:
+          type: string
+          format: date-time
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        utente_cancellazione:
+          type: string
+        occupazione_esposizione_crpt:
+          type: boolean
+        occupazione_settore_ditta_crpt:
+          type: string
+        occupazione_mansione_crpt:
+          type: string
+        occupazione_ragione_sociale_ditta_crpt:
+          type: string
+        occupazione_piva_ditta_crpt:
+          type: string
+        occupazione_codice_fiscale_ditta_crpt:
+          type: string
+        file_id:
+          type: integer
+        counseling:
+          type: string
+
+    AdesioneDTO:
+      type: object
+      description: Rappresenta il DTO dello scarico excel
+      properties:
+        adesione_id:
+          type: integer
+          format: int64
+          description: Primary Key ( SERIAL )
+        adesione_cod:
+          type: string
+        adesione_data:
+          type: string
+          format: date
+        sesso:
+          type: string
+        codice_fiscale:
+          type: string
+        cognome:
+          type: string
+        nome:
+          type: string
+        nascita_data:
+          type: string
+          format: date
+        nascita_provincia_desc:
+          type: string
+        nascita_comune_desc:
+          type: string
+        tessera_team:
+          type: string
+        id_aura:
+          type: string
+        domicilio_provincia_desc:
+          type: string
+        domicilio_comune_desc:
+          type: string
+        domicilio_comune_cod:
+          type: string
+        domicilio_cap:
+          type: string
+        email:
+          type: string
+        telefono:
+          type: string
+        domicilio_asl_cod:
+          type: string
+        domicilio_asl_desc:
+          type: string
+        azienda_cod:
+          type: string
+        residenza_asl_cod:
+          type: string
+        residenza_asl_desc:
+          type: string
+        esposizione_inizio:
+          type: string
+          format: date
+        esposizione_fine:
+          type: string
+          format: date
+        esposizione_azienda:
+          type: string
+        esposizione_azienda_comune_cod:
+          type: string
+        esposizione_azienda_comune_desc:
+          type: string
+        esposizione_azienda_cap:
+          type: string
+        esposizione_azienda_provincia:
+          type: string
+        esposizione_mansione:
+          type: string
+        soggetto_id:
+          type: integer
+        fonteId:
+          type: integer
+        file_id:
+          type: integer
+        utente_creazione:
+          type: string
+        lista_esposizione:
+          type: array
+          items:
+            $ref: EsposizioneDTO
+
+    NplaDTO:
+      type: object
+      properties:
+        reg_pdl_amianto_id:
+          type: integer
+          format: int32
+        codice_fiscale:
+          type: string
+        periodo:
+          type: integer
+          format: int32
+        id_cantiere:
+          type: integer
+          format: int32
+        azienda_piva:
+          type: string
+        azienda_nome:
+          type: string
+        asl_cantiere:
+          type: string
+        comune_cantiere:
+          type: string
+        anno:
+          type: integer
+          format: int32
+        tipologia_piano:
+          type: string
+        quantita_da_rimuovere:
+          type: number
+        quantita_rimossa:
+          type: number
+        validita_inizio:
+          type: string
+          format: date-time
+        validita_fine:
+          type: string
+          format: date-time
+        cognome:
+          type: string
+        nome:
+          type: string
+        data_nascita:
+          type: string
+          format: date
+        sesso:
+          type: string
+        file_id:
+          type: integer
+        utente_creazione:
+          type: string
+
+    AslDTO:
+      type: object
+      properties:
+        asl_azienda_desc:
+          type: string
+        asl_id:
+          type: integer
+        asl_cod:
+          type: string
+
+    ComuneDTO:
+      type: object
+      properties:
+        comune_desc:
+          type: string
+        comune_cod:
+          type: string
+        comune_cap:
+          type: string
+
+    ProvinciaDTO:
+      type: object
+      properties:
+        provincia_sigla:
+          type: string
+        provincia_desc:
+          type: string
+        provincia_id:
+          type: integer
+        provincia_cod:
+          type: string
+
+    NazioneDTO:
+      type: object
+      properties:
+        nazione_desc_it:
+          type: string
+        nazione_istat_cod:
+          type: string
+
+    RegistroDTO:
+      type: object
+      properties:
+        registro_id:
+          type: integer
+        soggetto_id_hmac:
+          type: string
+        soggetto_id_cifrato:
+          type: string
+          format: byte
+        att_sanitaria_stato:
+          type: boolean
+        att_sanitaria_spresal:
+          type: boolean
+        att_sanitaria_spresal_data:
+          type: string
+          format: date
+        att_sanitaria_inail:
+          type: boolean
+        att_sanitaria_inail_data:
+          type: string
+          format: date
+        sezione:
+          type: integer
+        inserito_in_sorveglianza:
+          type: boolean
+        versione_numero:
+          type: integer
+        validita_inizio:
+          type: string
+          format: date-time
+        validita_fine:
+          type: string
+          format: date-time
+        data_creazione:
+          type: string
+          format: date-time
+        data_modifica:
+          type: string
+          format: date-time
+        data_cancellazione:
+          type: string
+          format: date-time
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        utente_cancellazione:
+          type: string
+        tipo_elenco_inail:
+          type: string
+
+    AnagraficaDTO:
+      type: object
+      description: Rappresenta il DTO di Anagrafica
+      properties:
+        soggetto_id:
+          type: integer
+          format: int64
+          description: Primary Key (SERIAL)
+        codice_fiscale:
+          type: string
+          maxLength: 16
+        domicilio_asl_id:
+          type: integer
+        domicilio_asl_cod:
+          type: string
+        domicilio_asl_desc:
+          type: string
+        residenza_asl_id:
+          type: integer
+        residenza_asl_cod:
+          type: string
+        assistenza_asl_id:
+          type: string
+        assistenza_asl_cod:
+          type: string
+        nome:
+          type: string
+        cognome:
+          type: string
+        sesso:
+          type: string
+        nascita_data:
+          type: string
+          format: date
+        fonte_id:
+          type: integer
+        soggetto_stato_id:
+          type: integer
+        descrizione_fonte:
+          type: array
+          items:
+            type: string
+            description: descrizione delle reea_d_fonte afferenti assistito
+        lista_esposizione:
+          type: array
+          items:
+            $ref: EsposizioneDTO
+        lista_esenzione:
+          type: array
+          items:
+            $ref: EsenzioneDTO
+        descrizione_asl_competenza:
+          type: string
+        descrizione_stato:
+          type: string
+          description: descrizione della tabella reea_d_soggetto_stato afferente assistito
+        id_aura:
+          type: string
+        inserimento_tipo_id:
+          type: integer
+        provincia_nascita:
+          type: string
+        comune_nascita:
+          type: string
+        tessera_team:
+          type: string
+        provincia_di_domicilio:
+          type: string
+        comune_di_domicilio:
+          type: string
+        domicilio_comune_cod:
+          type: string
+        domicilio_cap:
+          type: string
+        domicilio_numero_civico:
+          type: string
+        email:
+          type: string
+        telefono:
+          type: string
+        azienda_cod:
+          type: string
+        residenza_asl_desc:
+          type: string
+        data_decesso:
+          type: string
+          format: timestamp
+        assistenza_asl_fine:
+          type: string
+          format: timestamp
+        adesione_id:
+          type: integer
+          format: int64
+        nascita_comune:
+          type: string
+        nascita_provincia:
+          type: string
+        nascita_stato:
+          type: string
+        domicilio_comune_desc:
+          type: string
+        domicilio_provincia_desc:
+          type: string
+        domicilio_indirizzo:
+          type: string
+        preadesione_email:
+          type: string
+        preadesione_telefono:
+          type: string
+        preadesione_cod:
+          type: string
+        preadesione_data:
+          type: string
+          format: date
+        adesione_data:
+          type: string
+        nascita_comune_desc:
+          type: string
+        nascita_provincia_desc:
+          type: string
+        nascita_stato_cod:
+          type: string
+        nascita_stato_desc:
+          type: string
+        cittadinanza_stato_cod:
+          type: string
+        cittadinanza_stato_desc:
+          type: string
+        domicilio_provincia_cod:
+          type: string
+        domicilio_stato_cod:
+          type: string
+        domicilio_stato_desc:
+          type: string
+        residenza_indirizzo:
+          type: string
+        residenza_comune_cod:
+          type: string
+        residenza_comune_desc:
+          type: string
+        residenza_provincia_cod:
+          type: string
+        residenza_provincia_desc:
+          type: string
+        residenza_stato_cod:
+          type: string
+        residenza_stato_desc:
+          type: string
+        residenza_cap:
+          type: string
+        residenza_regione:
+          type: string
+        residenza_istat:
+          type: string
+        residenza_numero_civico:
+          type: string
+        nascita_comune_cod:
+          type: string
+        nascita_provincia_cod:
+          type: string
+        adesione_cod:
+          type: string
+        presentazione_istanza_data:
+          type: string
+        soggetto_stato_note:
+          type: string
+        reg_inail_id:
+          type: integer
+        telefono_aura:
+          type: string
+        email_aura:
+          type: string
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        data_creazione:
+          type: string
+          format: date-time
+        data_modifica:
+          type: string
+          format: date-time
+        domanda:
+          type: string
+        att_santaria_inail:
+          type: boolean
+        tipologia_inail:
+          type: string
+        soggetto_stato_precedente_id:
+            type: integer
+        file_id:
+          type: integer
+        lista_fonte_by_id_soggetto:
+          type: array
+          items:
+            $ref: FonteConDataDTO
+        lista_inail:
+          type: array
+          items:
+            $ref: '#/components/schemas/InailDTO'
+        lista_npla:
+          type: array
+          items:
+            $ref: '#/components/schemas/NplaDTO'
+        lista_anamnesi_spresal:
+         type: array
+         items:
+            $ref: '#/components/schemas/SpresalDTO'
+        spresal:
+          $ref: SpresalDTO
+        registro:
+          $ref: RegistroDTO
+        listaPdf:
+          type: array
+          items:
+            $ref: '#/components/schemas/PdfInfo'
+          nullable: true
+          description: Lista dei PDF associati al soggetto (prefisso = soggettoId)
+
+    InailDTO:
+      type: object
+      description: Rappresenta il DTO Inail
+      properties:
+        reg_inail_id:
+          type: integer
+          format: int64
+          description: Primary Key (SERIAL)
+        registro_id:
+          type: integer
+        domanda:
+          type: integer
+        cognome:
+          type: string
+        nome: 
+          type: string
+        codice_fiscale:
+          type: string
+        sesso:
+          type: string
+        data_nascita:
+          type: string
+          format: date
+        indirizzo_residenza:
+          type: string
+        cap_residenza:
+          type: integer
+        istat_residenza:
+          type: integer
+        comune_residenza:
+          type: string
+        provincia_residenza:
+          type: string
+        regione_residenza:
+          type: string
+        validita_inizio:
+          type: string
+          format: date-time
+        validita_fine:
+          type: string
+          format: date-time
+        data_creazione:
+          type: string
+          format: date-time
+        data_modifica:
+          type: string
+          format: date-time
+        data_cancellazione:
+          type: string
+          format: date-time
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        utente_cancellazione:
+          type: string
+        tipologia_inail:
+          type: string
+        file_id:
+          type: integer
+    
+    EsenzioneDTO:
+      type: object
+      description: Rappresenta l'esenzione di un assistito
+      properties:
+        soggetto_id_hmac:
+          type: string
+        soggetto_id:
+          type: string
+        esenzione_id_hmac:
+          type: integer
+        esenzione_id:
+          type: string
+        esenzione_data_emissione:
+          type: string
+          format: date
+        esenzione_data_scadenza:
+          type: string
+          format: date
+        validita_inizio:
+          type: string
+          format: timestamp
+        validita_fine:
+          type: string
+          format: timestamp
+        data_creazione:
+          type: string
+          format: timestamp
+        data_modifica:
+          type: string
+          format: timestamp
+        data_cancellazione:
+          type: string
+          format: timestamp
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        utente_cancellazione:
+          type: string
+        esenzione_cod:
+          type: string
+        esenzione_desc:
+          type: string
+        diagnosi_cod:
+          type: string
+        diagnosi_desc:
+          type: string
+
+    NotaDTO:
+      type: object
+      description: Nota di registro associata ad un assistito
+      properties:
+        nota_id:
+          type: integer
+          format: int64
+        registro_id:
+          type: integer
+        descrizione:
+          type: string
+        data_modifica:
+          type: string
+        utente_modifica:
+          type: string
+
+
+    StoriaStatoDTO:
+      type: object
+      description: Record storico dello stato di un assistito
+      properties:
+        soggetto_stato_id:
+          type: string
+        soggetto_stato_desc:
+          type: string
+        data_modifica:
+          type: string
+          format: date-time
+        utente_modifica:
+          type: string
+        soggetto_stato_note:
+          type: string
+
+    CrptDizionarioDTO:
+      type: object
+      description: Rappresenta una voce di dizionario CRPT (codice + descrizione)
+      properties:
+        cod:
+          type: string
+        desc:
+          type: string
+        ditta_codice_fiscale:
+            type: string
+
+    SpresalEsitiDTO:
+      type: object
+      description: Rappresenta il DTO esiti SPRESAL
+      properties:
+        reg_spresal_esiti_id:
+          type: integer
+          format: int64
+          description: Primary Key (SERIAL)
+        registro_id:
+          type: integer
+        codice_fiscale:
+          type: string
+        id_aura:
+          type: integer
+        data_visita:
+          type: string
+          format: date
+        visita:
+          type: string
+        nome:
+          type: string
+        cognome:
+          type: string
+        data_nascita:
+          type: string
+          format: date
+        sesso:
+          type: string
+        livello_visita:
+          type: string
+        riceve_indennizzo:
+          type: boolean
+        malattia_indennizzo:
+          type: string
+        accertamenti_rx:
+          type: boolean
+        accertamenti_rx_data:
+          type: string
+          format: date
+        accertamenti_rx_referto_normale:
+          type: string
+        accertamenti_rx_acquisita:
+          type: string  
+        accertamenti_tc:
+          type: boolean
+        accertamenti_tc_data:
+          type: string
+          format: date
+        accertamenti_tc_referto_normale:
+          type: string
+        accertamenti_tc_acquisita:
+          type: string
+        accertamenti_spirometria_semplice:
+          type: boolean
+        accertamenti_spirometria_semplice_data:
+          type: string
+          format: date
+        accertamenti_spirometria_semplice_referto_norm:
+          type: string
+        accertamenti_spirometria_semplice_acquisita:
+          type: string
+        accertamenti_spirometria_globale:
+          type: boolean
+        accertamenti_spirometria_globale_data:
+          type: string
+          format: date
+        accertamenti_spirometria_globale_referto_norm:
+          type: string
+        accertamenti_spirometria_globale_acquisita:
+          type: string
+        accertamenti_dlco:
+          type: boolean
+        accertamenti_dlco_data:
+          type: string
+          format: date
+        accertamenti_dlco_referto_normale:
+          type: string
+        accertamenti_dlco_acquisita:
+          type: string
+        accertamenti_pet:
+          type: boolean
+        accertamenti_pet_data:
+          type: string
+          format: date
+        accertamenti_pet_referto_normale:
+          type: string
+        accertamenti_pet_acquisita:
+          type: string
+        accertamenti_visita_pneumologica:
+          type: boolean
+        accertamenti_visita_pneumologica_data:
+          type: string
+          format: date
+        accertamenti_visita_pneumologica_referto:
+          type: string
+        accertamenti_visita_pneumologica_acquisita:
+          type: string
+        accertamenti_visita_radiologica:
+          type: boolean
+        accertamenti_visita_radiologica_data:
+          type: string
+          format: date
+        accertamenti_visita_radiologica_referto:
+          type: string
+        accertamenti_visita_radiologica_acquisita:
+          type: string
+        accertamenti_visita_oncologica:
+          type: boolean
+        accertamenti_visita_oncologica_data:
+          type: string
+          format: date
+        accertamenti_visita_oncologica_referto:
+          type: string
+        accertamenti_visita_oncologica_acquisita:
+          type: string
+        accertamenti_altro:
+          type: boolean
+        accertamenti_altro_descrizione:
+          type: string
+        accertamenti_altro_data:
+          type: string
+          format: date
+        accertamenti_altro_referto_normale:
+          type: string
+        accertamenti_altro_referto_acquisita:
+          type: string
+        risultato_negativo:
+          type: boolean
+        ppm_placche_pleuriche_monolaterali:
+          type: boolean
+        ppm_primo_certificato_e_denuncia:
+          type: boolean
+        ppm_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        ppm_aggravamento_e_denuncia:
+          type: boolean
+        ppm_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        ppm_percentuale_di_riconoscimento:
+          type: number
+        ppm_referto:
+          type: boolean
+        ppm_referto_data:
+          type: string
+          format: date
+        ppb_placche_pleuriche_bilaterali:
+          type: boolean
+        ppb_primo_certificato_e_denuncia:
+          type: boolean
+        ppb_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        ppb_aggravamento_e_denuncia:
+          type: boolean
+        ppb_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        ppb_percentuale_di_riconoscimento:
+          type: number
+        ppb_referto:
+          type: boolean
+        ppb_referto_data:
+          type: string
+          format: date
+        ap_asbestosi_polmonare:
+          type: boolean
+        ap_primo_certificato_e_denuncia:
+          type: boolean
+        ap_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        ap_aggravamento_e_denuncia:
+          type: boolean
+        ap_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        ap_percentuale_di_riconoscimento:
+          type: number
+        ap_referto:
+          type: boolean
+        ap_referto_data:
+          type: string
+          format: date
+        fpd_fibrosi_pleurica_diffusa:
+          type: boolean
+        fpd_primo_certificato_e_denuncia:
+          type: boolean
+        fpd_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        fpd_aggravamento_e_denuncia:
+          type: boolean
+        fpd_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        fpd_percentuale_di_riconoscimento:
+          type: number
+        fpd_referto:
+          type: boolean
+        fpd_referto_data:
+          type: string
+          format: date
+        mp_mesotelioma_pleurico:
+          type: boolean
+        mp_primo_certificato_e_denuncia:
+          type: boolean
+        mp_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        mp_aggravamento_e_denuncia:
+          type: boolean
+        mp_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        mp_percentuale_di_riconoscimento:
+          type: number
+        mp_referto:
+          type: boolean
+        mp_referto_data:
+          type: string
+          format: date
+        mp_comunicazione_al_cor:
+          type: boolean
+        mp_comunicazione_al_cor_data:
+          type: string
+          format: date
+        am_altro_mesotelioma:
+          type: boolean
+        am_primo_certificato_e_denuncia:
+          type: boolean
+        am_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        am_aggravamento_e_denuncia:
+          type: boolean
+        am_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        am_percentuale_di_riconoscimento:
+          type: number
+        am_referto:
+          type: boolean
+        am_referto_data:
+          type: string
+          format: date
+        am_comunicazione_al_cor:
+          type: boolean
+        am_comunicazione_al_cor_data:
+          type: string
+          format: date
+        nl_neoplasia_laringe:
+          type: boolean
+        nl_primo_certificato_e_denuncia:
+          type: boolean
+        nl_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        nl_aggravamento_e_denuncia:
+          type: boolean
+        nl_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        nl_percentuale_di_riconoscimento:
+          type: number
+        nl_referto:
+          type: boolean
+        nl_referto_data:
+          type: string
+          format: date
+        no_neoplasia_ovarica:
+          type: boolean
+        no_primo_certificato_e_denuncia:
+          type: boolean
+        no_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        no_aggravamento_e_denuncia:
+          type: boolean
+        no_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        no_percentuale_di_riconoscimento:
+          type: number
+        no_referto:
+          type: boolean
+        no_referto_data:
+          type: string
+          format: date
+        tp_tumore_del_polmone:
+          type: boolean
+        tp_primo_certificato_e_denuncia:
+          type: boolean
+        tp_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        tp_aggravamento_e_denuncia:
+          type: boolean
+        tp_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        tp_percentuale_di_riconoscimento:
+          type: number
+        tp_referto:
+          type: boolean
+        tp_referto_data:
+          type: string
+          format: date
+        tp_comunicazione_al_cor:
+          type: boolean
+        tp_comunicazione_al_cor_data:
+          type: string
+          format: date
+        bpco_enfisema_polmonare:
+          type: boolean
+        bpco_primo_certificato_e_denuncia:
+          type: boolean
+        bpco_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        bpco_aggravamento_e_denuncia:
+          type: boolean
+        bpco_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        bpco_percentuale_di_riconoscimento:
+          type: number
+        bpco_referto:
+          type: boolean
+        bpco_referto_data:
+          type: string
+          format: date
+        altra_diagnosi:
+          type: boolean
+        altra_diagnosi_descrizione:
+          type: string
+        altra_primo_certificato_e_denuncia:
+          type: boolean
+        altra_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        altra_aggravamento_e_denuncia:
+          type: boolean
+        altra_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        altra_percentuale_di_riconoscimento:
+          type: number
+        altra_referto:
+          type: boolean
+        altra_referto_data:
+          type: string
+          format: date
+        follow_up_previsto:
+          type: boolean
+        anno_presunto_prossima_visita:
+          type: integer
+        anno_ultima_visita:
+          type: integer
+        invio_sintesi_a_mmg:
+          type: boolean
+        id_spresal:
+          type: number
+        validita_inizio:
+          type: string
+          format: date-time
+        validita_fine:
+          type: string
+          format: date-time
+        data_creazione:
+          type: string
+          format: date-time
+        data_modifica:
+          type: string
+          format: date-time
+        data_cancellazione:
+          type: string
+          format: date-time
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        utente_cancellazione:
+          type: string
+        asl_assistenza:
+          type: string
+        soggetto_stato_desc:
+          type: string
+        file_id:
+          type: integer
+  
+    TracciaFileDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        fileName:
+          type: string
+        baseDir:
+          type: string
+        contentType:
+          type: string
+        fileSize:
+          type: integer
+          format: int64
+        checksum:
+          type: string
+        stato:
+          type: string
+        createdBy:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        lastUpdatedAt:
+          type: string
+          format: date-time
+        elaborazioneId:
+          type: integer
+          format: int64
+
+    Allegato4ElaborazioneDTO:
+      type: object
+      properties:
+        elaborazione_id:
+          type: integer
+        anno:
+          type: integer
+        file_name:
+          type: string
+        stato:
+          type: string
+        data_richiesta:
+          type: string
+          format: date-time
+        data_generazione:
+          type: string
+          format: date-time
+        operatore:
+          type: string
+
+
+    EsposizioneDTO:
+      type: object
+      description: Rappresenta la lista delle esposizioni dell'assistito
+      properties:
+        esposizione_id:
+          type: integer
+          format: int64
+          description: Primary Key (SERIAL)
+        soggetto_id_hmac:
+          type: string
+        soggetto_id_cifrato:
+          type: string
+          format: byte
+        esposizione_azienda:
+          type: string
+        esposizione_azienda_comune_cod:
+          type: string
+        esposizione_azienda_comune_desc:
+          type: string
+        esposizione_azienda_cap:
+          type: string
+        esposizione_azienda_provincia:
+          type: string
+        esposizione_mansione:
+          type: string
+        esposizione_inizio:
+          type: string
+          format: date
+        esposizione_fine:
+          type: string
+          format: date
+        fonte_id:
+          type: integer
+        data_creazione:
+          type: string
+          format: date
+        data_modifica:
+          type: string
+          format: date
+        data_cancellazione:
+          type: string
+          format: date
+        utente_creazione:
+          type: string
+        utente_modifica:
+          type: string
+        utente_cancellazione:
+          type: string
+        data_decesso:
+          type: string
+          format: timestamp
+
+    ExportDTO:
+      type: object
+      description: Rappresenta il DTO per l'export dei dati
+      properties:
+        soggetto_id:
+          type: integer
+          format: int32
+        adesione_codice_adesione:
+          type: string
+        adesione_data_adesione:
+          type: string
+          format: date-time
+        adesione_codice_fiscale:
+          type: string
+        adesione_cognome:
+          type: string
+        adesione_nome:
+          type: string
+        adesione_data_di_nascita:
+          type: string
+          format: date
+        adesione_provincia_di_nascita:
+          type: string
+        adesione_comune_di_nascita:
+          type: string
+        adesione_tessera_team:
+          type: string
+        adesione_id_aura:
+          type: string
+        adesione_provincia_di_domicilio:
+          type: string
+        adesione_comune_di_domicilio:
+          type: string
+        adesione_codice_comune_istat_di_domicilio:
+          type: string
+        adesione_cap_di_domicilio:
+          type: string
+        adesione_email:
+          type: string
+        adesione_telefono:
+          type: string
+        adesione_codice_asl_di_domicilio:
+          type: string
+        adesione_asl_di_domicilio:
+          type: string
+        adesione_codazi:
+          type: string
+        adesione_codice_asl_di_residenza:
+          type: string
+        adesione_asl_di_residenza:
+          type: string
+        adesione_data_inizio_esposizione:
+          type: string
+          format: date
+        adesione_data_fine_esposizione:
+          type: string
+          format: date
+        adesione_azienda:
+          type: string
+        adesione_codice_comune_istat_azienda:
+          type: string
+        adesione_comune_azienda:
+          type: string
+        adesione_cap_azienda:
+          type: string
+        adesione_provincia_azienda:
+          type: string
+        adesione_mansione:
+          type: string
+        adesione_esposizione_azienda:
+          type: string
+        adesione_esposizione_azienda_comune_cod:
+          type: string
+        adesione_esposizione_azienda_comune_desc:
+          type: string
+        adesione_esposizione_azienda_cap:
+          type: string
+        adesione_esposizione_data_inizio_esposizione:
+          type: string
+          format: date
+        adesione_esposizione_data_fine_esposizione:
+          type: string
+          format: date
+        adesione_esposizione_provincia_azienda:
+          type: string
+        adesione_esposizione_mansione:
+          type: string
+        cod_esenzione:
+          type: string
+        desc_esenzione:
+          type: string
+        cod_diagnosi:
+          type: string
+        desc_diagnosi:
+          type: string
+        data_emissione:
+          type: string
+          format: date
+        data_scadenza:
+          type: string
+          format: date
+        aura_codice_fiscale:
+          type: string
+        aura_domicilio_asl:
+          type: string
+        aura_residenza_asl:
+          type: string
+        aura_assistenza_asl:
+          type: string
+        aura_nome:
+          type: string
+        aura_cognome:
+          type: string
+        aura_sesso:
+          type: string
+        aura_nascita_data:
+          type: string
+          format: date
+        aura_nascita_comune_cod:
+          type: string
+        aura_nascita_comune_desc:
+          type: string
+        aura_nascita_provincia_cod:
+          type: string
+        aura_nascita_provincia_desc:
+          type: string
+        aura_nascita_stato_cod:
+          type: string
+        aura_nascita_stato_desc:
+          type: string
+        aura_cittadinanza_stato_cod:
+          type: string
+        aura_cittadinanza_stato_desc:
+          type: string
+        aura_domicilio_comune_cod:
+          type: string
+        aura_domicilio_comune_desc:
+          type: string
+        aura_domicilio_provincia_cod:
+          type: string
+        aura_domicilio_provincia_desc:
+          type: string
+        aura_domicilio_stato_cod:
+          type: string
+        aura_domicilio_stato_desc:
+          type: string
+        aura_domicilio_cap:
+          type: string
+        aura_domicilio_indirizzo:
+          type: string
+        aura_domicilio_numero_civico:
+          type: string
+        aura_residenza_comune_cod:
+          type: string
+        aura_residenza_comune_desc:
+          type: string
+        aura_residenza_provincia_cod:
+          type: string
+        aura_residenza_provincia_desc:
+          type: string
+        aura_residenza_stato_cod:
+          type: string
+        aura_residenza_stato_desc:
+          type: string
+        aura_residenza_cap:
+          type: string
+        aura_residenza_indirizzo:
+          type: string
+        aura_residenza_numero_civico:
+          type: string
+        aura_tessera_team:
+          type: string
+        aura_id_aura:
+          type: string
+        aura_email_aura:
+          type: string
+        aura_telefono_aura:
+          type: string
+        email:
+          type: string
+        telefono:
+          type: string
+        aura_data_decesso:
+          type: string
+          format: date
+        aura_assistenza_asl_fine:
+          type: string
+          format: date
+        anamnesi_codice_fiscale:
+          type: string
+        anamnesi_id_aura:
+          type: string
+        anamnesi_data_intervista:
+          type: string
+          format: date
+        anamnesi_nominativo_intervistatore:
+          type: string
+        anamnesi_fumatore:
+          type: boolean
+        anamnesi_sigarette:
+          type: boolean
+        anamnesi_sigarette_anni:
+          type: number
+        anamnesi_sigarette_eta_inizio:
+          type: number
+        anamnesi_sigarette_fuma_attualmente:
+          type: boolean
+        anamnesi_sigarette_eta_fine:
+          type: number
+        anamnesi_sigarette_die:
+          type: number
+        anamnesi_sigari:
+          type: boolean
+        anamnesi_sigari_anni:
+          type: number
+        anamnesi_sigari_eta_inizio:
+          type: number
+        anamnesi_sigari_fuma_attualmente:
+          type: boolean
+        anamnesi_sigari_eta_fine:
+          type: number
+        anamnesi_sigari_die:
+          type: number
+        anamnesi_pipa:
+          type: boolean
+        anamnesi_pipa_anni:
+          type: number
+        anamnesi_pipa_eta_inizio:
+          type: number
+        anamnesi_pipa_fuma_attualmente:
+          type: boolean
+        anamnesi_pipa_eta_fine:
+          type: number
+        anamnesi_pipa_die:
+          type: number
+        anamnesi_occupazione_num:
+          type: string
+        anamnesi_occupazione_anno_inizio:
+          type: string
+        anamnesi_occupazione_anno_fine:
+          type: string
+        anamnesi_occupazione_tipo:
+          type: string
+        anamnesi_occupazione_descrizione_lavoro:
+          type: string
+        anamnesi_occupazione_nome_e_indirizzo_ditta:
+          type: string
+        anamnesi_occupazione_attivita_ditta:
+          type: string
+        anamnesi_nota_attivita_con_amianto:
+          type: string
+        anamnesi_anamnesi_esposizione_amianto:
+          type: boolean
+        anamnesi_esposizione_professionale:
+          type: string
+        anamnesi_anno_fine_esposizione:
+          type: integer
+        anamnesi_livello_esposizione:
+          type: string
+        anamnesi_inserimento_in_sorveglianza:
+          type: boolean
+        anamnesi_id_spresal:
+          type: integer
+        anamnesi_occupazione_esposizione_crpt:
+          type: boolean
+        anamnesi_occupazione_settore_ditta_crpt:
+          type: string
+        anamnesi_occupazione_mansione_crpt:
+          type: string
+        anamnesi_occupazione_ragione_sociale_ditta_crpt:
+          type: string
+        anamnesi_occupazione_piva_ditta_crpt:
+          type: string
+        anamnesi_counseling:
+          type: string
+        anamnesi_occupazione_codice_fiscale_ditta_crpt:
+          type: string
+        esiti_vis_codice_fiscale:
+          type: string
+        esiti_vis_id_aura:
+          type: integer
+        esiti_vis_data_visita:
+          type: string
+          format: date
+        esiti_vis_visita:
+          type: string
+        esiti_vis_livello_visita:
+          type: string
+        esiti_vis_riceve_indennizzo:
+          type: boolean
+        esiti_vis_malattia_indennizzo:
+          type: string
+        esiti_vis_accertamenti_rx:
+          type: boolean
+        esiti_vis_accertamenti_rx_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_rx_referto_normale:
+          type: string
+        esiti_vis_accertamenti_tc:
+          type: boolean
+        esiti_vis_accertamenti_tc_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_tc_referto_normale:
+          type: string
+        esiti_vis_accertamenti_spirometria_semplice:
+          type: boolean
+        esiti_vis_accertamenti_spirometria_semplice_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_spirometria_semplice_referto_normale:
+          type: string
+        esiti_vis_accertamenti_spirometria_globale:
+          type: boolean
+        esiti_vis_accertamenti_spirometria_globale_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_spirometria_globale_referto_normale:
+          type: string
+        esiti_vis_accertamenti_dlco:
+          type: boolean
+        esiti_vis_accertamenti_dlco_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_dlco_referto_normale:
+          type: string
+        esiti_vis_accertamenti_pet:
+          type: boolean
+        esiti_vis_accertamenti_pet_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_pet_referto_normale:
+          type: string
+        esiti_vis_accertamenti_visita_pneumologica:
+          type: boolean
+        esiti_vis_accertamenti_visita_pneumologica_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_visita_pneumologica_referto:
+          type: string
+        esiti_vis_accertamenti_visita_radiologica:
+          type: boolean
+        esiti_vis_accertamenti_visita_radiologica_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_visita_radiologica_referto:
+          type: string
+        esiti_vis_accertamenti_visita_oncologica:
+          type: boolean
+        esiti_vis_accertamenti_visita_oncologica_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_visita_oncologica_referto:
+          type: string
+        esiti_vis_accertamenti_altro:
+          type: boolean
+        esiti_vis_accertamenti_altro_descrizione:
+          type: string
+        esiti_vis_accertamenti_altro_data:
+          type: string
+          format: date
+        esiti_vis_accertamenti_altro_referto_normale:
+          type: string
+        esiti_vis_risultato_negativo:
+          type: boolean
+        esiti_vis_ppm_placche_pleuriche_monolaterali:
+          type: boolean
+        esiti_vis_ppm_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_ppm_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_ppm_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_ppm_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_ppm_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_ppm_referto:
+          type: boolean
+        esiti_vis_ppm_referto_data:
+          type: string
+          format: date
+        esiti_vis_ppb_placche_pleuriche_bilaterali:
+          type: boolean
+        esiti_vis_ppb_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_ppb_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_ppb_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_ppb_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_ppb_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_ppb_referto:
+          type: boolean
+        esiti_vis_ppb_referto_data:
+          type: string
+          format: date
+        esiti_vis_ap_asbestosi_polmonare:
+          type: boolean
+        esiti_vis_ap_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_ap_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_ap_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_ap_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_ap_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_ap_referto:
+          type: boolean
+        esiti_vis_ap_referto_data:
+          type: string
+          format: date
+        esiti_vis_fpd_fibrosi_pleurica_diffusa:
+          type: boolean
+        esiti_vis_fpd_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_fpd_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_fpd_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_fpd_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_fpd_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_fpd_referto:
+          type: boolean
+        esiti_vis_fpd_referto_data:
+          type: string
+          format: date
+        esiti_vis_mp_mesotelioma_pleurico:
+          type: boolean
+        esiti_vis_mp_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_mp_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_mp_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_mp_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_mp_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_mp_referto:
+          type: boolean
+        esiti_vis_mp_referto_data:
+          type: string
+          format: date
+        esiti_vis_mp_comunicazione_al_cor:
+          type: boolean
+        esiti_vis_mp_comunicazione_al_cor_data:
+          type: string
+          format: date
+        esiti_vis_am_altro_mesotelioma:
+          type: boolean
+        esiti_vis_am_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_am_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_am_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_am_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_am_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_am_referto:
+          type: boolean
+        esiti_vis_am_referto_data:
+          type: string
+          format: date
+        esiti_vis_am_comunicazione_al_cor:
+          type: boolean
+        esiti_vis_am_comunicazione_al_cor_data:
+          type: string
+          format: date
+        esiti_vis_nl_neoplasia_laringe:
+          type: boolean
+        esiti_vis_nl_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_nl_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_nl_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_nl_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_nl_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_nl_referto:
+          type: boolean
+        esiti_vis_nl_referto_data:
+          type: string
+          format: date
+        esiti_vis_no_neoplasia_ovarica:
+          type: boolean
+        esiti_vis_no_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_no_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_no_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_no_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_no_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_no_referto:
+          type: boolean
+        esiti_vis_no_referto_data:
+          type: string
+          format: date
+        esiti_vis_tp_tumore_del_polmone:
+          type: boolean
+        esiti_vis_tp_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_tp_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_tp_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_tp_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_tp_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_tp_referto:
+          type: boolean
+        esiti_vis_tp_referto_data:
+          type: string
+          format: date
+        esiti_vis_tp_comunicazione_al_cor:
+          type: boolean
+        esiti_vis_tp_comunicazione_al_cor_data:
+          type: string
+          format: date
+        esiti_vis_bpco_enfisema_polmonare:
+          type: boolean
+        esiti_vis_bpco_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_bpco_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_bpco_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_bpco_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_bpco_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_bpco_referto:
+          type: boolean
+        esiti_vis_bpco_referto_data:
+          type: string
+          format: date
+        esiti_vis_altra_diagnosi:
+          type: boolean
+        esiti_vis_altra_diagnosi_descrizione:
+          type: string
+        esiti_vis_altra_primo_certificato_e_denuncia:
+          type: boolean
+        esiti_vis_altra_primo_certificato_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_altra_aggravamento_e_denuncia:
+          type: boolean
+        esiti_vis_altra_aggravamento_e_denuncia_data:
+          type: string
+          format: date
+        esiti_vis_altra_percentuale_di_riconoscimento:
+          type: number
+        esiti_vis_altra_referto:
+          type: boolean
+        esiti_vis_altra_referto_data:
+          type: string
+          format: date
+        esiti_vis_follow_up_previsto:
+          type: boolean
+        esiti_vis_anno_presunto_prossima_visita:
+          type: integer
+        esiti_vis_anno_ultima_visita:
+          type: integer
+        esiti_vis_invio_sintesi_a_mmg:
+          type: boolean
+        esiti_vis_id_spresal:
+          type: integer
+        esiti_vis_accertamenti_rx_acquisita:
+          type: string
+        esiti_vis_accertamenti_tc_acquisita:
+          type: string
+        esiti_vis_accertamenti_spirometria_semplice_acquisita:
+          type: string
+        esiti_vis_accertamenti_spirometria_globale_acquisita:
+          type: string
+        esiti_vis_accertamenti_dlco_acquisita:
+          type: string
+        esiti_vis_accertamenti_pet_acquisita:
+          type: string
+        esiti_vis_accertamenti_visita_pneumologica_acquisita:
+          type: string
+        esiti_vis_accertamenti_visita_radiologica_acquisita:
+          type: string
+        esiti_vis_accertamenti_visita_oncologica_acquisita:
+          type: string
+        esiti_vis_accertamenti_altro_referto_acquisita:
+          type: string
+        reg_att_sanitaria_stato:
+          type: boolean
+        reg_att_sanitaria_spresal:
+          type: boolean
+        reg_att_sanitaria_spresal_data:
+          type: string
+          format: date
+        reg_att_sanitaria_inail:
+          type: boolean
+        reg_sezione:
+          type: integer
+        reg_inserito_in_sorveglianza:
+          type: boolean
+        reg_tipo_elenco_inail:
+          type: string
+        inail_domanda:
+          type: integer
+          format: int32
+        inail_cognome:
+          type: string
+        inail_nome:
+          type: string
+        inail_codice_fiscale:
+          type: string
+        inail_sesso:
+          type: string
+        inail_data_nascita:
+          type: string
+          format: date
+        inail_indirizzo_residenza:
+          type: string
+        inail_cap_residenza:
+          type: integer
+          format: int32
+        inail_istat_residenza:
+          type: integer
+          format: int32
+        inail_regione_residenza:
+          type: string
+        inail_provincia_residenza:
+          type: string
+        inail_comune_residenza:
+          type: string
+        npla_codice_fiscale:
+          type: string
+        npla_periodo:
+          type: integer
+          format: int32
+        npla_id_cantiere:
+          type: integer
+          format: int32
+        npla_azienda_piva:
+          type: string
+        npla_azienda_nome:
+          type: string
+        npla_asl_cantiere:
+          type: string
+        npla_comune_cantiere:
+          type: string
+        npla_anno:
+          type: integer
+          format: int32
+        npla_tipologia_piano:
+          type: string
+        npla_quantita_da_rimuovere:
+          type: number
+        npla_quantita_rimossa:
+          type: number
+        npla_soggetto_id:
+          type: integer
+          format: int32
+        asl_azienda_desc:
+          type: string
+        soggetto_stato_desc:
+          type: string
+
+
+      required:
+        - codice_fiscale
+        - asl_domicilio_cod
+        - asl_residenza_cod
+        - nome_cifrato
+        - cognome_cifrato
+        - nascita_data
+
+    LoginRequestDTO:
+      type: object
+      description: Credenziali per il login interno
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    ExportFileListDTO:
+      type: object
+      description: DTO per la lista dei file di export dati massivi
+      properties:
+        file_id:
+          type: integer
+          format: int32
+        elaborazione_id:
+          type: integer
+          format: int32
+        nome:
+          type: string
+        tipo:
+          type: string
+          description: chiaro o pseudo
+        stato:
+          type: string
+        data_richiesta:
+          type: string
+        data_generazione:
+          type: string
+        operatore:
+          type: string
+
+    AuditLogRequest:
+      type: object
+      properties:
+        idApp:
+          type: string
+          description: Codice identificativo della componente applicativa (es. REEAFE, REEABE)
+        ipAddress:
+          type: string
+          description: Indirizzo IP del client che effettua l'operazione
+        utente:
+          type: string
+          description: Identificativo univoco dell'utente (tipicamente codice fiscale)
+        operazione:
+          type: string
+          description: Nome dell'operazione effettuata (login, read, insert, update, delete oppure nome di business più specifico)
+        oggOper:
+          type: string
+          nullable: true
+          description: Descrizione/identificativo dell'oggetto trattato (es. nome tabella); non valorizzare per operazioni di login/logout
+        keyOper:
+          type: string
+          nullable: true
+          description: Chiave univoca del dato oggetto di operazione; non valorizzare per login/logout
+        uuid:
+          type: string
+          nullable: true
+          description: Identificativo della richiesta (es. X-Request-Id se presente in header); se assente può essere generato lato server
+        requestPayload:
+          type: string
+          format: byte
+          nullable: true
+          description: Request payload serializzato (es. JSON UTF-8 in base64); NON va scritto per upload/download allegati
+        responsePayload:
+          type: string
+          format: byte
+          nullable: true
+          description: Response payload serializzato (es. JSON UTF-8 in base64); NON va scritto per upload/download allegati
+        esitoChiamata:
+          type: integer
+          format: int32
+          description: HTTP status dell'operazione (es. 200, 500)
+        loginLogout:
+          type: boolean
+          format: boolean
+          nullable: false
+          default: false
+          description: Flag per indicare operazioni di login/logout; se true oggOper e keyOper non vanno valorizzati
+        skipPayload:
+          type: boolean
+          format: boolean
+          nullable: false
+          default: false
+          description: Se true non vengono tracciati requestPayload e responsePayload
+
+    LoginResponseDTO:
+      type: object
+      description: Risposta al login interno (sessione già impostata server-side)
+      properties:
+        username:
+          type: string
+        ipAddress:
+          type: string
+
+    GetListaAnagraficheRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        filtroFonteId:
+          type: array
+          items:
+            type: integer
+            format: int32
+            nullable: true
+            description: Lista di identificativi delle fonti di provenienza da filtrare
+        descrizioniStato:
+          type: array
+          items:
+            type: string
+            nullable: true
+            description: Lista delle descrizioni degli stati da filtrare
+        sezione:
+          type: array
+          items:
+            type: string
+            nullable: true
+            description: Lista delle sezioni dell'anagrafica da filtrare
+        insInSorveglianza:
+          type: boolean
+          nullable: true
+          description: Flag per filtrare le anagrafiche inserite in sorveglianza
+        tipoElencoInail:
+          type: string
+          nullable: true
+          description: Tipo elenco INAIL per il filtro
+        assistenzaAslId:
+          type: array
+          items:
+            type: integer
+            format: int32
+            nullable: true
+            description: Lista di identificativi delle ASL di assistenza per il filtro
+        codiceFiscale:
+            type: string
+            nullable: true
+            description: Codice fiscale per il filtro server-side
+        cognome:
+            type: string
+            nullable: true
+            description: Cognome (parziale) per il filtro server-side
+        nome:
+            type: string
+            nullable: true
+            description: Nome (parziale) per il filtro server-side
+        cognomeLettDa:
+            type: string
+            nullable: true
+            description: Cognome (parziale) per il filtro lato DB (lettura diretta da tabella)
+        cognomeLettA:
+            type: string
+            nullable: true
+            description: Cognome (parziale) per il filtro lato DB (lettura diretta da tabella)
+        nascitaData:
+            type: string
+            format: date
+            nullable: true
+            description: Data di nascita per il filtro server-side
+        azzeraContatoreProssimoStep:
+            type: boolean
+            nullable: false
+            description: Flag per capire se sto caricando gli step successivi della ricerca ( prossimi 1000 )
+        profiloUtente:
+            type: string
+            nullable: false
+        auditLogRequest:
+          $ref: '#/components/schemas/AuditLogRequest'
+
+    PdfListResponse:
+      type: object
+      description: DTO per la risposta della lista PDF
+      properties:
+        prefisso:
+          type: integer
+          format: int32
+          description: Prefisso numerico utilizzato per la ricerca dei file PDF
+          example: 200
+        totaleTrovati:
+          type: integer
+          format: int32
+          description: Numero totale di file PDF trovati
+          example: 3
+        pdfList:
+          type: array
+          description: Elenco dei file PDF trovati
+          items:
+            $ref: '#/components/schemas/PdfInfo'
+
+
+    PdfInfo:
+      type: object
+      description: DTO che rappresenta le informazioni di un file PDF trovato nel filesystem
+      properties:
+        nomeFile:
+          type: string
+          description: Nome del file PDF
+          example: 200_Scheda_S03_all2_Storia_prof_Industria_artigianatoV02-Nominativo-1.pdf
+        percorsoAssoluto:
+          type: string
+          description: Percorso assoluto del file nel filesystem
+        dimensione:
+          type: integer
+          format: int64
+          description: Dimensione del file in byte
+          example: 245678
+        dataModifica:
+          type: string
+          format: date-time
+          description: Data e ora dell'ultima modifica del file
+          example: 2026-05-26T17:45:00
+
+    ListaAnagraficheResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnagraficaDTO'
+        totalRecords:
+          type: integer
+          format: int32

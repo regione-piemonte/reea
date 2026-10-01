@@ -1,0 +1,64 @@
+Progetto: Amianto Registry
+1. Alberatura
+amianto-registry-parent (pom)
+│
+├── common-registry       → moduli condivisi (model, API util, OpenAPI generated)
+└── amianto-registry     → applicazione Spring Boot principale
+
+
+
+Parent POM: versioni comuni, moduli e dependencyManagement.
+
+common-registry: classi modello, API utility, codice OpenAPI generato.
+
+amianto-registry: applicazione Spring Boot, dipende da common-registry.
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+2. Compilazione
+
+Compilazione con JDK 17.
+
+Generazione OpenAPI tramite openapi-generator-maven-plugin (in common-registry).
+
+Il modulo amianto-registry produce il fat jar reeabe.jar contenente:
+
+classi amianto-registry
+
+librerie esterne
+
+dipendenza common-registry
+
+Comando di build dalla root:
+
+mvn clean package
+
+
+Esecuzione del jar:
+
+java -jar amianto-registry/target/reeabe.jar
+\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+3. Contenuto del FAT JAR (reeabe.jar)
+reeabe.jar
+├── META-INF/
+│   └── MANIFEST.MF
+├── BOOT-INF/
+│   ├── classes/                 ← classi del modulo amianto-registry
+│   │   └── it/csi/registry/...
+│   └── lib/                     ← jar delle dipendenze
+│       ├── common-registry-1.0.0-SNAPSHOT.jar  ← classi e modelli condivisi
+│       ├── spring-boot-*.jar
+│       └── altre librerie esterne
+└── org/                         ← classi interne di Spring Boot loader
+
+
+BOOT-INF/classes: contiene il codice compilato del modulo principale (amianto-registry).
+
+BOOT-INF/lib: contiene tutte le dipendenze necessarie, tra cui common-registry e librerie Spring Boot.
+
+Questo layout consente di eseguire direttamente il jar con:
+
+java -jar reeabe.jar
+
+
+Il jar è quindi autocontenuto (FAT JAR), pronto per il deploy in qualsiasi ambiente Java 17.
+

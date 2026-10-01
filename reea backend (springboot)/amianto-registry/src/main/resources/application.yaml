@@ -1,0 +1,64 @@
+spring:
+  application:
+    name: reeabe
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  logging:
+    level:
+    org.jooq: ERROR                # log JOOQ
+    org.jooq.tools.LoggerListener: OFF  # log listener JOOQ
+    it.csi.registry.config.SqlLoggerListener: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - info
+          - health
+          - metrics
+      base-path: /actuator
+  server:
+    port: 9000
+
+configuratore:
+  # URL base, username e password letti da reea_c_parametro:
+  # CONFIGURATORE_BASE_URL, CONFIGURATORE_USER, CONFIGURATORE_PASSWORD
+  codice-servizio: REEA
+
+
+preadesione:
+  upload:
+    dir: /reea/fonti/preadesione
+
+inail:
+  upload:
+    dir: /reea/fonti/inail
+
+npla:
+  upload:
+    dir: /reea/fonti/npla
+
+spresalAnamnesi:
+  upload:
+    dir: /reea/fonti/spresal/anamnesi
+
+spresalEsiti:
+  upload:
+    dir: /reea/fonti/spresal/esiti
+
+spresal:
+  export:
+    base-dir: /reea/export
+
+export:
+  download:
+    dir: /reea/export
+
+pdf:
+  upload:
+    dir: /reea/storia_professionale

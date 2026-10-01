@@ -1,0 +1,3979 @@
+swagger: '2.0'
+info:
+  description: Api che realizzano la profilazione applicativa dei servizi online rivolti agli operatori sanitari della Regione Piemonte.
+  version: v1
+  title: Configuratore REST API
+  contact:
+    name: CSI Piemonte
+basePath: /api/v1
+tags:
+  - name: Configuratore API
+  - name: Backoffice
+  - name: Configuratore Proxy API
+schemes:
+  - https
+paths:
+  /sol/{applicazione}/utenti:
+    get:
+      tags:
+        - Configuratore API
+      summary: getUtentiSOL
+      description: 'restituisce la lista degli utenti attivi (in base alle date di validazione) di un SOL, eventualmente filtrata per Collocazione (Azienda). '
+      operationId: applicazioneSolApplicazioneUtentiGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: applicazione
+          in: path
+          required: true
+          type: string
+        - name: azienda
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ModelUtente'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+      deprecated: true
+  /sol/{applicazione}/collocazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: getCollocazioniSol
+      description: 'restituisce la lista delle collocazioni (aziende) attive (in base alle date di validitï¿½) in cui ï¿½ attivo il SOL ricevuto in inpu '
+      operationId: applicazioneSolApplicazioneCollocazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: applicazione
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelCollocazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+      deprecated: true
+  /applicazioni/{applicazione}/abilitazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: getUtentiSOL
+      description: 'restituisce la lista degli utenti attivi (in base alle date di validazione) di un SOL, eventualmente filtrata per Collocazione (Azienda). '
+      operationId: applicazioneSolApplicazioneUtentiGet_2
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: applicazione
+          in: path
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: integer
+          format: int32
+        - name: offset
+          in: query
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ModelUtente'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/{applicazione}/collocazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: getCollocazioniSol
+      description: 'restituisce la lista delle collocazioni (aziende) attive (in base alle date di validitï¿½) in cui ï¿½ attivo il SOL ricevuto in inpu '
+      operationId: applicazioneSolApplicazioneCollocazioniGet_2
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: applicazione
+          in: path
+          required: true
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: integer
+          format: int32
+        - name: offset
+          in: query
+          required: true
+          type: integer
+          format: int32
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelCollocazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/{applicazione}/funzionalita:
+    get:
+      tags:
+        - Configuratore API
+      summary: getUtentiSOL
+      description: 'restituisce la lista degli utenti attivi (in base alle date di validazione) di un SOL, eventualmente filtrata per Collocazione (Azienda). '
+      operationId: getApplicazioneFunzionalita_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: applicazione
+          in: path
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ModelUtente'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/{codice_applicazione}/profili_funzionalita/{codice}:
+    put:
+      tags:
+        - Configuratore API
+      summary: profili_funzionalita
+      description: consente di aggiornare le informazioni sui profili e funzionalita
+      operationId: modificaProfiliFunzionalita_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa   ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_applicazione
+          in: path
+          required: true
+          type: string
+        - name: codice
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/ProfiloFunzionalitaBody'
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ResponseWrite'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/{codice_applicazione}/profili_funzionalita:
+    get:
+      tags:
+        - Configuratore API
+      summary: profili_funzionalita
+      description: restituisce la lista dei profili e delle funzionalita dato un applicativo
+      operationId: getProfiliFunzionalita_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_applicazione
+          in: path
+          required: true
+          type: string
+        - name: limit
+          in: query
+          required: false
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProfiloFunzionalita'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+    post:
+      tags:
+        - Configuratore API
+      summary: profili_funzionalita
+      description: consente di aggiornare le informazioni sui profili e funzionalita
+      operationId: inserisciProfiliFunzionalita_1
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa   ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_applicazione
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/InserimentoProfiloFunzionalitaBody'
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+        - name: codice_profilo
+          in: query
+          required: false
+          type: string
+        - name: descrizione_profilo
+          in: query
+          required: false
+          type: string
+        - name: codice_funzionalita
+          in: query
+          required: false
+          type: string
+        - name: descrizione_funzionalita
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ResponseWrite'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/{codice_applicazione}/funzionalita/{codice}:
+    delete:
+      tags:
+        - Configuratore API
+      summary: profili_funzionalita
+      description: consente di cancellare una funzionalita
+      operationId: cancellaFunzionalita_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa   ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_applicazione
+          in: path
+          required: true
+          type: string
+        - name: codice
+          in: path
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ResponseWrite'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: 'Restituisce la lista delle applicazioni presenti nel sistema Configuratore '
+      operationId: applicazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta, utile per i log e l''audit. Il formato della stringa Ã¨ ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+        - name: limit
+          in: query
+          required: false
+          type: string
+        - name: offset
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Applicazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/verifica-url:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: 'Restituisce true se la url è tra quelle utilizzabili per il redirect'
+      operationId: applicazioniVerificaUrlGet_1
+      produces:
+        - text/plain
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta, utile per i log e l''audit. Il formato della stringa Ã¨ ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: redirect_url
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: boolean
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/{codice_applicazione}/funzionalita/{codice}/tipologia_dato_permesso:
+    put:
+      tags:
+        - Configuratore API
+      summary: profili_funzionalita
+      description: consente di aggiornare le informazioni sui permessi delle funzionalita
+      operationId: modificaPermesso_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa   ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_applicazione
+          in: path
+          required: true
+          type: string
+        - name: codice
+          in: path
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/ListaPermessi'
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ResponseWrite'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /applicazioni/{codice_applicazione}/profili/{codice}:
+    delete:
+      tags:
+        - Configuratore API
+      summary: profili_funzionalita
+      description: consente di cancellare i profili
+      operationId: cancellaProfilo_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa   ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_applicazione
+          in: path
+          required: true
+          type: string
+        - name: codice
+          in: path
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ResponseWrite'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /collocazioni/{codice_azienda}:
+    get:
+      tags:
+        - Configuratore API
+      summary: getCollocazioniAzienda
+      description: 'restituisce la lista di collocazioni per un''azienda '
+      operationId: collocazioniByAziendaGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_azienda
+          in: path
+          required: true
+          type: string
+        - name: codice_struttura
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: integer
+          format: int32
+        - name: offset
+          in: query
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CollocazioneUtente'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /farmacie/farmacia-occasionale:
+    get:
+      tags:
+        - Backoffice
+      summary: getFarmacie
+      description: restituisce la lista delle farmacie
+      operationId: farmacieGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_farmacia
+          in: query
+          required: false
+          type: string
+        - name: piva_farmacia
+          in: query
+          required: false
+          type: string
+        - name: denominazione_farmacia
+          in: query
+          required: false
+          type: string
+        - name: nome
+          in: query
+          required: false
+          type: string
+        - name: cognome
+          in: query
+          required: false
+          type: string
+        - name: valido
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: true
+          type: string
+          format: int32
+        - name: offset
+          in: query
+          required: true
+          type: string
+          format: int32
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelAbilitazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /farmacie/farmacia-abituale:
+    get:
+      tags:
+        - Backoffice
+      summary: getFarmacieFarab
+      description: restituisce la lista delle farmacie farab
+      operationId: farmacieFarabGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_farmacia
+          in: query
+          required: false
+          type: string
+        - name: piva_farmacia
+          in: query
+          required: false
+          type: string
+        - name: denominazione_farmacia
+          in: query
+          required: false
+          type: string
+        - name: cf_farmacista
+          in: query
+          required: false
+          type: string
+        - name: nome
+          in: query
+          required: false
+          type: string
+        - name: cognome
+          in: query
+          required: false
+          type: string
+        - name: valido
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: true
+          type: string
+          format: int32
+        - name: offset
+          in: query
+          required: true
+          type: string
+          format: int32
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelAbilitazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/abilitazioni:
+    get:
+      tags:
+        - Configuratore Proxy API
+      summary: getAbilitazioni
+      description: 'restituisce la lista degli applicativi verticali (SOL) sui quali lï¿½utente collegato con un dato ruolo e una data collocazione '
+      operationId: proxyAbilitazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_ruolo
+          in: query
+          required: true
+          type: string
+        - name: codice_collocazione
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelAbilitazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/collocazioni:
+    get:
+      tags:
+        - Configuratore Proxy API
+      summary: get collocazioni
+      description: 'Restituisce la lista delle collocazioni associate allï¿½utente collegato e al ruolo specificato nei parametri di input '
+      operationId: proxyCollocazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_ruolo
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelCollocazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/contatti:
+    get:
+      summary: utenteContattiGet
+      description: Legge le informazioni relative all'utente con i relativi contatti
+      operationId: utenteContattiGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: cf
+          in: query
+          required: false
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/UtenteContatti'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/token-information2:
+    get:
+      summary: getTokenInformation
+      description: 'verifica che il token utilizzato per lï¿½accesso sia quello generato in fase di autenticazione e  sia ancora valido e di reperire le caratteristiche della richiesta di accesso registrate in LCCE in fase di autenticazione '
+      operationId: proxyTokenInformationGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: Token
+          in: header
+          description: 'Contiene il token di autenticazione '
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ModelTokenInformazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/authentication2:
+    post:
+      tags:
+        - Configuratore Proxy API
+      summary: getAuthentication
+      description: 'restituisce un token per lï¿½accesso alle piattaforme del Sistema Sanitario Regionale On Line '
+      operationId: proxyTokenAuthenticationPost_1
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: parametri necessari al recupero del token di autenticazione
+          required: true
+          schema:
+            $ref: '#/definitions/ParametriAutenticazione'
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/Token'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/applicazioni-abilitate:
+    get:
+      tags:
+        - Configuratore API
+      summary: Applicazioni
+      description: 'restituisce la lista degli applicativi verticali (SOL) sui quali l''utente collegato con un dato ruolo e una data collocazione '
+      operationId: applicazioniGet_2
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identity-Provider
+          in: header
+          description: Contiene il nome del service provider utilizzato nell'autenticazione tramite shibboleth
+          required: true
+          type: string
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_ruolo
+          in: query
+          required: true
+          type: string
+        - name: codice_collocazione
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelApplicazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/utente:
+    get:
+      summary: utenteGet
+      description: Legge le informazioni relative all'utente
+      operationId: utenteGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/ModelUtenteBase'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /login/ruoli:
+    get:
+      tags:
+        - Configuratore Proxy API
+      summary: GetRuoli
+      description: 'restituisce la lista dei ruoli presenti nel sistema Configuratore '
+      operationId: proxyRuoliGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelRuolo'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /preferences/{utente}/search:
+    get:
+      tags:
+        - Configuratore API
+      summary: preferences
+      description: restituisce la lista delle preferenze di spedizione usato dal pua presenti nel sistema Configuratore per l'utente in input
+      operationId: getPreferenzeOperatore_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: utente
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelUtenteBase'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /preferences/utenti:
+    post:
+      tags:
+        - Configuratore API
+      summary: preferences
+      description: restituisce la lista degli utenti che il notificatore usera' per spedire email in base a applicativo o ruolo o ruolo e collocazione
+      operationId: getUtentiNotifiche_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosi' di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/FilterPreferences'
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelUtenteBase'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /preferences/token/configuration:
+    put:
+      tags:
+        - Configuratore API
+      summary: preferences
+      description: modifica le configurazioni del fruitore andando a cancellare le preferenze qualora necessario
+      operationId: saveTokenConfiguration_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosi' di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/TokenConfiguration'
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelUtenteBase'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /preferences/{utente}/save:
+    put:
+      tags:
+        - Configuratore API
+      summary: savePreferences
+      description: salva la lista delle preferenze di spedizione usato dal pua presenti nel sistema Configuratore per l'utente in input
+      operationId: salvaPreferenzeOperatore_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: utente
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/Preferences'
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelUtenteBase'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /preferencesUsers/{utente}/save:
+    put:
+      tags:
+        - Configuratore API
+      summary: savePreferences
+      description: salva i contatti digitali di un utente
+      operationId: salvaContattoDigitale_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identity-Provider
+          in: header
+          description: Contiene il nome del service provider utilizzato nell'autenticazione tramite shibboleth
+          required: true
+          type: string
+        - name: Shib-Identita-Provider
+          in: header
+          description: Contiene il tipo del service provider utilizzato nell'autenticazione tramite shibboleth
+          required: true
+          type: string
+        - name: Shib-Identita-Loa
+          in: header
+          description: Contiene il livello di autenticazione utilizzato nell'autenticazione tramite shibboleth
+          required: true
+          type: string
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: utente
+          in: path
+          required: true
+          type: string
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/ContattiDigitali'
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: string
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /preferencesUsers/{utente}/elimina:
+    post:
+      tags:
+        - Configuratore API
+      summary: preferences
+      description: elimina i contatti e le preferenze di un utente
+      operationId: eliminaContattoDigitale_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosi' di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: utente
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: string
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /preferencesUsers/{utente}/search:
+    get:
+      tags:
+        - Configuratore API
+      summary: preferences
+      description: restituisce i contatti digitali di un utente
+      operationId: getContattoDigitale_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: utente
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ContattiDigitali'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /ruoli/{codice_ruolo}/utenti:
+    get:
+      tags:
+        - Configuratore API
+      summary: getUtentiRuolo
+      description: 'restituisce la lista degli utenti attivi presenti nel sistema Configuratore, eventualmente filtrati per ruolo '
+      operationId: ruoliCodiceRuoloUtentiGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_ruolo
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelUtenteBase'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /ruoli:
+    get:
+      tags:
+        - Configuratore API
+      summary: getRuoli
+      description: 'restituisce la lista dei ruoli attivi presenti nel sistema Configuratore '
+      operationId: ruoliGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ModelRuolo'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /servizio-attivo:
+    get:
+      summary: ''
+      description: 'Serve per verificare se il servizio risponde o meno '
+      operationId: servizioAttivoGet_1
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: string
+  /utenti_abilitazioni/abilitazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: restituisce la lista di tutti gli utenti attivi e dei relativi profili/funzionalita per il backoffice
+      operationId: utentiAbilitazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta, utile per i log e l''audit. Il formato della stringa Ã¨ ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_farmacia
+          in: query
+          required: false
+          type: string
+        - name: piva_farmacia
+          in: query
+          required: false
+          type: string
+        - name: denominazione_farmacia
+          in: query
+          required: false
+          type: string
+        - name: descrizione_struttura
+          in: query
+          required: false
+          type: string
+        - name: cf_utente
+          in: query
+          required: false
+          type: string
+        - name: farmacia
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: denominazione_applicazione
+          in: query
+          required: false
+          type: string
+        - name: denominazione_azienda
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: false
+          type: string
+          format: int32
+        - name: offset
+          in: query
+          required: false
+          type: string
+          format: int32
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/VTreeUtenti'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti_abilitazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: restituisce la lista di tutti gli utenti attivi e dei relativi profili/funzionalita dato un ruolo e una collocazione
+      operationId: utentiGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta, utile per i log e l''audit. Il formato della stringa Ã¨ ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: ruolo_codice
+          in: query
+          required: true
+          type: string
+        - name: collocazione_codice
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UtenteProfiloFunzionalita'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/{codice_fiscale}/profili-abilitazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: 'restituisce la lista di tutte le collocazioni associate ad abilitazioni attive per l''utente ricevuto in input. '
+      operationId: profiliAbilitazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_fiscale
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+        - name: codice_applicazione
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/UtenteProfilo'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/{codice_fiscale}/email-auth:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: 'restituisce l’email dell’operatore e la tipologia di autenticazione con cui è stato salvato e il livello di autenticazione'
+      operationId: GetEmailAutenticazioneCf
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_fiscale
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            $ref: '#/definitions/UtenteProfilo'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/profili-disabilitazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: 'restituisce la lista di tutte le collocazioni associate ad abilitazioni non attive per l''utente ricevuto in input. '
+      operationId: profiliDisabilitazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+        - name: da
+          in: query
+          required: false
+          type: string
+        - name: a
+          in: query
+          required: false
+          type: string
+        - name: codice_applicazione
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UtenteProfiloDisabilitato'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/{codice_fiscale}/autorizzazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: autorizzazioni
+      description: 'restituisce l''informazione se l''utente e'' abilitato all''applicativo in base ai parametri passati.  '
+      operationId: autorizzazioneUtenteGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_fiscale
+          in: path
+          required: true
+          type: string
+        - name: ruolo_codice
+          in: query
+          required: true
+          type: string
+        - name: applicazione_codice
+          in: query
+          required: true
+          type: string
+        - name: collocazione_codice
+          in: query
+          required: true
+          type: string
+        - name: profilo_codice
+          in: query
+          required: false
+          type: string
+        - name: funzionalita_codice
+          in: query
+          required: false
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AutorizzazioneUtente'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: restituisce la lista di tutti gli utenti attivi e dei relativi profili/funzionalita dato un ruolo e una collocazione
+      operationId: utentiGet_2
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta, utile per i log e l''audit. Il formato della stringa Ã¨ ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: ruolo_codice
+          in: query
+          required: true
+          type: string
+        - name: collocazione_codice
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UtenteApplicazioni'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/{codice_fiscale}/abilitazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: ''
+      description: restituisce la lista di tutti gli utenti attivi e dei relativi profili/funzionalita dato un ruolo e una collocazione
+      operationId: abilitazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta, utile per i log e l''audit. Il formato della stringa Ã¨ ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: ruolo_codice
+          in: query
+          required: true
+          type: string
+        - name: collocazione_codice
+          in: query
+          required: false
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+        - name: codice_fiscale
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Applicazione'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/{codice_fiscale}/ruoli:
+    get:
+      tags:
+        - Configuratore API
+      summary: autorizzazioni
+      description: 'restituisce i ruoli per l''utente  '
+      operationId: ruoliUtentiGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_fiscale
+          in: path
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: integer
+          format: int32
+        - name: limit
+          in: query
+          required: true
+          type: integer
+          format: int32
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Ruolo'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/{codice_fiscale}/collocazioni:
+    get:
+      tags:
+        - Configuratore API
+      summary: collocazioni
+      description: 'restituisce la lista di tutte le collocazioni associate ad abilitazioni attive per l''utente ricevuto in input. '
+      operationId: collocazioniGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_fiscale
+          in: path
+          required: true
+          type: string
+        - name: ruolo_codice
+          in: query
+          required: true
+          type: string
+        - name: offset
+          in: query
+          required: true
+          type: string
+        - name: limit
+          in: query
+          required: true
+          type: string
+        - name: codice_azienda
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CollocazioneUtente'
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+  /utenti/{codice_fiscale}/azienda:
+    get:
+      tags:
+        - Configuratore API
+      summary: codiceAzienda
+      description: 'restituisce il codice azienda della collocazione se esiste un''abilitazione attiva dato CF, ruolo, collocazione e applicazione '
+      operationId: aziendaUtenteGet_1
+      produces:
+        - application/json
+      parameters:
+        - name: Shib-Identita-CodiceFiscale
+          in: header
+          description: Contiene il codice fiscale dell'utente loggato ottenuto tramite shibboleth
+          required: true
+          type: string
+        - name: X-Request-Id
+          in: header
+          description: Contiene un id univoco (`uuid v4`) della chiamata HTTP che viene generato dal front-end, viene propagato agli strati successivi e viene restituito al front-end assieme alla response, permettendo cosï¿½ di tracciare l'intero ciclo di vita della richiesta
+          required: true
+          type: string
+        - name: X-Forwarded-For
+          in: header
+          description: 'Contiene l''elenco degli ip che hanno gestito la richiesta. Utile per i log e l''audit. Il formato della stringa ï¿½  ``` <ip-front-end> | <ip-primo-server> | ... | <ip-ultimo-server> ``` Es. `10.10.10.10 | 10.38.45.68 | 10.128.69.244` '
+          required: true
+          type: string
+        - name: X-Codice-Servizio
+          in: header
+          description: 'Contiene il codice del servizio chiamante '
+          required: true
+          type: string
+        - name: codice_fiscale
+          in: path
+          required: true
+          type: string
+        - name: collocazione_codice
+          in: query
+          required: true
+          type: string
+        - name: ruolo_codice
+          in: query
+          required: true
+          type: string
+        - name: applicazione_codice
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Operazione eseguita con successo
+          schema:
+            type: string
+        '400':
+          description: bad request
+          schema:
+            $ref: '#/definitions/Errore'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Errore'
+        '404':
+          description: not found
+          schema:
+            $ref: '#/definitions/Errore'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errore'
+        '502':
+          description: Service invocation error
+          schema:
+            $ref: '#/definitions/Errore'
+      security:
+        - basicAuth: []
+securityDefinitions:
+  basicAuth:
+    description: ''
+    type: basic
+definitions:
+  Abilitazione:
+    type: object
+    properties:
+      ruolo:
+        $ref: '#/definitions/ModelRuolo'
+      collocazione:
+        $ref: '#/definitions/ModelCollocazione'
+      profilo:
+        $ref: '#/definitions/Profilo'
+  ModelCollocazione:
+    type: object
+    properties:
+      codiceCollocazione:
+        type: string
+        description: codice della collocazione
+      descrizioneCollocazione:
+        type: string
+        description: descrizione della collocazione
+      codiceAzienda:
+        type: string
+        description: codice dell'azienda
+      descrizioneAzienda:
+        type: string
+        description: descrizione del azienda
+  ModelRuolo:
+    type: object
+    required:
+      - codice
+    properties:
+      codice:
+        type: string
+        example: MMG
+        description: codice del ruolo
+      descrizione:
+        type: string
+        description: descrizione del ruolo
+  ModelUtente:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      nome:
+        type: string
+        description: nome dell'utente
+      cognome:
+        type: string
+        description: cognome dell'utente
+      codiceFiscale:
+        type: string
+        description: codice fiscale dell'utente
+      abilitazioni:
+        type: array
+        items:
+          $ref: '#/definitions/Abilitazione'
+  Profilo:
+    type: object
+    properties:
+      codice:
+        type: string
+        description: codice del profilo
+      descrizione:
+        type: string
+        description: descrizione del profilo
+  Dettaglio:
+    type: object
+    properties:
+      chiave:
+        type: string
+      valore:
+        type: string
+  Errore:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: int32
+      codice:
+        type: string
+      descrizione:
+        type: string
+      dettaglio:
+        type: array
+        items:
+          $ref: '#/definitions/Dettaglio'
+  ResponseDetail:
+    type: object
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+  ResponseWrite:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: int32
+      code:
+        type: string
+      title:
+        type: string
+      responseDetail:
+        type: array
+        items:
+          $ref: '#/definitions/ResponseDetail'
+  ProfiloFunzionalitaBody:
+    type: object
+    properties:
+      descrizione:
+        type: string
+      tipo:
+        type: string
+  InserimentoProfiloFunzionalitaBody:
+    type: object
+    properties:
+      listaProfili:
+        type: array
+        items:
+          type: string
+      tipologiaDatiPermessi:
+        type: array
+        items:
+          $ref: '#/definitions/Permesso'
+      listaRuoli:
+        type: array
+        items:
+          type: string
+  Permesso:
+    type: object
+    properties:
+      codiceTipologiaDato:
+        type: string
+      codicePermesso:
+        type: string
+  FunzionalitaTecnici:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      inizioValidita:
+        type: string
+        format: date-time
+      fineValidita:
+        type: string
+        format: date-time
+      codice:
+        type: string
+      descrizione:
+        type: string
+      permessi:
+        type: array
+        items:
+          $ref: '#/definitions/PermessoValido'
+  PermessoValido:
+    type: object
+    properties:
+      codiceTipologiaDato:
+        type: string
+      codicePermesso:
+        type: string
+      inizioValidita:
+        type: string
+        format: date-time
+      fineValidita:
+        type: string
+        format: date-time
+  ProfiloFunzionalita:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      inizioValidita:
+        type: string
+        format: date-time
+      fineValidita:
+        type: string
+        format: date-time
+      codiceProfilo:
+        type: string
+      descrizioneProfilo:
+        type: string
+      funzionalita:
+        type: array
+        items:
+          $ref: '#/definitions/FunzionalitaTecnici'
+      listaRuoli:
+        type: array
+        items:
+          $ref: '#/definitions/Ruolo'
+  Ruolo:
+    type: object
+    properties:
+      codice:
+        type: string
+      descrizione:
+        type: string
+      dataInizioValidita:
+        type: string
+        format: date-time
+      dataFineValidita:
+        type: string
+        format: date-time
+  Applicazione:
+    type: object
+    properties:
+      codice:
+        type: string
+        description: codice dell'applicazione
+      descrizione:
+        type: string
+        description: descrizione dell'applicazione
+  ListaPermessi:
+    type: object
+    properties:
+      permessi:
+        type: array
+        items:
+          $ref: '#/definitions/Permesso'
+  CollocazioneUtente:
+    type: object
+    properties:
+      collocazioneCodice:
+        type: string
+      collocazioneDescrizione:
+        type: string
+      collocazioneCodiceAzienda:
+        type: string
+      collocazioneDescrizioneAzienda:
+        type: string
+      dataInizioValidita:
+        type: string
+        format: date-time
+      dataFineValidita:
+        type: string
+        format: date-time
+      strutturaCodice:
+        type: string
+      strutturaDescrizione:
+        type: string
+      uoCodice:
+        type: string
+      uoDescrizione:
+        type: string
+      multiSpecCodice:
+        type: string
+      multiSpecDescrizione:
+        type: string
+      elementoOrganizzativoCodice:
+        type: string
+      elementoOrganizzativoDescrizione:
+        type: string
+      ambulatorioID:
+        type: string
+      ambulatorioDescrizione:
+        type: string
+      colTipoCodice:
+        type: string
+      colTipoDescrizione:
+        type: string
+  ModelAbilitazione:
+    type: object
+    required:
+      - applicazione
+      - descrizione
+    properties:
+      applicazione:
+        type: string
+      descrizione:
+        type: string
+  UtenteContatti:
+    type: object
+    properties:
+      nome:
+        type: string
+        description: nome dell'utente
+      cognome:
+        type: string
+        description: cognome dell'utente
+      codiceFiscale:
+        type: string
+        description: codice fiscale dell'utente
+      sesso:
+        type: string
+        description: sesso
+      email:
+        type: string
+      telefono:
+        type: string
+  Funzionalita:
+    type: object
+    properties:
+      codice:
+        type: string
+      descrizione:
+        type: string
+      codiceFunzionalitaPadre:
+        type: string
+      descrizioneFunzionalitaPadre:
+        type: string
+  ModelTokenInformazione:
+    type: object
+    properties:
+      richiedente:
+        $ref: '#/definitions/Richiedente'
+      parametriLogin:
+        type: array
+        items:
+          $ref: '#/definitions/ParametroLogin'
+      funzionalita:
+        type: array
+        items:
+          $ref: '#/definitions/Funzionalita'
+  ParametroLogin:
+    type: object
+    properties:
+      codice:
+        type: string
+      valore:
+        type: string
+  Richiedente:
+    type: object
+    properties:
+      nome:
+        type: string
+      cognome:
+        type: string
+      codiceFiscale:
+        type: string
+      ruolo:
+        type: string
+      collocazione:
+        $ref: '#/definitions/ModelCollocazione'
+  Token:
+    type: object
+    properties:
+      token:
+        type: string
+        description: token di autorizzazione utilizzato per accedere ad un sistema SOL
+  ParametriAutenticazione:
+    type: object
+    required:
+      - applicazione
+      - azienda
+      - collocazione
+      - ruolo
+    properties:
+      ruolo:
+        type: string
+        description: codice ruolo dell'utente
+      collocazione:
+        type: string
+        description: codice collocazione dell'utente
+      azienda:
+        type: string
+        description: codice azienda dell'utente
+      applicazione:
+        type: string
+        description: codice applicazione richiesta
+      parametriLogin:
+        type: array
+        description: parametri opzionali utili al login
+        items:
+          $ref: '#/definitions/ParametroLogin'
+  ModelApplicazione:
+    type: object
+    required:
+      - codice
+      - descrizione
+      - redirectUrl
+      - redirectUrlPagPresentazione
+    properties:
+      codice:
+        type: string
+      descrizione:
+        type: string
+      redirectUrl:
+        type: string
+      redirectUrlPagPresentazione:
+        type: string
+  ModelUtenteBase:
+    type: object
+    properties:
+      nome:
+        type: string
+        description: nome dell'utente
+      cognome:
+        type: string
+        description: cognome dell'utente
+      codiceFiscale:
+        type: string
+        description: codice fiscale dell'utente
+      sesso:
+        type: string
+        description: sesso
+  FilterPreferences:
+    type: object
+    properties:
+      codiceRuolo:
+        type: string
+      codiceCollocazione:
+        type: string
+      codiceApplicazione:
+        type: string
+      codiceAzienda:
+        type: string
+      nomeFruitore:
+        type: string
+      codiciFiscale:
+        type: array
+        items:
+          type: string
+  Preference:
+    type: object
+    properties:
+      email:
+        type: boolean
+      sms:
+        type: boolean
+      push:
+        type: boolean
+      emailSelectable:
+        type: boolean
+      smsSelectable:
+        type: boolean
+      pushSelectable:
+        type: boolean
+  PreferenzeFruitore:
+    type: object
+    properties:
+      nomeFruitore:
+        type: string
+      descrizioneFruitore:
+        type: string
+      codiceRuolo:
+        type: string
+      codiceCollocazione:
+        type: string
+      applicazione:
+        type: string
+      preferenza:
+        $ref: '#/definitions/Preference'
+  TokenConfiguration:
+    type: object
+    properties:
+      preferenzeFruitoreDaCancellare:
+        type: array
+        items:
+          $ref: '#/definitions/PreferenzeFruitore'
+      preferenzeFruitoreDaAggiungere:
+        type: array
+        items:
+          $ref: '#/definitions/PreferenzeFruitore'
+  Fruitore:
+    type: object
+    properties:
+      codice:
+        type: string
+      descrizione:
+        type: string
+  ItemPreference:
+    type: object
+    properties:
+      fruitore:
+        $ref: '#/definitions/Fruitore'
+      collocazione:
+        type: string
+      descrizioneCollocazione:
+        type: string
+      applicazione:
+        $ref: '#/definitions/Applicazione'
+      ruolo:
+        type: string
+      descrizioneRuolo:
+        type: string
+      tipoPreferenza:
+        type: string
+      preferenza:
+        $ref: '#/definitions/Preference'
+  Preferences:
+    type: object
+    properties:
+      itemPreference:
+        type: array
+        items:
+          $ref: '#/definitions/ItemPreference'
+  ContattiDigitali:
+    type: object
+    properties:
+      email:
+        type: string
+      telefono:
+        type: string
+      tokenPush:
+        type: array
+        items:
+          type: string
+  VTreeUtenti:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      idUtente:
+        type: integer
+        format: int64
+      codiceFiscale:
+        type: string
+      cognome:
+        type: string
+      nome:
+        type: string
+      codiceRuolo:
+        type: string
+      descrizioneRuolo:
+        type: string
+      colCodice:
+        type: string
+      colDescrizione:
+        type: string
+      colCodAzienda:
+        type: string
+      colDescAzienda:
+        type: string
+      colId:
+        type: integer
+        format: int64
+      codAsrTerr:
+        type: string
+      applicazioneId:
+        type: integer
+        format: int64
+      applicazione:
+        type: string
+      codiceApplicazione:
+        type: string
+      tipoFunzionalita:
+        type: string
+      fnzCodice:
+        type: string
+      fnzDescrizione:
+        type: string
+      fnzDescrizioneParent:
+        type: string
+      tipoFunzionalitaParent:
+        type: string
+      fnztreeId:
+        type: integer
+        format: int64
+      idAuthRAbilitazione:
+        type: integer
+        format: int64
+      dataInizioValiditaRAbilitazione:
+        type: string
+        format: date-time
+      dataFineValiditaRAbilitazione:
+        type: string
+        format: date-time
+      cfOperatoreRAbilitazione:
+        type: string
+      utecolId:
+        type: integer
+        format: int64
+      colTipoIdAuthTCollocazione:
+        type: integer
+        format: int64
+      collocazioneTipoCollocazione:
+        type: string
+      colFonteIdAuthTCollocazione:
+        type: integer
+        format: int64
+      fonteCollocazione:
+        type: string
+      colFonteIdAuthRUtenteCollocazione:
+        type: integer
+        format: int64
+      fonteUtenteCollocazione:
+        type: string
+      colFonteIdAuthRRuoloUtente:
+        type: integer
+        format: int64
+      fonteAuthRRuoloUtente:
+        type: string
+      flagConfiguratoreTUtente:
+        type: string
+      flagConfiguratoreUtenteCollocazione:
+        type: string
+      flag_azienda:
+        type: string
+  ApplicazioneProfili:
+    type: object
+    properties:
+      codice:
+        type: string
+        description: codice dell'applicazione
+      descrizione:
+        type: string
+        description: descrizione dell'applicazione
+      profiloCollocazione:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/ProfiloCollocazione'
+  ProfiloCollocazione:
+    type: object
+    properties:
+      collocazione:
+        $ref: '#/definitions/CollocazioneUtente'
+      profiloFunzionalita:
+        $ref: '#/definitions/ProfiloFunzionalita'
+  UtenteProfiloFunzionalita:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      nome:
+        type: string
+      cognome:
+        type: string
+      codiceFiscale:
+        type: string
+      dataDiNascita:
+        type: string
+        format: date-time
+      comuneDiNascita:
+        type: string
+      sesso:
+        type: string
+      applicazioni:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: '#/definitions/ApplicazioneProfili'
+  AbilitazioneCollocazioneProfili:
+    type: object
+    properties:
+      dataInizioValidita:
+        type: string
+        format: date-time
+      dataFineValidita:
+        type: string
+        format: date-time
+      ruolo:
+        $ref: '#/definitions/ModelRuolo'
+      collocazione:
+        $ref: '#/definitions/CollocazioneUtente'
+      profilo:
+        $ref: '#/definitions/Profilo'
+  Pagination:
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int64
+      listaRis:
+        type: array
+        items:
+          type: object
+  PaginationAbilitazioneCollocazioneProfili:
+    type: object
+    properties:
+      count:
+        type: integer
+        format: int64
+      listaRis:
+        type: array
+        items:
+          $ref: '#/definitions/AbilitazioneCollocazioneProfili'
+  UtenteProfilo:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      nome:
+        type: string
+      cognome:
+        type: string
+      codiceFiscale:
+        type: string
+      dataDiNascita:
+        type: string
+        format: date-time
+      comuneDiNascita:
+        type: string
+      sesso:
+        type: string
+      idAura:
+        type: integer
+        format: int64
+      provinciaNascita:
+        type: string
+      tipologiaAccesso:
+        type: array
+        items:
+          $ref: '#/definitions/TipologiaAccesso'
+      abilitazioni:
+        $ref: '#/definitions/PaginationAbilitazioneCollocazioneProfili'
+  UtenteProfiloDisabilitato:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      nome:
+        type: string
+      cognome:
+        type: string
+      codiceFiscale:
+        type: string
+      dataDiNascita:
+        type: string
+        format: date-time
+      comuneDiNascita:
+        type: string
+      sesso:
+        type: string
+      idAura:
+        type: integer
+        format: int64
+      provinciaNascita:
+        type: string
+      disabilitazioni:
+        type: array
+        items:
+          $ref: '#/definitions/AbilitazioneCollocazioneProfili'
+  AutorizzazioneUtente:
+    type: object
+    properties:
+      abilitato:
+        type: boolean
+  UtenteApplicazioni:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int64
+      nome:
+        type: string
+      cognome:
+        type: string
+      codiceFiscale:
+        type: string
+      dataDiNascita:
+        type: string
+        format: date-time
+      comuneDiNascita:
+        type: string
+      sesso:
+        type: string
+  TipologiaAccesso:
+    type: object
+    properties:
+      serviceProvider:
+        type: string

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="6f949cba-53fb-48e0-8a6c-16a03b52942b" activeEnvironment="Default" abortOnError="false" runType="SEQUENTIAL" resourceRoot="" soapui-version="5.9.1" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings/>
+  <con:interface xsi:type="con:RestService" name="REEABE REST API" type="rest" id="567fb41c-362e-4b6f-8a87-4697b28ce205" wadlVersion="http://wadl.dev.java.net/2009/02" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints>
+      <con:endpoint>http://reeabe-svil.k8s-svil01.nivolapiemonte.it/reeabe/api</con:endpoint>
+    </con:endpoints>
+    <con:resource path="/api/anagrafica/creazioneAnagrafica" name="anagrafiche" id="122dd93d-a2c7-4fc0-a1ba-29cab9a01b51">
+      <con:settings/><con:parameters><con:parameter><con:name>flagCaricamentoDaFile</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="GET Lista Anagrafiche" method="GET" id="1fdb2367-a638-4821-8830-91f2066c344e">
+        <con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>405 500</con:status><con:params/><con:element xmlns:get="http://localhost/reeabe/api/anagrafica/getListaAnagrafiche">get:Fault</con:element></con:representation><con:request name="getListaAnagrafiche" id="9f01ef3a-140d-4cac-853f-907b70434c0b" mediaType="application/json">
+          <con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/reeabe</con:endpoint>
+          <con:resourcePath>/anagrafiche</con:resourcePath>
+        <con:request/><con:originalUri>http://localhost/reeabe/api/anagrafica/getListaAnagrafiche</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="flagCaricamentoDaFile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>file</con:entry></con:parameterOrder></con:request>
+      </con:method>
+      <con:method name="POST Crea Anagrafica" method="POST" id="d4acb65e-deff-4534-aeec-84f1cf34e756">
+        <con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>text/plain; charset=utf-8</con:mediaType><con:status>404</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>400 405 415 500 404</con:status><con:params/><con:element xmlns:cre="http://reeabe-svil.k8s-svil01.nivolapiemonte.it/reeabe/api/anagrafiche/creazioneAnagrafica">cre:Fault</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/x-www-form-urlencoded</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>multipart/form-data</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="createAnagrafica" id="bf4b864f-ba50-4139-ba47-20c44fce6d67" mediaType="application/json" postQueryString="false">
+          <con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting><con:setting id="RecordRequestRepresentations">true</con:setting></con:settings><con:endpoint>http://localhost:8080/reeabe</con:endpoint>
+          <con:resourcePath>/anagrafiche</con:resourcePath>
+          <con:mediaType>application/json</con:mediaType>
+          <con:requestContent>{
+  "codice_fiscale": "RSSMRA80A01H501Z",
+  "nome": "Mario",
+  "cognome": "Rossi",
+  "nascita_data": "1980-01-01",
+  "sesso": "M",
+  "domicilio_asl_id": 1,
+  "residenza_asl_id": 1,
+  "fonte_id": 1,
+  "soggetto_stato_id": 2,
+  "lista_esposizione": [
+    {
+      "esposizione_azienda": "Azienda S.p.A.",
+      "esposizione_azienda_comune_cod": "H501",
+      "esposizione_azienda_comune_desc": "Torino",
+      "esposizione_azienda_cap": "10100",
+      "esposizione_azienda_provincia": "TO",
+      "esposizione_mansione": "Operaio",
+      "esposizione_inizio": "2000-01-01",
+      "esposizione_fine": "2010-01-01"
+    }
+  ]
+}</con:requestContent>
+        <con:request>{\r
+   "codice_fiscale" : "LEIDVD71A09E463Y",\r
+   "cognome" : "A",\r
+   "nome" : "A",\r
+   "nascita_data" : "2025-10-09",\r
+   "sesso" : "M",\r
+   "id_aura" : null,\r
+   "fonte_id" : 1,\r
+   "residenza_asl_id" : 1166,\r
+   "domicilio_asl_id" : 1166,\r
+   "assistenza_asl_id" : 1166,\r
+   "domicilio_asl_cod" : "010203",\r
+   "residenza_asl_cod" : "010203",\r
+   "soggetto_stato_id" : 2,\r
+   "presentazione_istanza_data" : "2026-03-17",\r
+   "nascita_stato" : "100",\r
+   "provincia_nascita" : "TO",\r
+   "nascita_provincia" : "TORINO",\r
+   "comune_nascita" : "001001",\r
+   "nascita_comune" : "AGLIE'",\r
+   "domicilio_comune_cod" : "001001",\r
+   "domicilio_provincia_codice" : "TO",\r
+   "domicilio_stato_codice" : "100",\r
+   "domicilio_indirizzo" : "a",\r
+   "domicilio_numero_civico" : null,\r
+   "domicilio_cap" : "a",\r
+   "comune_di_domicilio" : "AGLIE'",\r
+   "provincia_di_domicilio" : "TORINO",\r
+   "residenza_indirizzo" : "a",\r
+   "residenza_numero_civico" : null,\r
+   "email" : null,\r
+   "telefono" : "a",\r
+   "assistenza_asl_fine" : null,\r
+   "lista_esposizione" : [\r
+      {\r
+         "esposizione_azienda" : "x",\r
+         "esposizione_azienda_comune_cod" : "001001",\r
+         "esposizione_azienda_comune_desc" : "AGLIE'",\r
+         "esposizione_mansione" : "x",\r
+         "esposizione_inizio" : "2022-12-31T23:00:00.000Z",\r
+         "esposizione_fine" : "2025-12-31T23:00:00.000Z"\r
+      }\r
+   ]\r
+}</con:request><con:originalUri>http://reeabe-svil.k8s-svil01.nivolapiemonte.it/reeabe/api/anagrafiche/creazioneAnagrafica</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="flagCaricamentoDaFile" value="false" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>flagCaricamentoDaFile</con:entry></con:parameterOrder></con:request>
+      </con:method>
+    </con:resource>
+    <con:resource path="/anagrafiche/{id}" name="anagrafiche-id" id="172e40ec-fff6-4d87-9a4e-d14e426b11fc">
+      <con:settings/><con:parameters><con:parameter><con:name>id</con:name><con:style>TEMPLATE</con:style></con:parameter></con:parameters><con:method name="GET Dettaglio Anagrafica" method="GET" id="168fc49c-e23c-46ea-a371-2888b65b60c7">
+        <con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>404</con:status><con:params/></con:representation><con:request name="getAnagraficaById" id="23451639-7bed-422e-9cea-121a1cb3f2cd" mediaType="application/json">
+          <con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/reeabe/api</con:endpoint>
+          <con:resourcePath>/anagrafiche/1</con:resourcePath>
+        <con:request/><con:originalUri>http://http//localhost:8080/reeabe/api</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request>
+      </con:method>
+      <con:method name="PUT Aggiorna Anagrafica" method="PUT" id="367544ab-a87a-4701-9dc1-56591fc2479f">
+        <con:settings/><con:parameters/><con:request name="updateAnagrafica" id="30663100-df39-4a5b-a230-b5a181b3c086" mediaType="application/json" postQueryString="false">
+          <con:settings/><con:endpoint>http://reeabe-svil.k8s-svil01.nivolapiemonte.it/reeabe/api</con:endpoint>
+          <con:resourcePath>/anagrafiche/1</con:resourcePath>
+          <con:mediaType>application/json</con:mediaType>
+          <con:requestContent>{
+  "codice_fiscale": "RSSMRA80A01H501Z",
+  "nome": "Mario",
+  "cognome": "Rossi",
+  "nascita_data": "1980-01-01",
+  "sesso": "M",
+  "domicilio_asl_id": 1,
+  "residenza_asl_id": 1,
+  "fonte_id": 1,
+  "soggetto_stato_id": 2,
+  "lista_esposizione": [
+    {
+      "esposizione_azienda": "Azienda Saggiornata S.p.A.",
+      "esposizione_azienda_comune_cod": "H501",
+      "esposizione_azienda_comune_desc": "Torino",
+      "esposizione_azienda_cap": "10100",
+      "esposizione_azienda_provincia": "TO",
+      "esposizione_mansione": "Impiegato",
+      "esposizione_inizio": "2011-01-01",
+      "esposizione_fine": "2020-01-01"
+    }
+  ]
+}</con:requestContent>
+        <con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request>
+      </con:method>
+      <con:method name="DELETE Elimina Anagrafica" method="DELETE" id="0f98a363-f508-4eba-929e-23ad8ed6293b">
+        <con:settings/><con:parameters/><con:request name="deleteAnagrafica" id="855f387a-717f-491e-99e4-dbd8678988e5" mediaType="application/json">
+          <con:settings/><con:endpoint>http://reeabe-svil.k8s-svil01.nivolapiemonte.it/reeabe/api</con:endpoint>
+          <con:resourcePath>/anagrafiche/1</con:resourcePath>
+        <con:parameters/><con:parameterOrder><con:entry>id</con:entry></con:parameterOrder></con:request>
+      </con:method>
+    </con:resource>
+  </con:interface>
+<con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

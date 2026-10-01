@@ -1,0 +1,69 @@
+spring:
+  application:
+    name: reeabe
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  #datasource:
+     #url: jdbc:postgresql://dbs-reea-tst-001p.site05.nivolapiemonte.it:5432/DBREEA
+     #username: reea
+     #password: reea_CM26
+     #driver-class-name: org.postgresql.Driver
+
+  logging:
+    level:
+      org.jooq: ERROR                # log JOOQ
+      org.jooq.tools.LoggerListener: OFF  # log listener JOOQ
+      it.csi.registry.config.SqlLoggerListener: INFO
+
+  jooq:
+    sql-dialect: POSTGRES
+
+preadesione:
+  upload:
+    dir: /reea/fonti/preadesione
+
+inail:
+  upload:
+    dir: /reea/fonti/inail
+
+npla:
+  upload:
+    dir: /reea/fonti/npla
+
+spresalAnamnesi:
+  upload:
+    dir: /reea/fonti/spresal/anamnesi
+
+spresalEsiti:
+  upload:
+    dir: /reea/fonti/spresal/esiti
+
+export:
+  download:
+    dir: /reea/export
+
+pdf:
+  upload:
+    dir: /reea/storia_professionale
+
+server:
+  port: 8080
+  servlet:
+    context-path: /reeabe
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  override-with-generic-response: false
+
+configuratore:
+  # URL base, username e password letti da reea_c_parametro:
+  # CONFIGURATORE_BASE_URL, CONFIGURATORE_USER, CONFIGURATORE_PASSWORD
+  codice-servizio: REEA

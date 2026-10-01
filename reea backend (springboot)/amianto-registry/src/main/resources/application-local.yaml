@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: reeabe
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  datasource:
+#    url: jdbc:postgresql://127.0.0.1:15432/DBREEA
+    url: jdbc:postgresql://127.0.0.1:15432/DBREEASVIL
+    username: reea
+    password: reea_CM26
+    driver-class-name: org.postgresql.Driver
+  
+  logging:
+    level:
+    org.jooq: ERROR               # log JOOQ
+    org.jooq.tools.LoggerListener: OFF  # log listener delLE QUERIES DISATTIVATO HO IL MIO CUSTOM
+    it.csi.registry.config.SqlLoggerListener: INFO
+  
+  jooq:
+    sql-dialect: POSTGRES
+
+server:
+  port: 8080
+  servlet:
+    context-path: /reeabe
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  override-with-generic-response: false
+
+preadesione:
+  upload:
+    dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\fonti\preadesione
+
+inail:
+  upload:
+    dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\fonti\inail
+
+npla:
+  upload:
+    dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\fonti\npla
+
+spresalAnamnesi:
+  upload:
+    dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\fonti\spresal\anamnesi
+
+spresalEsiti:
+  upload:
+    dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\fonti\spresal\esiti
+
+export:
+  download:
+    dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\export
+
+spresal:
+  export:
+    base-dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\export
+
+pdf:
+  upload:
+    dir: C:\Users\betacom\Desktop\CSI Piemonte\workspace-REEA\.metadata\reea\storia_professionale
+
+configuratore:
+  base-path: http://tst-be-srv-solconfig.csi.it/configuratoreapi/api/v1
+  username: apisolconfigpreprod
+  password: mypass
+  codice-servizio: REEA
+

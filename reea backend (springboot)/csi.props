@@ -1,0 +1,4 @@
+CSI_BASE=false
+IMAGE_NAME=reea/reeabe
+PRODUCT_MAIL=davide.elia@csi.it
+TECHNOLOGY=java

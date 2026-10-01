@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: api-job
+  namespace: reea-rp-01-svil
+  labels:
+    app: api-job
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  suspend: false
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 1500
+      backoffLimit: 3
+
+      template:
+        metadata:
+          labels:
+            app: api-job
+
+        spec:
+          restartPolicy: OnFailure
+          dnsPolicy: ClusterFirst
+          schedulerName: default-scheduler
+          terminationGracePeriodSeconds: 30
+
+          containers:
+            - name: api-job
+              image: docker-projects.ecosis.csi.it/reea/reeabe:latest
+              imagePullPolicy: Always
+
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  /scripts/api_job.sh
+                  sleep 1200
+
+              env:
+                - name: TZ
+                  value: Europe/Rome
+
+              resources:
+                limits:
+                  cpu: 200m
+                  memory: 256Mi
+                requests:
+                  cpu: 50m
+                  memory: 64Mi
+
+              terminationMessagePath: /dev/termination-log
+              terminationMessagePolicy: File

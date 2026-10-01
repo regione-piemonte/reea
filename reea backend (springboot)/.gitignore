@@ -1,0 +1,39 @@
+# ===== Maven =====
+**/target/
+**/dependency-reduced-pom.xml
+
+# ===== Eclipse =====
+.project
+.classpath
+.settings/
+.factorypath
+
+# ===== IntelliJ / IDEA (se qualcuno lo usa) =====
+.idea/
+*.iml
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Logs =====
+*.log
+
+# ===== Spring Boot =====
+**/application-local.yml
+**/application-dev.yml
+
+# ===== OpenAPI generated sources (se non vuoi versionarli) =====
+**/generated-sources/
+
+# ===== Node (eventuale) =====
+node_modules/
+
+# ===== Build output =====
+*.jar
+*.war
+*.ear
+
+# jOOQ generated sources
+**/target/
+**/generated-sources/
