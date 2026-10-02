@@ -93,9 +93,11 @@ maintenance:
     - name: Davide Elia
       email: davide.elia@csi.it
       phone: "3466299349"
+      affiliation: developer
     - name: Laura Lo Russo
       email: laura.lorusso@csi.it
       phone: "3472485366"
+      affiliation: analista
 localisation:
   localisationReady: false
   availableLanguages:
