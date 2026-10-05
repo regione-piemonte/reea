@@ -102,3 +102,13 @@ localisation:
   localisationReady: false
   availableLanguages:
     - it-IT
+IT:
+  countryExtensionVersion: "1.0"
+  piattaforme:
+    spid: false
+    cie: false
+    anpr: false
+    pagopa: false
+    io: false
+  riuso:
+    codiceIPA: r_piemon
