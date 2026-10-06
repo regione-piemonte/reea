@@ -46,6 +46,7 @@ E' altresì possibile configarare lìapplicativo per login e password e profilar
 La lista delle persone che hanno partecipato alla realizzazione del software sono:
 - Davide Elia
 - Laura Lo Russo
+- Giuliano Iunco
 - Gaetano Sorresso
 - Christian Porri
 
