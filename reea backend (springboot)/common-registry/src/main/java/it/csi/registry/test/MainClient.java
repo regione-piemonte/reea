@@ -45,7 +45,12 @@ import it.csi.registry.client.configuratore.model.ModelTokenInformazione;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MainClient {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(MainClient.class);
 
     public static void main(String[] args) {
 
@@ -75,7 +80,11 @@ public class MainClient {
             System.out.println("Funzionalità: " + info.getFunzionalita().size());
 
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+        	LOGGER.error(
+                    "Errore durante la chiamata al servizio",
+                    e
+            );
         }
     }
 }

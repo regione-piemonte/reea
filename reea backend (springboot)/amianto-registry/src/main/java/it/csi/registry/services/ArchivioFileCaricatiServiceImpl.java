@@ -59,20 +59,10 @@ public class ArchivioFileCaricatiServiceImpl implements ArchivioFileCaricatiServ
 		List<ArchivioFileCaricatiDTO> listaRitorno = null;
 		listaRitorno = archivioFileCaricatiRepository.listaArchivioFileCaricati(filtroFonte, dataDa, dataA);
 		
-		//
-		if(auditLogRequest == null)
-        	auditLogRequest = new AuditLogRequest();
-
-        auditLogRequest.setOperazione("Archivio file");
-        auditLogRequest.setOggOper(JsonNullable.of("Ricerca file"));
-        auditLogRequest.setKeyOper(null);
-        auditLogRequest.setRequestPayload(null);
-        auditLogRequest.setEsitoChiamata(200);
-
-        auditLogRequest.setResponsePayload(null);
-
-        auditService.salvaAudit(auditLogRequest);
-		//
+		salvaAuditArchivioFile(
+	            auditLogRequest,
+	            "Ricerca file"
+	    );
 		 
 		return listaRitorno;
 	}
@@ -84,20 +74,10 @@ public class ArchivioFileCaricatiServiceImpl implements ArchivioFileCaricatiServ
 		List<ScartoFileDTO> listaRitorno = null;
 		listaRitorno = archivioFileCaricatiRepository.getElaborazioneErroreFile(elaborazioneId);
 		
-		//
-		if(auditLogRequest == null)
-        	auditLogRequest = new AuditLogRequest();
-
-        auditLogRequest.setOperazione("Archivio file");
-        auditLogRequest.setOggOper(JsonNullable.of("Visualizzazione degli errori"));
-        auditLogRequest.setKeyOper(null);
-        auditLogRequest.setRequestPayload(null);
-        auditLogRequest.setEsitoChiamata(200);
-
-        auditLogRequest.setResponsePayload(null);
-
-        auditService.salvaAudit(auditLogRequest);
-		//
+		salvaAuditArchivioFile(
+	            auditLogRequest,
+	            "Visualizzazione degli errori"
+	    );
         
         return listaRitorno;
 	}
@@ -109,20 +89,10 @@ public class ArchivioFileCaricatiServiceImpl implements ArchivioFileCaricatiServ
 		List<ScartoFileDTO> listaRitorno = null;
 		listaRitorno = archivioFileCaricatiRepository.getScaricoErroreFile(fileId);
 		
-		//
-		if(auditLogRequest == null)
-        	auditLogRequest = new AuditLogRequest();
-
-        auditLogRequest.setOperazione("Archivio file");
-        auditLogRequest.setOggOper(JsonNullable.of("Visualizzazione degli scarti"));
-        auditLogRequest.setKeyOper(null);
-        auditLogRequest.setRequestPayload(null);
-        auditLogRequest.setEsitoChiamata(200);
-
-        auditLogRequest.setResponsePayload(null);
-
-        auditService.salvaAudit(auditLogRequest);
-		//
+		salvaAuditArchivioFile(
+	            auditLogRequest,
+	            "Visualizzazione degli scarti"
+	    );
         
         return listaRitorno;
 	}
@@ -132,6 +102,27 @@ public class ArchivioFileCaricatiServiceImpl implements ArchivioFileCaricatiServ
 	    return archivioFileCaricatiRepository.hasElaborazioneTerminata(tipo);
 	}
 
+	
+	private void salvaAuditArchivioFile(
+	        AuditLogRequest auditLogRequest,
+	        String oggettoOperazione) {
+
+	    AuditLogRequest audit =
+	            auditLogRequest != null
+	                    ? auditLogRequest
+	                    : new AuditLogRequest();
+
+	    audit.setOperazione("Archivio file");
+	    audit.setOggOper(
+	            JsonNullable.of(oggettoOperazione)
+	    );
+	    audit.setKeyOper(null);
+	    audit.setRequestPayload(null);
+	    audit.setEsitoChiamata(200);
+	    audit.setResponsePayload(null);
+
+	    auditService.salvaAudit(audit);
+	}
 
 }
 

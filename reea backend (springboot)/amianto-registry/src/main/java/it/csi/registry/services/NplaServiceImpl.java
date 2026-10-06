@@ -68,7 +68,7 @@ public class NplaServiceImpl implements NplaService {
         		dsl,
                 elaborazioneId,
                 "REEA_T_REGISTRO_PDL_AMIANTO",
-                out.getAdesioneId().intValue(),
+                regPdlAmiantoId,
                 2,
                 out.getUtenteCreazione()
         );
@@ -200,54 +200,6 @@ public class NplaServiceImpl implements NplaService {
         tracciaElaborazioneRepository.aggiornaFineValidita(dsl, fileId);
         return salvato;
     }
-//    @Override
-//    public FileSalvato importNpla(MultipartFile file) throws IOException {
-//
-//        // 1. Salva subito il file su filesystem
-//        FileSalvato salvato = ExcelFileUtils.salvaExcelFileSystem(file, baseDir);
-//
-//        // 2. Inserisci il record su reea_t_file
-//        Integer fileId = elaborazioneService.inserisciFile(
-//            salvato.fileName(),
-//            salvato.filePath(),
-//            salvato.checksum(),
-//            file.getContentType(),
-//            file.getSize(),
-//            1,
-//            "ADMIN"
-//        );
-//
-//        // 3. Leggi il file DAL PATH SALVATO, non pi� dal MultipartFile
-//        try (InputStream is = new FileInputStream(salvato.filePath())) {
-//            // 1. Cancella staging non ancora processati
-//            nplaRepository.deleteRecordNonProcessati();
-//
-//            // 2. Parsa il file NPLA
-//            List<NplaDTO> rows = ExcelNplaParser.parseNpla(is);
-//
-//            // 3. Escludi campi obbligatori null e CF+cantiere gi� processati
-//            Set<String> giaProcessati = nplaRepository.getProcessedCantiereCods();
-//
-//            List<NplaDTO> nuovi = rows.stream()
-//                    .filter(r -> {
-//                        if (r.getCodiceFiscale() == null || r.getCodiceFiscale().isBlank()) return false;
-//                        if (r.getPeriodo() == null) return false;
-//                        if (r.getIdCantiere() == null) return false;
-//                        if (r.getAslCantiere() == null || r.getAslCantiere().isBlank()) return false;
-//
-//                        String key = r.getCodiceFiscale() + "_" + r.getIdCantiere();
-//                        return !giaProcessati.contains(key);
-//                    })
-//                    .toList();
-//
-//            // 4. Inserisci solo i nuovi
-//            if (!nuovi.isEmpty()) {
-//                nplaRepository.scaricaNpla(nuovi, fileId);
-//            }
-//        }
-//
-//        return salvato;
-//    }
 
 
     @Override

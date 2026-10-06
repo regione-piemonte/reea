@@ -190,7 +190,15 @@ public class InailController {
 								"REEA_T_REGISTRO_INAIL",                     // ← era "REEA_T_SOGGETTO"
 								dto.getRegInailId() != null ? dto.getRegInailId() : 0
 						);
-					} catch (Exception ex) { ex.printStackTrace(); }
+					} catch (Exception ex) { 
+//						ex.printStackTrace(); 
+						LOGGER.error(
+					            "Errore durante la registrazione dell'errore "
+					                    + "per regInailId={}",
+					            dto.getRegInailId(),
+					            ex
+					    );
+					}
 
 				}
     	    }

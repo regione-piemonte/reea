@@ -7,8 +7,8 @@ spring:
       max-request-size: 20MB
 
   datasource:
-#    url: jdbc:postgresql://127.0.0.1:15432/DBREEA
-    url: jdbc:postgresql://127.0.0.1:15432/DBREEASVIL
+    url: jdbc:postgresql://127.0.0.1:15432/DBREEA
+#    url: jdbc:postgresql://127.0.0.1:15432/DBREEASVIL
     username: reea
     password: reea_CM26
     driver-class-name: org.postgresql.Driver

@@ -142,43 +142,7 @@ public class AdesioneServiceImpl implements AdesioneService {
         tracciaElaborazioneRepository.aggiornaFineValidita(dsl, fileId);
         return salvato;
     }
-//    @Override
-//    public FileSalvato importAdesioni(MultipartFile file) throws IOException {
-//
-//        // 1. Salva subito il file su filesystem
-//        FileSalvato salvato = ExcelFileUtils.salvaExcelFileSystem(file, baseDir);
-//
-//        // 2. Inserisci il record su reea_t_file
-//        Integer fileId = elaborazioneRepository.inserisciFile(
-//        	dsl,
-//            salvato.fileName(),
-//            salvato.filePath(),
-//            salvato.checksum(),
-//            file.getContentType(),
-//            file.getSize(),
-//            1,
-//            "ADMIN"
-//        );
-//
-//        // 3. Leggi il file DAL PATH SALVATO, non pi� dal MultipartFile
-//        try (InputStream is = new FileInputStream(salvato.filePath())) {
-//            adesioneRepository.deleteRecordNonProcessati();
-//
-//            List<AdesioneDTO> rows = ExcelParser.parseAdesioni(is);
-//            Set<String> giaProcessati = adesioneRepository.getProcessedAdesioneCods();
-//
-//            // 3. Escludi record gia'� importati (soggetto_id valorizzato)
-//            List<AdesioneDTO> nuovi = rows.stream()
-//                .filter(r -> r.getAdesioneCod() == null || !giaProcessati.contains(r.getAdesioneCod()))
-//                .toList();
-//
-//            if (!nuovi.isEmpty()) {
-//                adesioneRepository.scaricoDatiExcelInTAdesione(nuovi, fileId);
-//            }
-//        }
-//
-//        return salvato;
-//    }
+
 
     @Override
     public List<AdesioneDTO> getAdesioneBySoggettoId(Long soggettoId) {

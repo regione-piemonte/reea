@@ -179,7 +179,16 @@ public class ConfiguratoreService {
                 throw new IllegalArgumentException("URL base HTTP(S) assoluto richiesto");
             }
             // Il client aggiunge il percorso dell'operazione all'URL base.
-            return uri.toASCIIString().replaceAll("/+$", "");
+//            return uri.toASCIIString().replaceAll("/+$", "");
+            String basePath = uri.toASCIIString();
+
+            int end = basePath.length();
+
+            while (end > 0 && basePath.charAt(end - 1) == '/') {
+                end--;
+            }
+
+            return basePath.substring(0, end);
         } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,
                     "Parametro DB CONFIGURATORE_BASE_URL non valido", ex);
