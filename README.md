@@ -47,6 +47,7 @@ La lista delle persone che hanno partecipato alla realizzazione del software son
 - Davide Elia
 - Laura Lo Russo
 - Giuliano Iunco
+- Marco Maberto
 - Gaetano Sorresso
 - Christian Porri
 
